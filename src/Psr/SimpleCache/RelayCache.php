@@ -11,8 +11,6 @@ use DateInterval;
 use Relay\Relay;
 
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\CacheException;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class RelayCache implements CacheInterface
 {
