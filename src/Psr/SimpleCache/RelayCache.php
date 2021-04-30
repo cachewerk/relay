@@ -1,5 +1,7 @@
 <?php
 
+namespace Relay\Psr\SimpleCache;
+
 use DateTime;
 use TypeError;
 use Throwable;
