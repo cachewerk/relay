@@ -3,10 +3,19 @@
     "description": "The next-generation caching layer for PHP.",
     "type": "library",
     "license": "MIT",
+    "scripts": {
+        "bench": "./vendor/bin/phpbench run --report=redis",
+        "bench:verbose": "./vendor/bin/phpbench run --report=redis --progress=blinken"
+    },
     "require": {
         "php": "^7.4|^8.0",
         "ext-relay": "*",
         "psr/simple-cache": "^1.0"
+    },
+    "require-dev": {
+        "phpbench/phpbench": "^1.0",
+        "predis/predis": "^1.1",
+        "colinmollenhour/credis": "^1.12"
     },
     "provide": {
         "psr/simple-cache-implementation": "1.0"
@@ -14,6 +23,11 @@
     "autoload": {
         "psr-4": {
             "Relay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Relay\\Benchmarks\\": "benchmarks/"
         }
     }
 }

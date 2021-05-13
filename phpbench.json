@@ -1,0 +1,25 @@
+{
+    "core.extensions": [
+        "Relay\\PhpBench\\RedisExtension"
+    ],
+    "runner.path": "benchmarks",
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.progress": "verbose",
+    "runner.executor": "redis",
+    "report.generators": {
+        "redis": {
+            "extends": "aggregate",
+            "generator": "expression",
+            "break": ["benchmark"],
+            "cols": [
+                "benchmark",
+                "subject",
+                "revs",
+                "its",
+                "rstdev",
+                "mem_peak",
+                "mode"
+            ]
+        }
+    }
+}
