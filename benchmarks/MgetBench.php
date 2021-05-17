@@ -33,13 +33,13 @@ class MgetBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
-     * @BeforeMethods("setUpCredis")
-     * @Groups("credis")
+     * @BeforeMethods("setUpPredis")
+     * @Groups("predis")
      */
-    public function benchMgetUsingCredis($params)
+    public function benchMgetUsingPredis($params)
     {
         foreach ($params['chunks'] as $keys) {
-            array_map('unserialize', $this->credis->mget($keys));
+            array_map('unserialize', $this->predis->mget($keys));
         }
     }
 
@@ -49,13 +49,13 @@ class MgetBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
-     * @BeforeMethods("setUpPredis")
-     * @Groups("predis")
+     * @BeforeMethods("setUpCredis")
+     * @Groups("credis")
      */
-    public function benchMgetUsingPredis($params)
+    public function benchMgetUsingCredis($params)
     {
         foreach ($params['chunks'] as $keys) {
-            array_map('unserialize', $this->predis->mget($keys));
+            array_map('unserialize', $this->credis->mget($keys));
         }
     }
 

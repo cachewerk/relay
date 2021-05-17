@@ -32,12 +32,12 @@ class GetStringsBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpCredis")
-     * @Groups("credis")
+     * @BeforeMethods("setUpPredis")
+     * @Groups("predis")
      */
-    public function benchGetStringsUsingCredis($params) {
+    public function benchGetStringsUsingPredis($params) {
         foreach ($params['keys'] as $key) {
-            $this->credis->get($key);
+            $this->predis->get($key);
         }
     }
 
@@ -47,12 +47,12 @@ class GetStringsBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpPredis")
-     * @Groups("predis")
+     * @BeforeMethods("setUpCredis")
+     * @Groups("credis")
      */
-    public function benchGetStringsUsingPredis($params) {
+    public function benchGetStringsUsingCredis($params) {
         foreach ($params['keys'] as $key) {
-            $this->predis->get($key);
+            $this->credis->get($key);
         }
     }
 

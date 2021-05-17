@@ -32,15 +32,14 @@ class GetThroughputBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("seconds", precision=2)
      * @OutputMode("throughput")
-     * @Format("mode(variant.time.avg) as ms")
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpCredis")
-     * @Groups("credis")
+     * @BeforeMethods("setUpPredis")
+     * @Groups("predis")
      */
-    public function benchGetThroughputOfCredis($params)
+    public function benchGetThroughputOfPredis($params)
     {
         foreach ($params['keys'] as $key) {
-            $this->credis->get($key);
+            $this->predis->get($key);
         }
     }
 
@@ -51,13 +50,13 @@ class GetThroughputBench extends BenchCase
      * @OutputTimeUnit("seconds", precision=2)
      * @OutputMode("throughput")
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpPredis")
-     * @Groups("predis")
+     * @BeforeMethods("setUpCredis")
+     * @Groups("credis")
      */
-    public function benchGetThroughputOfPredis($params)
+    public function benchGetThroughputOfCredis($params)
     {
         foreach ($params['keys'] as $key) {
-            $this->predis->get($key);
+            $this->credis->get($key);
         }
     }
 

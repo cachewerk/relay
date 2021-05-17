@@ -11,6 +11,9 @@
             "extends": "aggregate",
             "generator": "expression",
             "break": ["benchmark"],
+            "expressions": {
+                "diff": "percent_diff(mode(result_time_avg), mode(suite[subject_groups = [\"predis\"]][\"result_time_avg\"]))"
+            },
             "cols": [
                 "benchmark",
                 "subject",
@@ -18,7 +21,8 @@
                 "its",
                 "rstdev",
                 "mem_peak",
-                "mode"
+                "mode",
+                "diff"
             ]
         }
     }

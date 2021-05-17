@@ -35,12 +35,12 @@ class GetUnserializeBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpCredis")
-     * @Groups("credis")
+     * @BeforeMethods("setUpPredis")
+     * @Groups("predis")
      */
-    public function benchGetSerializedUsingCredis($params) {
+    public function benchGetSerializedUsingPredis($params) {
         foreach ($params['keys'] as $key) {
-            unserialize($this->credis->get($key));
+            unserialize($this->predis->get($key));
         }
     }
 
@@ -50,12 +50,12 @@ class GetUnserializeBench extends BenchCase
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpPredis")
-     * @Groups("predis")
+     * @BeforeMethods("setUpCredis")
+     * @Groups("credis")
      */
-    public function benchGetSerializedUsingPredis($params) {
+    public function benchGetSerializedUsingCredis($params) {
         foreach ($params['keys'] as $key) {
-            unserialize($this->predis->get($key));
+            unserialize($this->credis->get($key));
         }
     }
 
