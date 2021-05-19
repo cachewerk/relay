@@ -130,7 +130,7 @@ class MgetBench extends BenchCase
         }
 
         yield 'dataset' => [
-            'chunks' => array_chunk($keys, 32),
+            'chunks' => array_chunk($keys, 12),
         ];
     }
 }

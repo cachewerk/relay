@@ -12,7 +12,7 @@
             "generator": "expression",
             "break": ["benchmark"],
             "expressions": {
-                "diff": "percent_diff(mode(result_time_avg), mode(suite[subject_groups = [\"predis\"]][\"result_time_avg\"]))"
+                "diff": "format(\"%.1fx (%.1f%%)\", mode(suite[subject_groups = [\"predis\"]][\"result_time_avg\"]) / mode(result_time_avg), percent_diff(mode(result_time_avg), mode(suite[subject_groups = [\"predis\"]][\"result_time_avg\"])))"
             },
             "cols": [
                 "benchmark",
