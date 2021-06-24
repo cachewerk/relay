@@ -19,7 +19,7 @@ class GetThroughputBench extends BenchCase
         $redis = static::redis();
         $redis->flushdb(true);
 
-        foreach (static::loadJson('meteorites.json') as $landing) {
+        foreach (static::loadJson('dataset-meteorites.json') as $landing) {
             $redis->set("meteorite:{$landing->_id}", $landing);
         }
     }
@@ -119,7 +119,7 @@ class GetThroughputBench extends BenchCase
     {
         $keys = [];
 
-        foreach (static::loadJson('meteorites.json') as $landing) {
+        foreach (static::loadJson('dataset-meteorites.json') as $landing) {
             $keys[] = "meteorite:{$landing->_id}";
         }
 
