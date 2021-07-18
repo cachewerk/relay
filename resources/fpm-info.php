@@ -37,8 +37,8 @@ list($requests, $misses, $hits, $errors, $oom, $empty) = [
     $stats['misses'],
     $stats['hits'],
     $stats['errors'],
-    $stats['empty'],
     $stats['oom'],
+    $stats['empty'],
 ];
 
 function pct($a, $b) {
