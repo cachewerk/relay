@@ -10,20 +10,6 @@ use Predis\Client as Predis;
 abstract class BenchCase
 {
     /**
-     * The hostname of the Redis instance to use.
-     *
-     * @var string
-     */
-    const Host = '127.0.0.1';
-
-    /**
-     * The port of the Redis instance to use.
-     *
-     * @var int
-     */
-    const Port = 6379;
-
-    /**
      * The Credis client.
      *
      * @var \Credis_Client
@@ -59,7 +45,7 @@ abstract class BenchCase
     public static function redis()
     {
         $redis = new PhpRedis;
-        $redis->connect(self::Host, self::Port);
+        $redis->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
         $redis->setOption(PhpRedis::OPT_SERIALIZER, PhpRedis::SERIALIZER_PHP);
         $redis->ping();
 
@@ -73,7 +59,7 @@ abstract class BenchCase
      */
     public function setUpCredis(): Credis
     {
-        $this->credis = new Credis(self::Host, self::Port);
+        $this->credis = new Credis($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
         $this->credis->forceStandalone();
         $this->credis->ping();
 
@@ -88,8 +74,8 @@ abstract class BenchCase
     public function setUpPredis(): Predis
     {
         $this->predis = new Predis([
-            'host' => self::Host,
-            'port' => self::Port,
+            'host' => $_SERVER['REDIS_HOST'],
+            'port' => $_SERVER['REDIS_PORT'],
         ]);
 
         $this->predis->ping();
@@ -105,7 +91,7 @@ abstract class BenchCase
     public function setUpPhpRedis(): PhpRedis
     {
         $this->phpredis = new PhpRedis;
-        $this->phpredis->connect(self::Host, self::Port);
+        $this->phpredis->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
         $this->phpredis->ping();
 
         return $this->phpredis;
@@ -119,7 +105,7 @@ abstract class BenchCase
     public function setUpRelay(): Relay
     {
         $this->relay = new Relay;
-        $this->relay->connect(self::Host, self::Port);
+        $this->relay->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
         $this->relay->ping();
 
         return $this->relay;

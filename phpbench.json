@@ -7,6 +7,10 @@
     "runner.progress": "verbose",
     "runner.executor": "redis",
     "runner.file_pattern": "*Bench.php",
+    "runner.php_env": {
+        "REDIS_HOST": "127.0.0.1",
+        "REDIS_PORT": 6379
+    },
     "report.generators": {
         "redis": {
             "extends": "aggregate",
