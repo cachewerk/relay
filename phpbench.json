@@ -6,6 +6,7 @@
     "runner.bootstrap": "vendor/autoload.php",
     "runner.progress": "verbose",
     "runner.executor": "redis",
+    "runner.file_pattern": "*Bench.php",
     "report.generators": {
         "redis": {
             "extends": "aggregate",
