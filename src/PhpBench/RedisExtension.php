@@ -18,7 +18,8 @@ class RedisExtension implements ExtensionInterface
     {
         $container->register(RedisExecutor::class, function (Container $container) {
             return new RedisExecutor(
-                $container->get(RemoteExecutor::class)
+                $container->get(RemoteExecutor::class),
+                $container->getParameter(RunnerExtension::PARAM_PHP_ENV)
             );
         }, [
             RunnerExtension::TAG_EXECUTOR => [

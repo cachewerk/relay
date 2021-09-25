@@ -4,8 +4,6 @@ namespace Relay\PhpBench;
 
 use Redis;
 
-use Relay\Benchmarks\BenchCase;
-
 use PhpBench\Registry\Config;
 use PhpBench\Executor\ExecutionContext;
 use PhpBench\Executor\ExecutionResults;
@@ -24,13 +22,22 @@ class RedisExecutor implements BenchmarkExecutorInterface
     protected $executor;
 
     /**
+     * The `runner.php_env` environment variables.
+     *
+     * @var array
+     */
+    protected $env;
+
+    /**
      * Creates a new Redis executor instance.
      *
      * @param  \PhpBench\Executor\Benchmark\RemoteExecutor  $executor
+     * @param  array  $env
      * @return void
      */
-    public function __construct(RemoteExecutor $executor)
+    public function __construct(RemoteExecutor $executor, array $env)
     {
+        $this->env = $env;
         $this->executor = $executor;
     }
 
@@ -50,7 +57,7 @@ class RedisExecutor implements BenchmarkExecutorInterface
         $results = $this->executor->execute($context, $config);
 
         $redis = new Redis;
-        $redis->connect(BenchCase::Host, BenchCase::Port);
+        $redis->connect($this->env['REDIS_HOST'], $this->env['REDIS_PORT']);
 
         $results->add(
             new RedisResult($redis->info())
