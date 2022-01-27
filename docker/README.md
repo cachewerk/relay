@@ -16,6 +16,13 @@ docker build --pull --tag relay-ubuntu-apt --file ubuntu-apt.Dockerfile .
 docker run -it relay-ubuntu-apt bash
 ```
 
+## Debian (PHP 8.1)
+
+```bash
+docker build --pull --tag relay-debian --file debian.Dockerfile .
+docker run -it relay-debian bash
+```
+
 ## Amazon Linux 2 (PHP 8.0)
 
 ```bash
