@@ -30,6 +30,13 @@ docker build --pull --tag relay-amazon2 --file amzn2.Dockerfile .
 docker run -it relay-amazon2 bash
 ```
 
+## Alpine Linux 3 (PHP 8.0)
+
+```bash
+docker build --pull --tag relay-alpine --file alpine.Dockerfile .
+docker run -it relay-alpine sh
+```
+
 ## CentOS 7 (PHP 8.0)
 
 ```bash
