@@ -35,4 +35,4 @@ RUN cp /tmp/relay-dev-php8.0-centos7-`arch`/relay-pkg.so $(php-config --extensio
 
 # Inject UUID
 RUN uuid=$(cat /proc/sys/kernel/random/uuid) \
-  && sed -i "s/31415926-5358-9793-2384-626433832795/${uuid}/" $(php-config --extension-dir)/relay.so
+  && sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:${uuid}/" $(php-config --extension-dir)/relay.so
