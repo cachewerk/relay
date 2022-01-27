@@ -14,12 +14,12 @@ RUN add-apt-repository ppa:ondrej/php
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt install -y \
-  php8.0-dev \
-  php8.0-fpm
+  php8.1-dev \
+  php8.1-fpm
 
 RUN curl -s https://cachewerk.s3.amazonaws.com/repos/key.gpg | apt-key add -
 RUN add-apt-repository "deb https://cachewerk.s3.amazonaws.com/repos/deb $(lsb_release -cs) main"
-RUN apt install -y php8.0-relay
+RUN apt install -y php8.1-relay
 
 ## This works as well (if no specific PHP version is installed)
 # RUN apt install -y php-dev php-fpm

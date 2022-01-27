@@ -1,15 +1,15 @@
 # Docker environments
 
-## Ubuntu (PHP 8.0)
+## Ubuntu (PHP 8.1)
 
-### Using APT
+### Manual
 
 ```bash
 docker build --pull --tag relay-ubuntu --file ubuntu.Dockerfile .
 docker run -it relay-ubuntu bash
 ```
 
-### Manual
+### Using APT
 
 ```bash
 docker build --pull --tag relay-ubuntu-apt --file ubuntu-apt.Dockerfile .

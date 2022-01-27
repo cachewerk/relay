@@ -14,17 +14,17 @@ RUN apt update
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt install -y \
-  php8.0-dev \
-  php8.0-fpm \
-  php8.0-msgpack \
-  php8.0-igbinary
+  php8.1-dev \
+  php8.1-fpm \
+  php8.1-msgpack \
+  php8.1-igbinary
 
 # Download Relay
-RUN curl -L "https://cachewerk.s3.amazonaws.com/relay/develop/relay-dev-php8.0-debian-$(uname -m).tar.gz" | tar xz -C /tmp
+RUN curl -L "https://cachewerk.s3.amazonaws.com/relay/develop/relay-dev-php8.1-debian-$(uname -m).tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
-RUN cp /tmp/relay-dev-php8.0-debian-$(uname -m)/relay.ini $(php-config --ini-dir)/30-relay.ini
-RUN cp /tmp/relay-dev-php8.0-debian-$(uname -m)/relay-pkg.so $(php-config --extension-dir)/relay.so
+RUN cp /tmp/relay-dev-php8.1-debian-$(uname -m)/relay.ini $(php-config --ini-dir)/30-relay.ini
+RUN cp /tmp/relay-dev-php8.1-debian-$(uname -m)/relay-pkg.so $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN uuid=$(cat /proc/sys/kernel/random/uuid) \
