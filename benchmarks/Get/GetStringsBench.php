@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks\Get;
 
-use Relay\Benchmarks\BenchCase;
+use CacheWerk\Relay\Benchmarks\BenchCase;
 
 /**
  * @BeforeClassMethods("setUp")

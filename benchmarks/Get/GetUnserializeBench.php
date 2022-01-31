@@ -5,7 +5,7 @@ namespace CacheWerk\Relay\Benchmarks\Get;
 use Redis;
 use Relay\Relay;
 
-use Relay\Benchmarks\BenchCase;
+use CacheWerk\Relay\Benchmarks\BenchCase;
 
 /**
  * @BeforeClassMethods("setUp")

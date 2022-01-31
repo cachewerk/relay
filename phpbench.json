@@ -1,6 +1,6 @@
 {
     "core.extensions": [
-        "Relay\\PhpBench\\RedisExtension"
+        "CacheWerk\\Relay\\PhpBench\\RedisExtension"
     ],
     "runner.path": "benchmarks",
     "runner.bootstrap": "vendor/autoload.php",
