@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Relay\\": "src/"
+            "CacheWerk\\Relay\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Relay\\Benchmarks\\": "benchmarks/"
+            "CacheWerk\\Relay\\Benchmarks\\": "benchmarks/"
         }
     }
 }

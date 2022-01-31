@@ -1,6 +1,6 @@
 <?php
 
-namespace Relay\Benchmarks\Throughput;
+namespace CacheWerk\Relay\Benchmarks\Throughput;
 
 use Relay\Benchmarks\BenchCase;
 

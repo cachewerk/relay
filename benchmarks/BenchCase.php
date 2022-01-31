@@ -1,6 +1,6 @@
 <?php
 
-namespace Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks;
 
 use Relay\Relay;
 use Redis as PhpRedis;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Relay\Psr\SimpleCache;
+namespace CacheWerk\Relay\Psr\SimpleCache;
 
 use DateTime;
 use TypeError;

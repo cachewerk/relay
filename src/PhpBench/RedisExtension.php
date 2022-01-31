@@ -1,6 +1,6 @@
 <?php
 
-namespace Relay\PhpBench;
+namespace CacheWerk\Relay\PhpBench;
 
 use PhpBench\Extension\RunnerExtension;
 use PhpBench\DependencyInjection\Container;
