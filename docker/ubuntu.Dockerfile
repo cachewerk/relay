@@ -1,23 +1,28 @@
 FROM ubuntu:20.04
 
-RUN apt update
-RUN apt upgrade -y
+RUN apt-get update
+RUN apt-get upgrade -y
 
-RUN apt install -y \
+RUN apt-get install -y \
   ca-certificates \
   apt-transport-https \
   software-properties-common
 
 RUN add-apt-repository ppa:ondrej/php
-RUN apt update
+RUN apt-get update
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt install -y \
+# Relay requires the `msgpack` and `igbinary` extensions
+RUN apt-get install -y \
   php8.1-dev \
   php8.1-fpm \
   php8.1-msgpack \
   php8.1-igbinary
+
+# Install Relay dependencies
+RUN apt-get install -y \
+  libev-dev
 
 # Download Relay
 RUN curl -L "https://cachewerk.s3.amazonaws.com/relay/develop/relay-dev-php8.1-debian-$(uname -m).tar.gz" | tar xz -C /tmp

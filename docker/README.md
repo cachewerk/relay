@@ -2,14 +2,12 @@
 
 ## Ubuntu (PHP 8.1)
 
-### Manual
-
 ```bash
 docker build --pull --tag relay-ubuntu --file ubuntu.Dockerfile .
 docker run -it relay-ubuntu bash
 ```
 
-### Using APT
+Relay also has an APT package compatible with Ondřej’s wonderful `ppa:ondrej/php` repository:
 
 ```bash
 docker build --pull --tag relay-ubuntu-apt --file ubuntu-apt.Dockerfile .
