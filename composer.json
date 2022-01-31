@@ -10,7 +10,7 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-relay": "*",
-        "psr/simple-cache": "^1.0"
+        "psr/simple-cache": "^1|^2|^3"
     },
     "require-dev": {
         "phpbench/phpbench": "^1.1",
@@ -18,7 +18,7 @@
         "colinmollenhour/credis": "^1.12"
     },
     "provide": {
-        "psr/simple-cache-implementation": "1.0"
+        "psr/simple-cache-implementation": "^1|^2|^3"
     },
     "autoload": {
         "psr-4": {
