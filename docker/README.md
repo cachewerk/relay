@@ -1,4 +1,6 @@
-# Docker environments
+# Docker
+
+These Docker environments are concrete examples of Relay's [installation instruction](https://relaycache.com/docs/installation).
 
 ## Ubuntu (PHP 8.1)
 
