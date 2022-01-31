@@ -1,9 +1,9 @@
 FROM debian:buster
 
-RUN apt update
-RUN apt upgrade -y
+RUN apt-get update
+RUN apt-get upgrade -y
 
-RUN apt install -y \
+RUN apt-get install -y \
   lsb-release \
   apt-transport-https \
   ca-certificates \
@@ -12,15 +12,19 @@ RUN apt install -y \
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 
-RUN apt update
-RUN apt install -y \
+# Fix `php-config` link to `sed`
+RUN ln -s /bin/sed /usr/bin/sed
+
+RUN apt-get update
+
+# Relay requires the `msgpack` and `igbinary` extensions
+RUN apt-get install -y \
   php8.1-dev \
-  php8.1-fpm \
   php8.1-msgpack \
   php8.1-igbinary
 
 # Install Relay dependencies
-RUN apt install -y \
+RUN apt-get install -y \
   libev-dev
 
 # Download Relay
