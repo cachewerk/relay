@@ -4,6 +4,12 @@
 - [Twitter](https://twitter.com/RelayCache)
 - [Discussions](https://github.com/cachewerk/relay/discussions)
 
+## Installation
+
+```bash
+composer require cachewerk/relay
+```
+
 ## Benchmarks
 
 The host and port may be set in `phpbench.json`.

@@ -9,8 +9,7 @@
     },
     "require": {
         "php": "^7.4|^8.0",
-        "ext-relay": "*",
-        "psr/simple-cache": "^1|^2|^3"
+        "ext-relay": "*"
     },
     "require-dev": {
         "phpbench/phpbench": "^1.2",
@@ -28,6 +27,16 @@
     "autoload-dev": {
         "psr-4": {
             "CacheWerk\\Relay\\Benchmarks\\": "benchmarks/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CacheWerk\\Relay\\Laravel\\RelayServiceProvider"
+            ],
+            "aliases": {
+                "Relay": "CacheWerk\\Relay\\Laravel\\Relay"
+            }
         }
     }
 }
