@@ -7,6 +7,8 @@ namespace CacheWerk\Relay\Credis;
 use Relay\Relay;
 use Relay\Exception;
 
+use LogicException;
+
 class CredisProxy
 {
     /**
@@ -41,6 +43,16 @@ class CredisProxy
     public function __construct(Relay $relay)
     {
         $this->relay = $relay;
+    }
+
+    /**
+     * Hijack method.
+     *
+     * @throws LogicException
+     */
+    public function connect()
+    {
+        throw new LogicException('Connection must be established in Relay.');
     }
 
     /**
@@ -86,11 +98,11 @@ class CredisProxy
 
             try {
                 $response = call_user_func_array([$this->relay, $name], $args);
-            } catch (Exception $e) {
-                throw $e;
+            } catch (Exception $exception) {
+                throw $exception;
             }
-        } catch (Exception $e) {
-            throw $e;
+        } catch (Exception $exception) {
+            throw $exception;
         }
 
         return $response;
