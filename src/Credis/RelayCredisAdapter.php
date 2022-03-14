@@ -9,7 +9,7 @@ use Relay\Exception;
 
 use LogicException;
 
-class CredisProxy
+class RelayCredisAdapter
 {
     /**
      * The Relay client.
