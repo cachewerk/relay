@@ -66,7 +66,7 @@ class RelayCredisAdapter
     {
         $name = strtolower($name);
 
-        if (in_array($name, ['subscribe', 'psubscribe', 'scan', 'sscan', 'hscan', 'zscan'])) {
+        if (in_array($name, ['subscribe', 'psubscribe', 'sscan', 'hscan', 'zscan'])) {
             throw new \Exception("Command `{$name}` not implemented.");
         }
 
