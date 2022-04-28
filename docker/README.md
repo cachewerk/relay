@@ -2,7 +2,7 @@
 
 These Docker environments are concrete examples of Relay's [installation instruction](https://relaycache.com/docs/installation).
 
-## Ubuntu (PHP 8.1)
+## Ubuntu 20 (PHP 8.1)
 
 ```bash
 docker build --pull --tag relay-ubuntu --file ubuntu.Dockerfile .
@@ -18,7 +18,7 @@ docker run -it relay-ubuntu-apt bash
 $ php --ri relay
 ```
 
-## Debian (PHP 8.1)
+## Debian 10 (PHP 8.1)
 
 ```bash
 docker build --pull --tag relay-debian --file debian.Dockerfile .
