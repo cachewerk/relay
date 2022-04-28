@@ -13,16 +13,15 @@ RUN apt-get update
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Relay requires the `msgpack` and `igbinary` extensions
 RUN apt-get install -y \
   php8.1-dev \
-  php8.1-fpm \
-  php8.1-msgpack \
-  php8.1-igbinary
+  php8.1-fpm
 
 # Install Relay dependencies
 RUN apt-get install -y \
-  libev-dev
+  libev-dev \
+  php8.1-msgpack \
+  php8.1-igbinary
 
 # Download Relay
 RUN curl -L "https://cachewerk.s3.amazonaws.com/relay/v0.3.2/relay-v0.3.2-php8.1-debian-$(uname -m).tar.gz" | tar xz -C /tmp

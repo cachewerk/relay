@@ -18,17 +18,16 @@ RUN apt-get update
 # Fix `php-config` link to `sed`
 RUN ln -s /bin/sed /usr/bin/sed
 
-# Relay requires the `msgpack` and `igbinary` extensions
 RUN apt-get install -y \
-  php8.1-dev \
-  php8.1-msgpack \
-  php8.1-igbinary
+  php8.1-dev
 
 # Install Relay dependencies
 RUN apt-get install -y \
   lz4 \
   zstd \
-  libev4
+  libev4 \
+  php8.1-msgpack \
+  php8.1-igbinary
 
 # Download Relay
 RUN wget -c "https://cachewerk.s3.amazonaws.com/relay/v0.3.2/relay-v0.3.2-php8.1-debian-$(uname -m).tar.gz" -O - | tar xz -C /tmp
