@@ -2,21 +2,23 @@
 
 These Docker environments are concrete examples of Relay's [installation instruction](https://relaycache.com/docs/installation).
 
-## Ubuntu 20 (PHP 8.1)
+## Ubuntu (PHP 8.1)
 
 ```bash
-docker build --pull --tag relay-ubuntu --file ubuntu.Dockerfile .
-docker run -it relay-ubuntu bash
+docker build --pull --tag relay-ubuntu-focal --file ubuntu20.Dockerfile .
+docker run -it relay-ubuntu-focal bash
 $ php --ri relay
 ```
 
 Relay also has an APT package compatible with Ondřej’s wonderful `ppa:ondrej/php` repository:
 
 ```bash
-docker build --pull --tag relay-ubuntu-apt --file ubuntu-apt.Dockerfile .
-docker run -it relay-ubuntu-apt bash
+docker build --pull --tag relay-ubuntu-bionic-apt --file ubuntu18-apt.Dockerfile .
+docker run -it relay-ubuntu-bionic-apt bash
 $ php --ri relay
 ```
+
+The installation using APT is identical for 18.04, 20.04 and 22.04.
 
 ## Debian 10 (PHP 8.1)
 
