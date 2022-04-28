@@ -2,7 +2,7 @@
 
 These Docker environments are concrete examples of Relay's [installation instruction](https://relaycache.com/docs/installation).
 
-## Ubuntu (PHP 8.1)
+## Ubuntu
 
 ```bash
 docker build --pull --tag relay-ubuntu-focal --file ubuntu20.Dockerfile .
@@ -20,15 +20,23 @@ $ php --ri relay
 
 The installation using APT is identical for 18.04, 20.04 and 22.04.
 
-## Debian 10 (PHP 8.1)
+## Debian 10
 
 ```bash
-docker build --pull --tag relay-debian --file debian.Dockerfile .
-docker run -it relay-debian bash
+docker build --pull --tag relay-debian-buster --file debian10.Dockerfile .
+docker run -it relay-debian-buster bash
 $ php --ri relay
 ```
 
-## Amazon Linux 2 (PHP 8.0)
+Relay also has an APT package compatible with Ondřej’s wonderful `ppa:ondrej/php` repository:
+
+```bash
+docker build --pull --tag relay-debian-bullseye-apt --file debian11-apt.Dockerfile .
+docker run -it relay-debian-bullseye-apt bash
+$ php --ri relay
+```
+
+## Amazon Linux 2
 
 ```bash
 docker build --pull --tag relay-amazon2 --file amzn2.Dockerfile .
@@ -36,7 +44,7 @@ docker run -it relay-amazon2 bash
 $ php --ri relay
 ```
 
-## Alpine Linux 3 (PHP 8.0)
+## Alpine Linux 3
 
 ```bash
 docker build --pull --tag relay-alpine --file alpine.Dockerfile .
@@ -44,7 +52,7 @@ docker run -it relay-alpine sh
 $ php --ri relay
 ```
 
-## CentOS 7 (PHP 8.0)
+## CentOS 7
 
 ```bash
 docker build --pull --tag relay-centos7 --file centos7.Dockerfile .
@@ -52,7 +60,7 @@ docker run -it relay-centos7 bash
 $ php --ri relay
 ```
 
-## CentOS 8 (PHP 8.0)
+## CentOS 8
 
 ```bash
 docker build --pull --tag relay-centos8 --file centos8.Dockerfile .

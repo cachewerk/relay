@@ -26,7 +26,9 @@ RUN apt-get install -y \
 
 # Install Relay dependencies
 RUN apt-get install -y \
-  libev-dev
+  lz4 \
+  zstd \
+  libev4
 
 # Download Relay
 RUN wget -c "https://cachewerk.s3.amazonaws.com/relay/v0.3.2/relay-v0.3.2-php8.1-debian-$(uname -m).tar.gz" -O - | tar xz -C /tmp
