@@ -22,13 +22,13 @@ RUN apt-get install -y \
 ENV RELAY=v0.3.2
 
 # Download Relay
-RUN PLATFORM=`uname -m` \
-  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php7.4-debian-${PLATFORM/_/-}.tar.gz" | tar xz -C /tmp
+RUN PLATFORM=$(uname -m | sed 's/_/-/') \
+  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php7.4-debian-$PLATFORM.tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
-RUN PLATFORM=`uname -m` \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-${PLATFORM/_/-}/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-${PLATFORM/_/-}/relay-pkg.so" $(php-config --extension-dir)/relay.so
+RUN PLATFORM=$(uname -m | sed 's/_/-/') \
+  && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay.ini" $(php-config --ini-dir)/30-relay.ini \
+  && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN uuid=$(cat /proc/sys/kernel/random/uuid) \
