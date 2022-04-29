@@ -18,12 +18,16 @@ RUN apk add \
   lz4-libs \
   zstd-libs
 
+ENV RELAY=v0.3.2
+
 # Download Relay
-RUN curl -L "https://cachewerk.s3.amazonaws.com/relay/v0.3.2/relay-v0.3.2-php8.0-alpine-$(uname -m).tar.gz" | tar xz -C /tmp
+RUN PLATFORM=`uname -m` \
+  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.0-alpine-${PLATFORM/_/-}.tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
-RUN cp /tmp/relay-v0.3.2-php8.0-alpine-$(uname -m)/relay.ini $(php-config --ini-dir)/60_relay.ini
-RUN cp /tmp/relay-v0.3.2-php8.0-alpine-$(uname -m)/relay-pkg.so $(php-config --extension-dir)/relay.so
+RUN PLATFORM=`uname -m` \
+  && cp "/tmp/relay-$RELAY-php8.0-alpine-${PLATFORM/_/-}/relay.ini" $(php-config --ini-dir)/60_relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.0-alpine-${PLATFORM/_/-}/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN uuid=$(cat /proc/sys/kernel/random/uuid) \

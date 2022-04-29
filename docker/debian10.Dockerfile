@@ -11,7 +11,7 @@ RUN apt-get install -y \
   software-properties-common \
   wget
 
-RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
+RUN wget -q "https://packages.sury.org/php/apt.gpg" -O- | apt-key add -
 RUN add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -sc) main"
 RUN apt-get update
 
@@ -29,12 +29,16 @@ RUN apt-get install -y \
   php8.1-msgpack \
   php8.1-igbinary
 
+ENV RELAY=v0.3.2
+
 # Download Relay
-RUN wget -c "https://cachewerk.s3.amazonaws.com/relay/v0.3.2/relay-v0.3.2-php8.1-debian-$(uname -m).tar.gz" -O - | tar xz -C /tmp
+RUN PLATFORM=`uname -m` \
+  && wget -c "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.1-debian-${PLATFORM/_/-}.tar.gz" -O - | tar xz -C /tmp
 
 # Copy relay.{so,ini}
-RUN cp /tmp/relay-v0.3.2-php8.1-debian-$(uname -m)/relay.ini $(php-config --ini-dir)/30-relay.ini
-RUN cp /tmp/relay-v0.3.2-php8.1-debian-$(uname -m)/relay-pkg.so $(php-config --extension-dir)/relay.so
+RUN PLATFORM=`uname -m` \
+  && cp "/tmp/relay-$RELAY-php8.1-debian-${PLATFORM/_/-}/relay.ini" $(php-config --ini-dir)/30-relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.1-debian-${PLATFORM/_/-}/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN uuid=$(cat /proc/sys/kernel/random/uuid) \

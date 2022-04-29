@@ -1,10 +1,11 @@
-FROM centos:7
+FROM centos:8
 
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+RUN dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+RUN dnf install -y "https://rpms.remirepo.net/enterprise/remi-release-8.rpm"
 RUN dnf install -y yum-utils
 
-RUN dnf install -y php80 \
+RUN dnf install -y \
+  php80 \
   php80-php-cli \
   php80-php-fpm
 
