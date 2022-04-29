@@ -1,6 +1,9 @@
 FROM centos:8
 
-RUN dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+# CentOS Linux 8 is EOL (https://stackoverflow.com/a/70930049)
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+
 RUN dnf install -y "https://rpms.remirepo.net/enterprise/remi-release-8.rpm"
 RUN dnf install -y yum-utils
 
