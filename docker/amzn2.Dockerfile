@@ -15,7 +15,6 @@ RUN yum install -y \
  php-pear \
  php-devel \
  openssl11 \
- libev-devel \
  libzstd-devel
 
 RUN pecl config-set php_ini /etc/php.ini
