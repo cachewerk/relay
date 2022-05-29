@@ -67,3 +67,11 @@ docker build --pull --tag relay-centos8 --file centos8.Dockerfile .
 docker run -it relay-centos8 bash
 $ php --ri relay
 ```
+
+## LiteSpeed
+
+```bash
+docker build --pull --tag relay-litespeed --file litespeed.Dockerfile .
+docker run -it relay-litespeed bash
+$ php --ri relay
+```
