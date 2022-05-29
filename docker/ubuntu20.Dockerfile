@@ -30,5 +30,4 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
   && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
-RUN uuid=$(cat /proc/sys/kernel/random/uuid) \
-  && sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:${uuid}/" $(php-config --extension-dir)/relay.so
+RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
