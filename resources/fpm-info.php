@@ -283,13 +283,13 @@ function pct($a, $b) {
                                     <code class="text-purple-600"><?php echo $endpoint; ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                    <code class="text-purple-600"><?php echo count($info['dbs']); ?></code>
+                                    <code class="text-purple-600"><?php echo count($info['connections']); ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                     <code class="text-purple-600"><?php echo $info['redis']['redis_version']; ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                    <code class="text-purple-600"><?php echo number_format(sumEndpointKeyCount($info['dbs'])); ?></code>
+                                    <code class="text-purple-600"><?php echo number_format(sumEndpointKeyCount($info['connections'])); ?></code>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
