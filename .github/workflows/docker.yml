@@ -6,7 +6,7 @@ jobs:
 
   builds:
 
-    name: Docker
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -42,7 +42,8 @@ jobs:
         run: |
           docker build --pull \
             --tag ${{ matrix.build }}-${{ matrix.version }} \
-            --file docker/${{ matrix.build }}.Dockerfile .
+            --file docker/${{ matrix.build }}.Dockerfile \
+            --build-arg RELAY=${{ matrix.version }} .
 
       - name: Run tests
         env:
