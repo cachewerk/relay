@@ -48,4 +48,8 @@ jobs:
         env:
           SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
         run: |
-          docker run ${{ matrix.build }}-${{ matrix.version }} $SHELL -c "php --ri relay"
+          docker run ${{ matrix.build }}-${{ matrix.version }} \
+            $SHELL -c "php --ri relay"
+          docker run ${{ matrix.build }}-${{ matrix.version }} \
+            --volume $GITHUB_WORKSPACE:/root/relay/ \
+            $SHELL -c "php /root/relay/resources/quicktest.php"
