@@ -14,11 +14,10 @@ RUN apt-get install -y \
 
 # Install Relay dependencies
 RUN apt-get install -y \
-  libev-dev \
   php-msgpack \
   php-igbinary
 
-ENV RELAY=v0.3.2
+ENV RELAY=v0.4.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

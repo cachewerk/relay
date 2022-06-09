@@ -13,11 +13,10 @@ RUN apk add \
 
 # Install Relay dependencies
 RUN apk add \
-  libev \
   lz4-libs \
   zstd-libs
 
-ENV RELAY=v0.3.2
+ENV RELAY=v0.4.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

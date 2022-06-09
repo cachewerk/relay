@@ -24,11 +24,10 @@ RUN apt-get install -y \
 RUN apt-get install -y \
   lz4 \
   zstd \
-  libev4 \
   php8.1-msgpack \
   php8.1-igbinary
 
-ENV RELAY=v0.3.2
+ENV RELAY=v0.4.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
