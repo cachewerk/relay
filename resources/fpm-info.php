@@ -1,14 +1,5 @@
 <?php
 
-function sumEndpointKeyCount($dbs) {
-    $total = 0;
-    foreach ($dbs as $db) {
-        $total += array_sum($db['keys']);
-    }
-
-    return $total;
-}
-
 $repeat = intval($_GET['repeat'] ?? 10);
 
 $arr_info = \Relay\Relay::stats();
@@ -272,7 +263,7 @@ function pct($a, $b) {
                 <table class="w-full text-left border-collapse mb-12 whitespace-nowrap">
                     <thead class="text-sm font-semibold text-gray-600 pb-2 pr-2 border-b-2 border-gray-200">
                         <td class="py-1 pr-2 border-b border-gray-200">ID</td>
-                        <td class="py-1 pr-2 border-b border-gray-200 text-right">DBS</td>
+                        <td class="py-1 pr-2 border-b border-gray-200 text-right">Connections</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Redis Version</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Keys</td>
                     </thead>
@@ -289,7 +280,9 @@ function pct($a, $b) {
                                     <code class="text-purple-600"><?php echo $info['redis']['redis_version']; ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                    <code class="text-purple-600"><?php echo number_format(sumEndpointKeyCount($info['connections'])); ?></code>
+                                    <code class="text-purple-600"><?php echo number_format(
+                                        array_sum(array_map(fn ($conn) => array_sum($conn['keys']), $info['connections']))
+                                    ); ?></code>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
