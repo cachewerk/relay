@@ -19,6 +19,8 @@ jobs:
         build:
           - alpine
           - amzn2
+          - centos7
+          - centos8
           - debian10
           - ubuntu20
           - litespeed
@@ -61,8 +63,8 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - centos7
-          - centos8
+          - centos7-yum
+          - centos8-dnf
           - debian11-apt
           - ubuntu18-apt
           - ubuntu22-apt

@@ -14,9 +14,16 @@ RUN dnf install -y \
 
 ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 
-# Add Relay repository
-RUN curl -s -o /etc/yum.repos.d/cachewerk.repo "https://cachewerk.s3.amazonaws.com/repos/rpm/el.repo"
+ARG RELAY=v0.4.0
 
-# Install Relay
-RUN yum install -y \
-  php80-php-relay
+# Download Relay
+RUN PLATFORM=$(uname -m | sed 's/_/-/') \
+  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.0-centos8-$PLATFORM.tar.gz" | tar xz -C /tmp
+
+# Copy relay.{so,ini}
+RUN PLATFORM=$(uname -m | sed 's/_/-/') \
+  && cp "/tmp/relay-$RELAY-php8.0-centos8-$PLATFORM/relay.ini" $(php-config --ini-dir)/50-relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.0-centos8-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
+
+# Inject UUID
+RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
