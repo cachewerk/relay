@@ -13,6 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        version:
+          - v0.4.0
+          - dev
         build:
           - alpine
           - amzn2
@@ -32,17 +35,17 @@ jobs:
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
         with:
-          key: docker-cache-{hash}
-          restore-keys: docker-cache-
+          key: ${{ matrix.build }}-${{ matrix.version }}-{hash}
+          restore-keys: ${{ matrix.build }}-${{ matrix.version }}
 
       - name: Build Docker container
         run: |
           docker build --pull \
-            --tag ${{ matrix.build }} \
+            --tag ${{ matrix.build }}-${{ matrix.version }} \
             --file docker/${{ matrix.build }}.Dockerfile .
 
       - name: Run tests
         env:
           SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
         run: |
-          docker run ${{ matrix.build }} $SHELL -c "php --ri relay"
+          docker run ${{ matrix.build }}-${{ matrix.version }} $SHELL -c "php --ri relay"
