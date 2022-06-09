@@ -31,7 +31,7 @@ jobs:
         run: |
           docker build --pull \
             --tag ${{ matrix.build }} \
-            --file ${{ matrix.build }}.Dockerfile .
+            --file docker/${{ matrix.build }}.Dockerfile .
 
       - name: Run tests
         env:
