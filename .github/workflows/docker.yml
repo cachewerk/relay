@@ -28,15 +28,20 @@ jobs:
           - ubuntu22-apt
           - litespeed
 
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 1s
+          --health-timeout 1s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-        with:
-          key: ${{ matrix.build }}-${{ matrix.version }}-{hash}
-          restore-keys: ${{ matrix.build }}-${{ matrix.version }}
 
       - name: Build Docker container
         run: |
@@ -48,8 +53,4 @@ jobs:
         env:
           SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
         run: |
-          docker run ${{ matrix.build }}-${{ matrix.version }} \
-            $SHELL -c "php --ri relay"
-          docker run ${{ matrix.build }}-${{ matrix.version }} \
-            --volume $GITHUB_WORKSPACE:/root/relay/ \
-            $SHELL -c "php /root/relay/resources/quicktest.php"
+          docker run ${{ matrix.build }}-${{ matrix.version }} $SHELL -c "php --ri relay"
