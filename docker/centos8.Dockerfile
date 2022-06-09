@@ -1,4 +1,4 @@
-FROM centos:8
+FROM centos:8.4.2105
 
 # CentOS Linux 8 is EOL (https://stackoverflow.com/a/70930049)
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
