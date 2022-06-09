@@ -1,0 +1,40 @@
+name: Test Docker
+
+on: [push, workflow_dispatch]
+
+jobs:
+
+  builds:
+
+    name: Docker
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build:
+          - alpine
+          - amzn2
+          - centos7
+          - centos8
+          - debian10
+          - debian11-apt
+          - ubuntu18-apt
+          - ubuntu20
+          - ubuntu22-apt
+          - litespeed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker container
+        run: |
+          docker build --pull \
+            --tag ${{ matrix.build }} \
+            --file ${{ matrix.build }}.Dockerfile .
+
+      - name: Run tests
+        env:
+          SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
+        run: |
+          docker run ${{ matrix.build }} $SHELL -c "php --ri relay"
