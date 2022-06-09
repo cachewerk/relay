@@ -17,7 +17,7 @@ RUN apt-get install -y \
   php-msgpack \
   php-igbinary
 
-ENV RELAY=v0.4.0
+ARG RELAY=v0.4.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

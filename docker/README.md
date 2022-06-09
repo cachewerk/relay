@@ -75,3 +75,17 @@ docker build --pull --tag relay-litespeed --file litespeed.Dockerfile .
 docker run -it relay-litespeed bash
 $ php --ri relay
 ```
+
+## Versions / Nightly builds
+
+You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
+
+```
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.0 .
+```
+
+To install the nightly developments builds use the `dev` version:
+
+```
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=dev .
+```
