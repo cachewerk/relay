@@ -55,7 +55,7 @@ class MgetBench extends BenchCase
     public function benchMgetUsingCredis($params)
     {
         foreach ($params['chunks'] as $keys) {
-            array_map('unserialize', $this->credis->mget($keys));
+            array_map('unserialize', $this->credis->mGet($keys));
         }
     }
 
