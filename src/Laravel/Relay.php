@@ -7,7 +7,7 @@ namespace CacheWerk\Relay\Laravel;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @mixin CacheWerk\Relay\Laravel\RelayConnection
+ * @mixin \CacheWerk\Relay\Laravel\RelayConnection
  */
 class Relay extends Facade
 {
