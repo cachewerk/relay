@@ -24,6 +24,7 @@ jobs:
           - debian10
           - ubuntu20
           - litespeed
+          - openlitespeed
 
     services:
       redis:
