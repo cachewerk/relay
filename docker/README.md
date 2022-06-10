@@ -55,7 +55,7 @@ $ php --ri relay
 ## CentOS 7
 
 ```bash
-docker build --pull --tag relay-centos7-yum --file centos7-yum.Dockerfile .
+docker build --pull --tag relay-centos7 --file centos7.Dockerfile .
 docker run -it relay-centos7 bash
 $ php --ri relay
 ```
@@ -65,7 +65,7 @@ See [centos7.Dockerfile](/docker/centos7.Dockerfile) for the manual installation
 ## CentOS 8
 
 ```bash
-docker build --pull --tag relay-centos8-dnf --file centos8-dnf.Dockerfile .
+docker build --pull --tag relay-centos8 --file centos8-dnf.Dockerfile .
 docker run -it relay-centos8 bash
 $ php --ri relay
 ```
@@ -79,6 +79,8 @@ docker build --pull --tag relay-litespeed --file litespeed.Dockerfile .
 docker run -it relay-litespeed bash
 $ php --ri relay
 ```
+
+For OpenLiteSpeed, see [openlitespeed.Dockerfile](/docker/openlitespeed.Dockerfile).
 
 ## Versions / Nightly builds
 
