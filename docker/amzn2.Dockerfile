@@ -27,7 +27,7 @@ RUN pecl install msgpack && \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.4.0
+ARG RELAY=v0.4.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

@@ -87,7 +87,7 @@ For OpenLiteSpeed, see [openlitespeed.Dockerfile](/docker/openlitespeed.Dockerfi
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
 ```
-docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.0 .
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.1 .
 ```
 
 To install the nightly developments builds use the `dev` version:
