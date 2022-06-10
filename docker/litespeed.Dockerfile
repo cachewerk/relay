@@ -17,3 +17,6 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 
 # Inject UUID
 RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
+
+# Don't start `lswsctrl`
+ENTRYPOINT [""]
