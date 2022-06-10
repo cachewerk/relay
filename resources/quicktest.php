@@ -10,3 +10,5 @@ var_dump(
     $relay->get('foo'),
     $relay->get('foo'),
 );
+
+throw new Exception("test CI failure");

@@ -58,7 +58,7 @@ jobs:
               --volume $(pwd):/root/relay/ \
               --env REDIS_HOST=$REDIS_HOST \
               ${{ matrix.build }}-${{ matrix.version }} \
-              $SHELL -c "php /root/relay/resources/quicktest.php"          
+              $SHELL -c "php /root/relay/resources/quicktest.php"
 
 
   packages:
@@ -106,4 +106,4 @@ jobs:
               --volume $(pwd):/root/relay/ \
               --env REDIS_HOST=$REDIS_HOST \
               ${{ matrix.build }}-${{ matrix.version }} \
-              bash -c "php /root/relay/resources/quicktest.php"             
+              bash -c "php /root/relay/resources/quicktest.php"
