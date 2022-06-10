@@ -13,7 +13,20 @@ RUN yum install -y php80 \
 
 ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 
+# Instead of using `php-config` let's hard code these
+ENV PHP_INI_DIR=/etc/opt/remi/php80/php.d/
+ENV PHP_EXT_DIR=/opt/remi/php80/root/usr/lib64/php/modules/
+
 ARG RELAY=v0.4.0
+
+# Install Relay dependencies
+RUN yum install -y \
+  openssl11 libzstd lz4
+
+# Relay requires the `msgpack` and `igbinary` extension
+RUN yum install -y \
+  php80-php-igbinary \
+  php80-php-msgpack
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
@@ -21,8 +34,8 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay.ini" $(php-config --ini-dir)/50-relay.ini \
-  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
+  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
-RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
+RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
