@@ -33,7 +33,7 @@ abstract class BenchCase
     /**
      * The Relay client.
      *
-     * @var \Relay
+     * @var \Relay\Relay
      */
     protected $relay;
 
@@ -100,7 +100,7 @@ abstract class BenchCase
     /**
      * Establishes, stores and returns a Relay connection.
      *
-     * @return Relay\Relay
+     * @return \Relay\Relay
      */
     public function setUpRelay(): Relay
     {

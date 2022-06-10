@@ -1,6 +1,10 @@
 parameters:
-  level: max
+  # Dream level
+  #level: max
+  level: 5
+  scanFiles:
+    - tests/Relay.stub
   paths:
-    - benchmarks
-    - resources
-    - src
+    - benchmarks/
+    - resources/
+    - src/

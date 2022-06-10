@@ -108,7 +108,7 @@ class GetStringsBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return Generator
+     * @return \Generator<string, array>
      */
     public function provideKeys()
     {

@@ -30,7 +30,7 @@ class RelayCredisAdapter
      * The transaction instance.
      *
      * @see Credis_Client::__call()
-     * @var \Relay\Relay
+     * @var \Relay\Relay|null
      */
     protected $redisMulti = null;
 

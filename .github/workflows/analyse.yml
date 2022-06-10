@@ -18,10 +18,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          tools: composer, phpstan
+          tools: composer
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-relay
 
       - name: Run PHPStan
         run: composer run analyse
