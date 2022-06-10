@@ -104,5 +104,5 @@ jobs:
               --network="host" \
               --volume $(pwd):/root/relay/ \
               --env REDIS_HOST=$REDIS_HOST \
-              ${{ matrix.build }}-${{ matrix.version }} \
+              ${{ matrix.package }} \
               bash -c "php /root/relay/resources/quicktest.php"
