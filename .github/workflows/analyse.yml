@@ -21,7 +21,7 @@ jobs:
           tools: composer, phpstan
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
       - name: Run PHPStan
         run: composer run analyse
