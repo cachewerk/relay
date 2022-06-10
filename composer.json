@@ -4,6 +4,7 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
+        "analyse": "./vendor/bin/phpstan analyse",
         "bench": "./vendor/bin/phpbench run --report=redis",
         "bench:verbose": "./vendor/bin/phpbench run --report=redis --progress=blinken"
     },
@@ -14,7 +15,8 @@
     "require-dev": {
         "phpbench/phpbench": "^1.2",
         "predis/predis": "^1.1",
-        "colinmollenhour/credis": "^1.12"
+        "colinmollenhour/credis": "^1.12",
+        "phpstan/phpstan": "^1.7"
     },
     "provide": {
         "psr/simple-cache-implementation": "^1|^2|^3"
