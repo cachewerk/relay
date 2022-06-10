@@ -8,7 +8,10 @@ var_dump(
     $relay,
     $relay->set('foo', 'bar'),
     $relay->get('foo'),
-    $relay->get('foo'),
 );
 
-throw new Exception("test CI failure");
+if ($relay->get('foo') === 'bar') {
+    exit(0);
+}
+
+exit(1);
