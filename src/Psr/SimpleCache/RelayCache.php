@@ -16,6 +16,8 @@ use Psr\SimpleCache\CacheInterface;
 
 class RelayCache implements CacheInterface
 {
+    protected Relay $relay;
+
     /**
      * Creates a new `RelayCache` instance.
      *
