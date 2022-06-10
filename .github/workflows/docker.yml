@@ -60,7 +60,6 @@ jobs:
               ${{ matrix.build }}-${{ matrix.version }} \
               $SHELL -c "php /root/relay/resources/quicktest.php"
 
-
   packages:
 
     name: Package
