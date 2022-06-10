@@ -8,7 +8,7 @@ use Illuminate\Contracts\Redis\Connection;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 
 /**
- * @mixin \Relay\Relay
+ * @Vmixin \Relay\Relay
  */
 class RelayConnection extends PhpRedisConnection implements Connection
 {
