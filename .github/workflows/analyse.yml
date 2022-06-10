@@ -20,5 +20,8 @@ jobs:
           php-version: '8.1'
           tools: composer, phpstan
 
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
       - name: Run PHPStan
         run: composer run analyse
