@@ -53,17 +53,13 @@ jobs:
           SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
         run: |
           docker run ${{ matrix.build }}-${{ matrix.version }} $SHELL -c "php --ri relay"
-
-      - name: Run Quick tests
-        env:
-          SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
-        run: |
           docker run \
               --network="host" \
               --volume $(pwd):/root/relay/ \
               --env REDIS_HOST=$REDIS_HOST \
               ${{ matrix.build }}-${{ matrix.version }} \
-              $SHELL -c "php /root/relay/resources/quicktest.php"
+              $SHELL -c "php /root/relay/resources/quicktest.php"          
+
 
   packages:
 
@@ -105,3 +101,9 @@ jobs:
       - name: Run tests
         run: |
           docker run ${{ matrix.package }} bash -c "php --ri relay"
+          docker run \
+              --network="host" \
+              --volume $(pwd):/root/relay/ \
+              --env REDIS_HOST=$REDIS_HOST \
+              ${{ matrix.build }}-${{ matrix.version }} \
+              bash -c "php /root/relay/resources/quicktest.php"             
