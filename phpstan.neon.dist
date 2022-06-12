@@ -1,5 +1,5 @@
 parameters:
-  level: 5  # Aim for `max`
+  level: max
   scanFiles:
     - relay.stub.php
   paths:
