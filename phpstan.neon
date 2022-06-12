@@ -1,6 +1,0 @@
-parameters:
-  level: max
-  paths:
-    - benchmarks
-    - resources
-    - src

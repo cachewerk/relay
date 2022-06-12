@@ -55,7 +55,7 @@ class MgetBench extends BenchCase
     public function benchMgetUsingCredis($params)
     {
         foreach ($params['chunks'] as $keys) {
-            array_map('unserialize', $this->credis->mget($keys));
+            array_map('unserialize', $this->credis->mGet($keys));
         }
     }
 
@@ -117,7 +117,7 @@ class MgetBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return Generator
+     * @return \Generator<string, array>
      */
     public function provideChunks()
     {

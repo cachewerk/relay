@@ -4,9 +4,9 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "analyse": "./vendor/bin/phpstan analyse",
-        "bench": "./vendor/bin/phpbench run --report=redis",
-        "bench:verbose": "./vendor/bin/phpbench run --report=redis --progress=blinken"
+        "analyse": "phpstan analyse",
+        "bench": "phpbench run --report=redis",
+        "bench:verbose": "phpbench run --report=redis --progress=blinken"
     },
     "require": {
         "php": "^7.4|^8.0",
@@ -16,7 +16,9 @@
         "phpbench/phpbench": "^1.2",
         "predis/predis": "^1.1",
         "colinmollenhour/credis": "^1.12",
-        "phpstan/phpstan": "^1.7"
+        "phpstan/phpstan": "^1.7",
+        "psr/simple-cache": "^3.0",
+        "illuminate/redis": "^9.17"
     },
     "provide": {
         "psr/simple-cache-implementation": "^1|^2|^3"
