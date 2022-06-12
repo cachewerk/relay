@@ -1,9 +1,7 @@
 parameters:
-  # Dream level
-  #level: max
-  level: 5
+  level: 5  # Aim for `max`
   scanFiles:
-    - tests/Relay.stub
+    - tests/relay.stub.php
   paths:
     - benchmarks/
     - resources/
