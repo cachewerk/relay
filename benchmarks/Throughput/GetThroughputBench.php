@@ -11,10 +11,8 @@ class GetThroughputBench extends BenchCase
 {
     /**
      * Seed Redis with random data.
-     *
-     * @return void
      */
-    public static function setUp()
+    public static function setUp(): void
     {
         $redis = static::redis();
         $redis->flushdb(true);
@@ -34,7 +32,7 @@ class GetThroughputBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      */
-    public function benchGetThroughputOfPredis($params)
+    public function benchGetThroughputOfPredis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->predis->get($key);
@@ -51,7 +49,7 @@ class GetThroughputBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      */
-    public function benchGetThroughputOfCredis($params)
+    public function benchGetThroughputOfCredis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->credis->get($key);
@@ -68,7 +66,7 @@ class GetThroughputBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      */
-    public function benchGetThroughputOfPhpRedis($params)
+    public function benchGetThroughputOfPhpRedis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->phpredis->get($key);
@@ -85,7 +83,7 @@ class GetThroughputBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchGetThroughputOfRelay($params)
+    public function benchGetThroughputOfRelay($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->relay->get($key);
@@ -103,7 +101,7 @@ class GetThroughputBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchGetThroughputOfRelayWarmed($params)
+    public function benchGetThroughputOfRelayWarmed($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->relay->get($key);

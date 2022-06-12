@@ -14,10 +14,8 @@ class GetUnserializeBench extends BenchCase
 {
     /**
      * Seed Redis with random data.
-     *
-     * @return void
      */
-    public static function setUp()
+    public static function setUp(): void
     {
         $redis = static::redis();
         $redis->flushdb(true);
@@ -38,7 +36,8 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      */
-    public function benchGetSerializedUsingPredis($params) {
+    public function benchGetSerializedUsingPredis($params): void
+    {
         foreach ($params['keys'] as $key) {
             unserialize($this->predis->get($key));
         }
@@ -53,7 +52,8 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      */
-    public function benchGetSerializedUsingCredis($params) {
+    public function benchGetSerializedUsingCredis($params): void
+    {
         foreach ($params['keys'] as $key) {
             unserialize($this->credis->get($key));
         }
@@ -68,7 +68,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      */
-    public function benchGetSerializedUsingPhpRedis($params)
+    public function benchGetSerializedUsingPhpRedis($params): void
     {
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
 
@@ -86,7 +86,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchGetSerializedUsingRelay($params)
+    public function benchGetSerializedUsingRelay($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
@@ -105,7 +105,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchGetSerializedUsingRelayWarmed($params)
+    public function benchGetSerializedUsingRelayWarmed($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 

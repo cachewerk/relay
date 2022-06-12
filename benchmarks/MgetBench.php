@@ -12,10 +12,8 @@ class MgetBench extends BenchCase
 {
     /**
      * Seed Redis with random data.
-     *
-     * @return void
      */
-    public static function setUp()
+    public static function setUp(): void
     {
         $redis = static::redis();
         $redis->flushdb(true);
@@ -36,7 +34,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      */
-    public function benchMgetUsingPredis($params)
+    public function benchMgetUsingPredis($params): void
     {
         foreach ($params['chunks'] as $keys) {
             array_map('unserialize', $this->predis->mget($keys));
@@ -52,7 +50,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      */
-    public function benchMgetUsingCredis($params)
+    public function benchMgetUsingCredis($params): void
     {
         foreach ($params['chunks'] as $keys) {
             array_map('unserialize', $this->credis->mGet($keys));
@@ -68,7 +66,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      */
-    public function benchMgetUsingPhpRedis($params)
+    public function benchMgetUsingPhpRedis($params): void
     {
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
 
@@ -86,7 +84,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchMgetUsingRelay($params)
+    public function benchMgetUsingRelay($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
@@ -105,7 +103,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      */
-    public function benchMgetUsingRelayWarmed($params)
+    public function benchMgetUsingRelayWarmed($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 

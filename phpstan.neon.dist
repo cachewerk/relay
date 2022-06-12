@@ -1,7 +1,7 @@
 parameters:
   level: 5  # Aim for `max`
   scanFiles:
-    - tests/relay.stub.php
+    - relay.stub.php
   paths:
     - benchmarks/
     - resources/
