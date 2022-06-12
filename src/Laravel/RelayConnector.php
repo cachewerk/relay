@@ -19,9 +19,15 @@ class RelayConnector extends PhpRedisConnector implements Connector
      */
     public function connect(array $config, array $options)
     {
-        $connector = function () use ($config, $options) {
+        $formattedOptions = Arr::pull($config, 'options', []);
+
+        if (isset($config['prefix'])) {
+            $formattedOptions['prefix'] = $config['prefix'];
+        }
+
+        $connector = function () use ($config, $options, $formattedOptions) {
             return $this->createClient(array_merge(
-                $config, $options, Arr::pull($config, 'options', [])
+                $config, $options, $formattedOptions
             ));
         };
 
@@ -47,7 +53,11 @@ class RelayConnector extends PhpRedisConnector implements Connector
             $client->setOption(Relay::OPT_PHPREDIS_COMPATIBILITY, true);
 
             if (! empty($config['password'])) {
-                $client->auth($config['password']);
+                if (isset($config['username']) && $config['username'] !== '' && is_string($config['password'])) {
+                    $client->auth([$config['username'], $config['password']]);
+                } else {
+                    $client->auth($config['password']);
+                }
             }
 
             if (isset($config['database'])) {
