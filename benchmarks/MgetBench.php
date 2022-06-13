@@ -34,7 +34,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param array<array<array<mixed>>> $params
+     * @param  array<array<array<mixed>>>  $params
      */
     public function benchMgetUsingPredis($params): void
     {
@@ -52,7 +52,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param array<array<array<mixed>>> $params     
+     * @param  array<array<array<mixed>>>  $params
      */
     public function benchMgetUsingCredis($params): void
     {
@@ -70,7 +70,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param array<array<array<string>>> $params
+     * @param  array<array<array<string>>>  $params
      */
     public function benchMgetUsingPhpRedis($params): void
     {
@@ -88,9 +88,9 @@ class MgetBench extends BenchCase
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpRelay")
-     *
-     * @param array<array<array<string>>> $params     
      * @Groups("relay")
+     *
+     * @param  array<array<array<string>>>  $params
      */
     public function benchMgetUsingRelay($params): void
     {
@@ -111,7 +111,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param array<array<array<string>>> $params     
+     * @param  array<array<array<string>>>  $params
      */
     public function benchMgetUsingRelayWarmed($params): void
     {

@@ -37,7 +37,7 @@ class RelayCredisAdapter
     /**
      * Create a new instance.
      *
-     * @param \Relay\Relay $relay
+     * @param  \Relay\Relay  $relay
      * @return void
      */
     public function __construct(Relay $relay)
@@ -48,7 +48,7 @@ class RelayCredisAdapter
     /**
      * Hijack method.
      *
-     * @throws LogicException
+     * @throws \LogicException
      */
     public function connect(): void
     {
@@ -58,8 +58,8 @@ class RelayCredisAdapter
     /**
      * Handle Credis' odd pipeline/multi syntax.
      *
-     * @param string $name
-     * @param array<int, array<string>> $args
+     * @param  string  $name
+     * @param  array<int, array<string>>  $args
      * @return mixed
      */
     public function __call($name, $args)
@@ -112,8 +112,8 @@ class RelayCredisAdapter
      * Transform arguments. Mimics what Credis does.
      *
      * @see Credis_Client::__call()
-     * @param string $command
-     * @param array<int, array<string>> $args
+     * @param  string  $command
+     * @param  array<int, array<string>>  $args
      * @return array<mixed>
      */
     protected function _transformArguments(string $command, $args)
@@ -211,8 +211,8 @@ class RelayCredisAdapter
      * Flatten arguments. Mimics what Credis does.
      *
      * @see Credis_Client::_flattenArguments()
-     * @param array<mixed> $arguments
-     * @param array<mixed> &$out
+     * @param  array<mixed>  $arguments
+     * @param  array<mixed>  &$out
      * @return array<mixed>
      */
     protected function _flattenArguments(array $arguments, &$out = [])

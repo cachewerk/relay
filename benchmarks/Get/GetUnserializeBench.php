@@ -36,7 +36,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param array<array<string>> $params
+     * @param  array<array<string>>  $params
      */
     public function benchGetSerializedUsingPredis($params): void
     {
@@ -54,7 +54,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param array<array<string>> $params
+     * @param  array<array<string>>  $params
      */
     public function benchGetSerializedUsingCredis($params): void
     {
@@ -72,7 +72,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param array<array<string>> $params     
+     * @param  array<array<string>>  $params
      */
     public function benchGetSerializedUsingPhpRedis($params): void
     {
@@ -92,7 +92,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param array<array<mixed>> $params     
+     * @param  array<array<mixed>>  $params
      */
     public function benchGetSerializedUsingRelay($params): void
     {
@@ -113,7 +113,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param array<array<mixed>> $params     
+     * @param  array<array<mixed>>  $params
      */
     public function benchGetSerializedUsingRelayWarmed($params): void
     {

@@ -26,7 +26,7 @@ class RedisExecutor implements BenchmarkExecutorInterface
     /**
      * The `runner.php_env` environment variables.
      *
-     * @var array<mixed>
+     * @var array<string, int|string>
      */
     protected $env;
 
@@ -34,7 +34,7 @@ class RedisExecutor implements BenchmarkExecutorInterface
      * Creates a new Redis executor instance.
      *
      * @param  \PhpBench\Executor\Benchmark\RemoteExecutor  $executor
-     * @param  array<mixed>  $env
+     * @param  array<string, int|string>  $env
      * @return void
      */
     public function __construct(RemoteExecutor $executor, array $env)
@@ -59,7 +59,7 @@ class RedisExecutor implements BenchmarkExecutorInterface
         $results = $this->executor->execute($context, $config);
 
         $redis = new Redis;
-        $redis->connect($this->env['REDIS_HOST'], $this->env['REDIS_PORT']);
+        $redis->connect((string) $this->env['REDIS_HOST'], (int) $this->env['REDIS_PORT']);
 
         $results->add(
             new RedisResult($redis->info())
