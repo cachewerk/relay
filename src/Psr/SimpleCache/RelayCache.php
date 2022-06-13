@@ -61,8 +61,8 @@ class RelayCache implements CacheInterface
 
         try {
             return is_null($ttl)
-                ? $this->relay->set($key, $value)
-                : $this->relay->setex($key, $ttl, $value);
+                ? (bool) $this->relay->set($key, $value)
+                : (bool) $this->relay->setex($key, $ttl, $value);
         } catch (TypeError $error) {
             throw new InvalidArgumentException($error->getMessage(), $error->getCode(), $error);
         } catch (Throwable $th) {
@@ -90,7 +90,7 @@ class RelayCache implements CacheInterface
     public function clear(): bool
     {
         try {
-            return $this->relay->flushdb();
+            return (bool) $this->relay->flushdb();
         } catch (Throwable $th) {
             throw new CacheException($th->getMessage(), $th->getCode(), $th);
         }
@@ -112,7 +112,7 @@ class RelayCache implements CacheInterface
         }
 
         try {
-            $items = $this->relay->mget($keys);
+            $items = (array) $this->relay->mget($keys);
         } catch (TypeError $error) {
             throw new InvalidArgumentException($error->getMessage(), $error->getCode(), $error);
         } catch (Throwable $th) {
@@ -145,7 +145,7 @@ class RelayCache implements CacheInterface
 
         try {
             if (is_null($ttl)) {
-                return $this->relay->mset($values);
+                return (bool) $this->relay->mset($values);
             }
 
             foreach ($values as $key => $value) {
@@ -190,7 +190,7 @@ class RelayCache implements CacheInterface
     public function has($key): bool
     {
         try {
-            return $this->relay->exists($key);
+            return (bool) $this->relay->exists($key);
         } catch (TypeError $error) {
             throw new InvalidArgumentException($error->getMessage(), $error->getCode(), $error);
         } catch (Throwable $th) {
