@@ -29,7 +29,7 @@ class RedisResult implements ResultInterface
     /**
      * Create a new Redis result instance.
      *
-     * @param  array<string, mixed> $info
+     * @param  array<string, mixed>  $info
      * @return void
      */
     public function __construct(array $info)
@@ -38,7 +38,7 @@ class RedisResult implements ResultInterface
     }
 
     /**
-     * Return a key value set representing the metrics in this result.
+     * Returns the Redis metrics for the result.
      * 
      * @return array<string, mixed>
      */
