@@ -50,7 +50,7 @@ class RelayCredisAdapter
      *
      * @throws LogicException
      */
-    public function connect()
+    public function connect(): void
     {
         throw new LogicException('Connection must be established in Relay.');
     }
@@ -59,7 +59,7 @@ class RelayCredisAdapter
      * Handle Credis' odd pipeline/multi syntax.
      *
      * @param string $name
-     * @param array $args
+     * @param array<int, array<string>> $args
      * @return mixed
      */
     public function __call($name, $args)
@@ -113,8 +113,8 @@ class RelayCredisAdapter
      *
      * @see Credis_Client::__call()
      * @param string $command
-     * @param array $args
-     * @return array
+     * @param array<int, array<string>> $args
+     * @return array<mixed>
      */
     protected function _transformArguments(string $command, $args)
     {
@@ -211,9 +211,9 @@ class RelayCredisAdapter
      * Flatten arguments. Mimics what Credis does.
      *
      * @see Credis_Client::_flattenArguments()
-     * @param array $arguments
-     * @param array &$out
-     * @return array
+     * @param array<mixed> $arguments
+     * @param array<mixed> &$out
+     * @return array<mixed>
      */
     protected function _flattenArguments(array $arguments, &$out = [])
     {

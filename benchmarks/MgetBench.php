@@ -33,6 +33,8 @@ class MgetBench extends BenchCase
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
+     *
+     * @param array<array<array<mixed>>> $params
      */
     public function benchMgetUsingPredis($params): void
     {
@@ -49,6 +51,8 @@ class MgetBench extends BenchCase
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
+     *
+     * @param array<array<array<mixed>>> $params     
      */
     public function benchMgetUsingCredis($params): void
     {
@@ -65,6 +69,8 @@ class MgetBench extends BenchCase
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
+     *
+     * @param array<array<array<string>>> $params
      */
     public function benchMgetUsingPhpRedis($params): void
     {
@@ -82,6 +88,8 @@ class MgetBench extends BenchCase
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpRelay")
+     *
+     * @param array<array<array<string>>> $params     
      * @Groups("relay")
      */
     public function benchMgetUsingRelay($params): void
@@ -102,6 +110,8 @@ class MgetBench extends BenchCase
      * @ParamProviders("provideChunks")
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
+     *
+     * @param array<array<array<string>>> $params     
      */
     public function benchMgetUsingRelayWarmed($params): void
     {
@@ -115,7 +125,7 @@ class MgetBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array>
+     * @return \Generator<string, array<mixed>>
      */
     public function provideChunks()
     {

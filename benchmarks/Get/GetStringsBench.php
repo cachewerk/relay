@@ -32,6 +32,8 @@ class GetStringsBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
+     *
+     * @param array<array<mixed>> $params
      */
     public function benchGetStringsUsingPredis(array $params): void
     {
@@ -48,6 +50,8 @@ class GetStringsBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
+     *
+     * @param array<array<string>> $params     
      */
     public function benchGetStringsUsingCredis(array $params): void
     {
@@ -64,6 +68,8 @@ class GetStringsBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
+     *
+     * @param array<array<string>> $params     
      */
     public function benchGetStringsUsingPhpRedis(array $params): void
     {
@@ -80,6 +86,8 @@ class GetStringsBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
+     *
+     * @param array<array<mixed>> $params     
      */
     public function benchGetStringsUsingRelay(array $params): void
     {
@@ -97,6 +105,8 @@ class GetStringsBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
+     *
+     * @param array<array<mixed>> $params     
      */
     public function benchGetStringsUsingRelayWarmed(array $params): void
     {
@@ -108,7 +118,7 @@ class GetStringsBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array>
+     * @return \Generator<string, array<mixed>>
      */
     public function provideKeys()
     {

@@ -14,7 +14,7 @@ class RedisResult implements ResultInterface
     /**
      * Information and statistics about the Redis server.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $info;
 
@@ -29,7 +29,7 @@ class RedisResult implements ResultInterface
     /**
      * Create a new Redis result instance.
      *
-     * @param  array  $info
+     * @param  array<string, mixed>  $info
      * @return void
      */
     public function __construct(array $info)
@@ -38,7 +38,9 @@ class RedisResult implements ResultInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the Redis metrics for the result.
+     * 
+     * @return array<string, mixed>
      */
     public function getMetrics(): array
     {

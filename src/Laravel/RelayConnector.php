@@ -15,7 +15,11 @@ use Illuminate\Redis\Connectors\PhpRedisConnector;
 class RelayConnector extends PhpRedisConnector implements Connector
 {
     /**
-     * {@inheritdoc}
+     * Create a new Relay connection.
+     *
+     * @param  array<mixed>  $config
+     * @param  array<mixed>  $options
+     * @return \CacheWerk\Relay\Laravel\RelayConnection
      */
     public function connect(array $config, array $options)
     {
@@ -35,7 +39,12 @@ class RelayConnector extends PhpRedisConnector implements Connector
     }
 
     /**
-     * {@inheritdoc}
+     * Create a new clustered Relay connection.
+     *
+     * @param  array<mixed>  $config
+     * @param  array<mixed>  $clusterOptions
+     * @param  array<mixed>  $options
+     * @return \CacheWerk\Relay\Laravel\RelayClusterConnection
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
@@ -43,7 +52,12 @@ class RelayConnector extends PhpRedisConnector implements Connector
     }
 
     /**
-     * {@inheritdoc}
+     * Create the Relay client instance.
+     *
+     * @param  array<int>  $config
+     * @return \Redis
+     *
+     * @throws \LogicException
      */
     protected function createClient(array $config)
     {

@@ -23,7 +23,7 @@ class RelayConnection extends PhpRedisConnection implements Connection
      * Pass method calls to Relay, or the underlying client.
      *
      * @param  string  $method
-     * @param  array  $parameters
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)

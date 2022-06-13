@@ -31,6 +31,8 @@ class GetThroughputBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
+     *
+     * @param array<array<mixed>> $params
      */
     public function benchGetThroughputOfPredis($params): void
     {
@@ -48,6 +50,8 @@ class GetThroughputBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
+     *
+     * @param array<array<string>> $params     
      */
     public function benchGetThroughputOfCredis($params): void
     {
@@ -65,6 +69,8 @@ class GetThroughputBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
+     *
+     * @param array<array<string>> $params     
      */
     public function benchGetThroughputOfPhpRedis($params): void
     {
@@ -82,6 +88,8 @@ class GetThroughputBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
+     *
+     * @param array<array<mixed>> $params     
      */
     public function benchGetThroughputOfRelay($params): void
     {
@@ -100,6 +108,8 @@ class GetThroughputBench extends BenchCase
      * @ParamProviders("provideKeys")
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
+     *
+     * @param array<array<mixed>> $params     
      */
     public function benchGetThroughputOfRelayWarmed($params): void
     {
@@ -111,7 +121,7 @@ class GetThroughputBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array>
+     * @return \Generator<string, array<mixed>>
      */
     public function provideKeys()
     {
