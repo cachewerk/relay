@@ -5,7 +5,9 @@ namespace CacheWerk\Relay\Benchmarks;
 use Relay\Relay;
 use Redis as PhpRedis;
 use Credis_Client as Credis;
+use Exception;
 use Predis\Client as Predis;
+use \RuntimeException;
 
 abstract class BenchCase
 {
@@ -115,12 +117,18 @@ abstract class BenchCase
      * Loads and returns decoded JSON data.
      *
      * @param  string  $filename
-     * @return mixed
+     * @return array
      */
     public static function loadJson($filename)
     {
+        $fileContent = file_get_contents(__DIR__ . "/data/{$filename}");
+
+        if (!$fileContent) {
+            throw new RuntimeException("{$filename} not found or empty.");
+        }
+
         return json_decode(
-            file_get_contents(__DIR__ . "/data/{$filename}"),
+            $fileContent,
             false,
             512,
             JSON_THROW_ON_ERROR

@@ -34,7 +34,7 @@ list($requests, $misses, $hits, $errors, $oom, $empty) = [
     $stats['empty'],
 ];
 
-function pct($a, $b) {
+function pct(float $a, float $b): string {
     return $b != 0
         ? round(100.00 * $a / $b) . '%'
         : '0%';
