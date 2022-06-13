@@ -125,7 +125,18 @@ class RelayCache implements CacheInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable<string,string>        $values A list of key => value pairs for a multiple-set operation.
+     * @param null|int|\DateInterval $ttl    Optional. The TTL value of this item. If no value is sent and
+     *                                       the driver supports TTL then the library may set a default value
+     *                                       for it or let the driver take care of that.
+     *
+     * @return bool True on success and false on failure.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $values is neither an array nor a Traversable,
+     *   or if any of the $values are not a legal value.
      */
     public function setMultiple($values, $ttl = null): bool
     {
