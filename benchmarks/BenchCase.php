@@ -122,14 +122,8 @@ abstract class BenchCase
      */
     public static function loadJson($filename)
     {
-        $fileContent = file_get_contents(__DIR__ . "/data/{$filename}");
-
-        if (!$fileContent) {
-            throw new RuntimeException("{$filename} not found or empty.");
-        }
-
         return json_decode(
-            $fileContent,
+            (string) file_get_contents(__DIR__ . "/data/{$filename}"),
             false,
             512,
             JSON_THROW_ON_ERROR
