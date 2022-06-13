@@ -2,12 +2,13 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
+use Exception;
+use RuntimeException;
+
 use Relay\Relay;
 use Redis as PhpRedis;
 use Credis_Client as Credis;
-use Exception;
 use Predis\Client as Predis;
-use \RuntimeException;
 
 abstract class BenchCase
 {
