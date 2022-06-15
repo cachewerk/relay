@@ -13,7 +13,6 @@ RUN apt-get install -y \
 RUN add-apt-repository ppa:ondrej/php
 
 RUN apt-get install -y \
-  php8.1-dev \
   php8.1-fpm
 
 # Add Relay repository
@@ -27,6 +26,5 @@ RUN apt-get install -y \
 ## If no specific PHP version is installed just omit the version number:
 
 # RUN apt-get install -y \
-#  php-dev \
 #  php-fpm \
 #  php-relay

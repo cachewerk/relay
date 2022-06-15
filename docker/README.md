@@ -82,6 +82,14 @@ $ php --ri relay
 
 For OpenLiteSpeed, see [openlitespeed.Dockerfile](/docker/openlitespeed.Dockerfile).
 
+## Apache 2
+
+```bash
+docker build --pull --tag relay-apache2 --file apache2.Dockerfile .
+docker run -it relay-apache2 bash
+$ php --ri relay
+```
+
 ## Versions / Nightly builds
 
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:

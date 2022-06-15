@@ -15,7 +15,6 @@ RUN add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -sc) ma
 RUN apt-get update
 
 RUN apt-get install -y \
-  php8.1-dev \
   php8.1-fpm
 
 # Add Relay repository
