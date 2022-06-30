@@ -26,12 +26,12 @@ class RelayConnector extends PhpRedisConnector implements Connector
         $formattedOptions = Arr::pull($config, 'options', []);
 
         if (isset($config['prefix'])) {
-            $formattedOptions['prefix'] = $config['prefix'];
+            $formattedOptions['prefix'] = $config['prefix']; // @phpstan-ignore-line
         }
 
         $connector = function () use ($config, $options, $formattedOptions) {
             return $this->createClient(array_merge(
-                $config, $options, $formattedOptions
+                $config, $options, (array) $formattedOptions
             ));
         };
 
@@ -44,7 +44,8 @@ class RelayConnector extends PhpRedisConnector implements Connector
      * @param  array<mixed>  $config
      * @param  array<mixed>  $clusterOptions
      * @param  array<mixed>  $options
-     * @return \CacheWerk\Relay\Laravel\RelayClusterConnection
+     *
+     * @throws \LogicException
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {

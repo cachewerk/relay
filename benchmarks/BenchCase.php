@@ -120,7 +120,7 @@ abstract class BenchCase
      * @param  string  $filename
      * @return array
      */
-    public static function loadJson($filename)
+    public static function loadJson($filename) // @phpstan-ignore-line
     {
         return (array) json_decode(
             (string) file_get_contents(__DIR__ . "/data/{$filename}"),

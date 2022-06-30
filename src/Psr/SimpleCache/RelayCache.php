@@ -127,7 +127,7 @@ class RelayCache implements CacheInterface
     /**
      * {@inheritdoc}
      */
-    public function setMultiple($values, $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool // @phpstan-ignore-line
     {
         if ($values instanceof Traversable) {
             $values = \iterator_to_array($values, false);
