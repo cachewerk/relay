@@ -20,7 +20,7 @@ class MgetBench extends BenchCase
 
         foreach (static::loadJson('dataset-medium.json') as $set) {
             foreach ($set as $key => $value) {
-                $redis->set("{$set->_id}:{$key}", $value);
+                $redis->set("{$set['_id']}:{$key}", $value);
             }
         }
     }
@@ -57,7 +57,7 @@ class MgetBench extends BenchCase
     public function benchMgetUsingCredis($params): void
     {
         foreach ($params['chunks'] as $keys) {
-            array_map('unserialize', $this->credis->mGet($keys));
+            array_map('unserialize', (array) $this->credis->mGet($keys));
         }
     }
 
@@ -133,7 +133,7 @@ class MgetBench extends BenchCase
 
         foreach (static::loadJson('dataset-medium.json') as $set) {
             foreach ($set as $key => $value) {
-                $keys[] = "{$set->_id}:{$key}";
+                $keys[] = "{$set['_id']}:{$key}";
             }
         }
 

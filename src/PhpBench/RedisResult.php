@@ -23,7 +23,7 @@ class RedisResult implements ResultInterface
      */
     public static function fromArray(array $values): ResultInterface
     {
-        return new self($values['info']);
+        return new self((array) $values['info']);
     }
 
     /**
@@ -39,7 +39,7 @@ class RedisResult implements ResultInterface
 
     /**
      * Returns the Redis metrics for the result.
-     * 
+     *
      * @return array<string, mixed>
      */
     public function getMetrics(): array

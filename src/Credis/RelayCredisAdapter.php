@@ -78,7 +78,7 @@ class RelayCredisAdapter
                     return $this;
                 } else {
                     $this->isMulti = true;
-                    $this->redisMulti = call_user_func_array([$this->relay, $name], $args);
+                    $this->redisMulti = $this->relay->{$name}(...$args);
 
                     return $this;
                 }
@@ -91,13 +91,13 @@ class RelayCredisAdapter
             }
 
             if ($this->isMulti) {
-                call_user_func_array([$this->redisMulti, $name], $args);
+                $this->redisMulti->{$name}(...$args);
 
                 return $this;
             }
 
             try {
-                $response = call_user_func_array([$this->relay, $name], $args);
+                $response = $this->relay->{$name}(...$args);
             } catch (Exception $exception) {
                 throw $exception;
             }

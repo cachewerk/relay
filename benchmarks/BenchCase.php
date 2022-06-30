@@ -122,9 +122,9 @@ abstract class BenchCase
      */
     public static function loadJson($filename)
     {
-        return json_decode(
+        return (array) json_decode(
             (string) file_get_contents(__DIR__ . "/data/{$filename}"),
-            false,
+            true,
             512,
             JSON_THROW_ON_ERROR
         );

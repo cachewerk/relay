@@ -19,7 +19,7 @@ class GetStringsBench extends BenchCase
 
         foreach (static::loadJson('dataset-medium.json') as $set) {
             foreach ($set as $key => $value) {
-                $redis->set("{$set->_id}:{$key}", $value);
+                $redis->set("{$set['_id']}:{$key}", $value);
             }
         }
     }
@@ -126,7 +126,7 @@ class GetStringsBench extends BenchCase
 
         foreach (static::loadJson('dataset-medium.json') as $set) {
             foreach ($set as $key => $value) {
-                $keys[] = "{$set->_id}:{$key}";
+                $keys[] = "{$set['_id']}:{$key}";
             }
         }
 
