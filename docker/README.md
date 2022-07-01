@@ -1,6 +1,6 @@
 # Docker
 
-These Docker environments are concrete examples of Relay's [installation instruction](https://relaycache.com/docs/installation).
+These Docker environments are concrete examples of Relay's [installation instruction](https://relay.so/docs/installation).
 
 ## Ubuntu
 
@@ -18,7 +18,7 @@ docker run -it relay-ubuntu-bionic-apt bash
 $ php --ri relay
 ```
 
-The installation using APT is identical for 18.04, 20.04 and 22.04.
+The installation using APT is identical for 16.04, 18.04, 20.04 and 22.04.
 
 ## Debian 10
 
@@ -95,7 +95,7 @@ $ php --ri relay
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
 ```
-docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.1 .
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.2 .
 ```
 
 To install the nightly developments builds use the `dev` version:

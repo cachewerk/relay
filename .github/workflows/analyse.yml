@@ -1,4 +1,4 @@
-name: Analyse
+name: Analyse code
 
 on: push
 

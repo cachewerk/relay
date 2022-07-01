@@ -4,7 +4,7 @@ Relay can be used as a drop-in replacement for PhpRedis with Laravel.
 
 ## Installation
 
-Be sure to follow the [installation instructions](https://relaycache.com/docs/installation) for the Relay extension itself.
+Be sure to follow the [installation instructions](https://relay.so/docs/installation) for the Relay extension itself.
 
 ```bash
 composer require cachewerk/relay

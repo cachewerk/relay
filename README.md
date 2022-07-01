@@ -1,13 +1,13 @@
 # Relay
 
-- [Documentation](https://relaycache.com/docs)
+- [Documentation](https://relay.so/docs)
 - [Twitter](https://twitter.com/RelayPHP)
 - [Discord](https://discord.gg/exYBXqTXgY)
 - [Discussions](https://github.com/cachewerk/relay/discussions)
 
 ## Installation
 
-First, follow the [installation instructions](https://relaycache.com/docs/installation) to set up the Relay extension for PHP.
+First, follow the [installation instructions](https://relay.so/docs/installation) to set up the Relay extension for PHP.
 
 Next, either try the [Laravel](https://github.com/cachewerk/relay/tree/main/src/Laravel), [WordPress](https://objectcache.pro/docs/relay/) or [Magento](https://github.com/cachewerk/magento-relay) integrations.
 
