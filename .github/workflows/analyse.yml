@@ -24,7 +24,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-relay
 
       - name: Download stubs
-        run: wget --content-disposition https://relay.so/stubs/relay.stub.php?ref=v0.4.2
+        run: wget https://cachewerk.s3.amazonaws.com/relay/dev/relay.stub.php
 
       - name: Run PHPStan
         run: composer run analyse
