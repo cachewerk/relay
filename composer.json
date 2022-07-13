@@ -23,6 +23,10 @@
     "provide": {
         "psr/simple-cache-implementation": "^1|^2|^3"
     },
+    "suggest": {
+        "ext-relay": "Required to use package.",
+        "ext-redis": "Required to run benchmarks."
+    },
     "autoload": {
         "psr-4": {
             "CacheWerk\\Relay\\": "src/"
