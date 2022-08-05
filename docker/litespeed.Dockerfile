@@ -4,7 +4,7 @@ FROM litespeedtech/litespeed:6.0.8-lsphp74
 ENV PHP_EXT_DIR=/usr/local/lsws/lsphp74/lib/php/20190902/
 ENV PHP_INI_DIR=/usr/local/lsws/lsphp74/etc/php/7.4/mods-available/
 
-ARG RELAY=v0.4.3
+ARG RELAY=v0.4.4
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
