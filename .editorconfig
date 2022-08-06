@@ -14,5 +14,11 @@ block_comment_end = */
 [*.md]
 trim_trailing_whitespace = false
 
-[*.{yml,yaml,neon,Dockerfile}]
+[*.{xml,yml,yaml,neon}]
+indent_size = 2
+
+[*.{xml,yml,yaml,neon}.dist]
+indent_size = 2
+
+[*.Dockerfile]
 indent_size = 2
