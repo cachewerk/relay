@@ -1,11 +1,15 @@
 parameters:
+
   level: max
+
   scanFiles:
     - relay.stub.php
+
   paths:
     - benchmarks/
     - resources/
     - src/
+
   ignoreErrors:
     - '#Parameter .+? expects Redis, Relay\\Relay given#'
     - '#Return type \(Relay\\Relay\) of method .+? should be compatible with return type \(Redis\) of method#'

@@ -1,18 +1,18 @@
-name: Analyse code
+name: Code style
 
-on: push
+on: [push, pull_request]
 
 jobs:
 
-  analyse:
+  phpstan:
 
-    name: Analyse
+    name: PHPStan
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,4 +27,17 @@ jobs:
         run: wget https://cachewerk.s3.amazonaws.com/relay/dev/relay.stub.php
 
       - name: Run PHPStan
-        run: composer run analyse
+        run: composer run stan
+
+  editorconfig:
+
+    name: EditorConfig
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check EditorConfig
+        uses: greut/eclint-action@v0

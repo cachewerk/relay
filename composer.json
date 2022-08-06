@@ -4,9 +4,9 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "analyse": "phpstan analyse",
         "bench": "phpbench run --report=redis",
-        "bench:verbose": "phpbench run --report=redis --progress=blinken"
+        "bench:verbose": "phpbench run --report=redis --progress=blinken",
+        "stan": "phpstan analyse"
     },
     "require": {
         "php": "^7.4|^8.0",
