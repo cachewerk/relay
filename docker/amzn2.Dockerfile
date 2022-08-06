@@ -10,12 +10,12 @@ RUN yum remove php*
 RUN amazon-linux-extras enable php8.0
 
 RUN yum install -y \
- php-cli \
- php-fpm \
- php-pear \
- php-devel \
- openssl11 \
- libzstd-devel
+  php-cli \
+  php-fpm \
+  php-pear \
+  php-devel \
+  openssl11 \
+  libzstd-devel
 
 RUN pecl config-set php_ini /etc/php.ini
 
