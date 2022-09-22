@@ -29,6 +29,4 @@ composer run bench:verbose
 # ./vendor/bin/phpbench run --report=redis --progress=blinken
 ```
 
-## Known Issues
-
-- [Inconsistent invalidations order](https://github.com/redis/redis/issues/8206) in Redis v6.2.6 and older
+> Note: While we're huge fans of New Relic, having the APM agent enabled will significantly slow down Relay and skew the benchmarks.
