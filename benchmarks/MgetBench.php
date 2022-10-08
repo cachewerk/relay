@@ -27,8 +27,8 @@ class MgetBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(50)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
@@ -46,8 +46,8 @@ class MgetBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(50)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
@@ -65,8 +65,8 @@ class MgetBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(50)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
@@ -86,8 +86,8 @@ class MgetBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(50)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
@@ -107,29 +107,8 @@ class MgetBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
-     * @Sleep(100000)
-     * @OutputTimeUnit("milliseconds", precision=3)
-     * @ParamProviders("provideChunks")
-     * @BeforeMethods("setUpRelayCache")
-     * @Groups("relay")
-     *
-     * @param  array{chunks: array<int, array<int, string>>}  $params
-     */
-    public function MGET_Relay_ColdCache($params): void
-    {
-        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
-
-        foreach ($params['chunks'] as $keys) {
-            $this->relayCache->mget($keys);
-        }
-    }
-
-    /**
-     * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(50)
+     * @Iterations(2)
      * @Warmup(1)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)

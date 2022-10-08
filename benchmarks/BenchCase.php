@@ -113,6 +113,7 @@ abstract class BenchCase
     {
         $this->relay = new Relay($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT'], 0, 0, ['use-cache' => false]);
         $this->relay->ping();
+        $this->relay->flushMemory();
 
         return $this->relay;
     }
@@ -127,6 +128,7 @@ abstract class BenchCase
         $this->relayCache = new Relay;
         $this->relayCache->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
         $this->relayCache->ping();
+        $this->relayCache->flushMemory();
 
         return $this->relayCache;
     }
@@ -137,7 +139,7 @@ abstract class BenchCase
      * @param  string  $filename
      * @return array
      */
-    public static function loadJson($filename) // @phpstan-ignore-line
+    public static function loadJson(string $filename) // @phpstan-ignore-line
     {
         return (array) json_decode(
             (string) file_get_contents(__DIR__ . "/data/{$filename}"),

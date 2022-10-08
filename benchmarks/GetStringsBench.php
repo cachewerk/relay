@@ -2,15 +2,12 @@
 
 namespace CacheWerk\Relay\Benchmarks\Get;
 
-use Redis;
-use Relay\Relay;
-
 use CacheWerk\Relay\Benchmarks\BenchCase;
 
 /**
  * @BeforeClassMethods("setUp")
  */
-class GetUnserializeBench extends BenchCase
+class GetStringsBench extends BenchCase
 {
     /**
      * Seed Redis with random data.
@@ -29,8 +26,8 @@ class GetUnserializeBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(10)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
@@ -39,17 +36,17 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array{keys: array<int, string>}  $params
      */
-    public function GET_Unserialize_Predis($params): void
+    public function GET_Strings_Predis(array $params): void
     {
         foreach ($params['keys'] as $key) {
-            unserialize((string) $this->predis->get($key));
+            $this->predis->get((string) $key);
         }
     }
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(10)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
@@ -58,17 +55,17 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array{keys: array<int, string>}  $params
      */
-    public function GET_Unserialize_Credis($params): void
+    public function GET_Strings_Credis(array $params): void
     {
         foreach ($params['keys'] as $key) {
-            unserialize($this->credis->get($key)); // @phpstan-ignore-line
+            $this->credis->get($key);
         }
     }
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(10)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
@@ -77,10 +74,8 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array{keys: array<int, string>}  $params
      */
-    public function GET_Unserialize_PhpRedis($params): void
+    public function GET_Strings_PhpRedis(array $params): void
     {
-        $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
-
         foreach ($params['keys'] as $key) {
             $this->phpredis->get($key);
         }
@@ -88,8 +83,8 @@ class GetUnserializeBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(10)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
@@ -98,10 +93,8 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array{keys: array<int, string>}  $params
      */
-    public function GET_Unserialize_Relay_NoCache($params): void
+    public function GET_Strings_Relay_NoCache(array $params): void
     {
-        $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
-
         foreach ($params['keys'] as $key) {
             $this->relay->get($key);
         }
@@ -109,29 +102,8 @@ class GetUnserializeBench extends BenchCase
 
     /**
      * @Subject
-     * @Revs(1)
-     * @Iterations(10)
-     * @Sleep(100000)
-     * @OutputTimeUnit("milliseconds", precision=3)
-     * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpRelayCache")
-     * @Groups("relay")
-     *
-     * @param  array{keys: array<int, string>}  $params
-     */
-    public function GET_Unserialize_Relay_ColdCache($params): void
-    {
-        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
-
-        foreach ($params['keys'] as $key) {
-            $this->relayCache->get($key);
-        }
-    }
-
-    /**
-     * @Subject
-     * @Revs(1)
-     * @Iterations(10)
+     * @Revs(10)
+     * @Iterations(2)
      * @Warmup(1)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
@@ -141,10 +113,8 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array{keys: array<int, string>}  $params
      */
-    public function GET_Unserialize_Relay_WarmCache($params): void
+    public function GET_Strings_Relay_WarmCache(array $params): void
     {
-        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
-
         foreach ($params['keys'] as $key) {
             $this->relayCache->get($key);
         }
