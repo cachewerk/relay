@@ -19,14 +19,11 @@ composer require cachewerk/relay
 
 ## Benchmarks
 
-The host and port may be set in `phpbench.json`.
+First set the `REDIS_HOST` and `REDIS_PORT` in the `phpbench.json`, then run the benchmarks:
 
 ```bash
 composer run bench
-# ./vendor/bin/phpbench run --report=redis
-
 composer run bench:verbose
-# ./vendor/bin/phpbench run --report=redis --progress=blinken
 ```
 
 > Note: While we're huge fans of New Relic, having the APM agent enabled will significantly slow down Relay and skew the benchmarks.
