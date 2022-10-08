@@ -23,6 +23,7 @@ class GetThroughputBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -34,7 +35,7 @@ class GetThroughputBench extends BenchCase
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetThroughputOfPredis($params): void
+    public function GET_Throughput_Predis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->predis->get($key);
@@ -42,6 +43,7 @@ class GetThroughputBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -53,7 +55,7 @@ class GetThroughputBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetThroughputOfCredis($params): void
+    public function GET_Throughput_Credis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->credis->get($key);
@@ -61,6 +63,7 @@ class GetThroughputBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -72,7 +75,7 @@ class GetThroughputBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetThroughputOfPhpRedis($params): void
+    public function GET_Throughput_PhpRedis($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->phpredis->get($key);
@@ -80,6 +83,7 @@ class GetThroughputBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -91,7 +95,7 @@ class GetThroughputBench extends BenchCase
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetThroughputOfRelay($params): void
+    public function GET_Throughput_Relay_NoCache($params): void
     {
         foreach ($params['keys'] as $key) {
             $this->relay->get($key);
@@ -99,6 +103,27 @@ class GetThroughputBench extends BenchCase
     }
 
     /**
+     * @Subject
+     * @Revs(1)
+     * @Iterations(10)
+     * @Sleep(100000)
+     * @OutputTimeUnit("seconds", precision=2)
+     * @OutputMode("throughput")
+     * @ParamProviders("provideKeys")
+     * @BeforeMethods("setUpRelayCache")
+     * @Groups("relay")
+     *
+     * @param  array<array<mixed>>  $params
+     */
+    public function GET_Throughput_Relay_ColdCache($params): void
+    {
+        foreach ($params['keys'] as $key) {
+            $this->relayCache->get($key);
+        }
+    }
+
+    /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Warmup(1)
@@ -106,15 +131,15 @@ class GetThroughputBench extends BenchCase
      * @OutputTimeUnit("seconds", precision=2)
      * @OutputMode("throughput")
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpRelay")
+     * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetThroughputOfRelayWarmed($params): void
+    public function GET_Throughput_Relay_WarmCache($params): void
     {
         foreach ($params['keys'] as $key) {
-            $this->relay->get($key);
+            $this->relayCache->get($key);
         }
     }
 

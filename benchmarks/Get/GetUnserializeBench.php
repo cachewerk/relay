@@ -28,6 +28,7 @@ class GetUnserializeBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -38,7 +39,7 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetSerializedUsingPredis($params): void
+    public function GET_Unserialize_Predis($params): void
     {
         foreach ($params['keys'] as $key) {
             unserialize((string) $this->predis->get($key));
@@ -46,6 +47,7 @@ class GetUnserializeBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -56,7 +58,7 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetSerializedUsingCredis($params): void
+    public function GET_Unserialize_Credis($params): void
     {
         foreach ($params['keys'] as $key) {
             unserialize($this->credis->get($key)); // @phpstan-ignore-line
@@ -64,6 +66,7 @@ class GetUnserializeBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -74,7 +77,7 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetSerializedUsingPhpRedis($params): void
+    public function GET_Unserialize_PhpRedis($params): void
     {
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
 
@@ -84,6 +87,7 @@ class GetUnserializeBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -94,7 +98,7 @@ class GetUnserializeBench extends BenchCase
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetSerializedUsingRelay($params): void
+    public function GET_Unserialize_Relay_NoCache($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
@@ -104,23 +108,45 @@ class GetUnserializeBench extends BenchCase
     }
 
     /**
+     * @Subject
+     * @Revs(1)
+     * @Iterations(10)
+     * @Sleep(100000)
+     * @OutputTimeUnit("milliseconds", precision=3)
+     * @ParamProviders("provideKeys")
+     * @BeforeMethods("setUpRelayCache")
+     * @Groups("relay")
+     *
+     * @param  array<array<mixed>>  $params
+     */
+    public function GET_Unserialize_Relay_ColdCache($params): void
+    {
+        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
+
+        foreach ($params['keys'] as $key) {
+            $this->relayCache->get($key);
+        }
+    }
+
+    /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Warmup(1)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpRelay")
+     * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetSerializedUsingRelayWarmed($params): void
+    public function GET_Unserialize_Relay_WarmCache($params): void
     {
-        $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
+        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
         foreach ($params['keys'] as $key) {
-            $this->relay->get($key);
+            $this->relayCache->get($key);
         }
     }
 

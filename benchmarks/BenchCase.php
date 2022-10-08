@@ -31,11 +31,18 @@ abstract class BenchCase
     protected $phpredis;
 
     /**
-     * The Relay client.
+     * The Relay client (without in-memory caching).
      *
      * @var \Relay\Relay
      */
     protected $relay;
+
+    /**
+     * The Relay client (with in-memory caching).
+     *
+     * @var \Relay\Relay
+     */
+    protected $relayCache;
 
     /**
      * Returns a PhpRedis connection used for seeding data and flushing.
@@ -98,17 +105,30 @@ abstract class BenchCase
     }
 
     /**
-     * Establishes, stores and returns a Relay connection.
+     * Establishes, stores and returns a Relay connection (with in-memory caching disabled).
      *
      * @return \Relay\Relay
      */
     public function setUpRelay(): Relay
     {
-        $this->relay = new Relay;
-        $this->relay->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
+        $this->relay = new Relay($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT'], 0, 0, ['use-cache' => false]);
         $this->relay->ping();
 
         return $this->relay;
+    }
+
+    /**
+     * Establishes, stores and returns a Relay connection (with in-memory caching enabled).
+     *
+     * @return \Relay\Relay
+     */
+    public function setUpRelayCache(): Relay
+    {
+        $this->relayCache = new Relay;
+        $this->relayCache->connect($_SERVER['REDIS_HOST'], $_SERVER['REDIS_PORT']);
+        $this->relayCache->ping();
+
+        return $this->relayCache;
     }
 
     /**

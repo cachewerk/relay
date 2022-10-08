@@ -26,6 +26,7 @@ class MgetBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -36,7 +37,7 @@ class MgetBench extends BenchCase
      *
      * @param  array<array<array<mixed>>>  $params
      */
-    public function benchMgetUsingPredis($params): void
+    public function MGET_Predis($params): void
     {
         foreach ($params['chunks'] as $keys) {
             array_map('unserialize', $this->predis->mget($keys));
@@ -44,6 +45,7 @@ class MgetBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -54,7 +56,7 @@ class MgetBench extends BenchCase
      *
      * @param  array<array<array<mixed>>>  $params
      */
-    public function benchMgetUsingCredis($params): void
+    public function MGET_Credis($params): void
     {
         foreach ($params['chunks'] as $keys) {
             array_map('unserialize', (array) $this->credis->mGet($keys));
@@ -62,6 +64,7 @@ class MgetBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -72,7 +75,7 @@ class MgetBench extends BenchCase
      *
      * @param  array<array<array<string>>>  $params
      */
-    public function benchMgetUsingPhpRedis($params): void
+    public function MGET_PhpRedis($params): void
     {
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
 
@@ -82,6 +85,7 @@ class MgetBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -92,7 +96,7 @@ class MgetBench extends BenchCase
      *
      * @param  array<array<array<string>>>  $params
      */
-    public function benchMgetUsingRelay($params): void
+    public function MGET_Relay_NoCache($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
@@ -102,23 +106,45 @@ class MgetBench extends BenchCase
     }
 
     /**
+     * @Subject
+     * @Revs(1)
+     * @Iterations(10)
+     * @Sleep(100000)
+     * @OutputTimeUnit("milliseconds", precision=3)
+     * @ParamProviders("provideChunks")
+     * @BeforeMethods("setUpRelayCache")
+     * @Groups("relay")
+     *
+     * @param  array<array<array<string>>>  $params
+     */
+    public function MGET_Relay_ColdCache($params): void
+    {
+        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
+
+        foreach ($params['chunks'] as $keys) {
+            $this->relayCache->mget($keys);
+        }
+    }
+
+    /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Warmup(1)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideChunks")
-     * @BeforeMethods("setUpRelay")
+     * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
      * @param  array<array<array<string>>>  $params
      */
-    public function benchMgetUsingRelayWarmed($params): void
+    public function MGET_Relay_WarmCache($params): void
     {
-        $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
+        $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
         foreach ($params['chunks'] as $keys) {
-            $this->relay->mget($keys);
+            $this->relayCache->mget($keys);
         }
     }
 

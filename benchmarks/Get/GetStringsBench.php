@@ -25,6 +25,7 @@ class GetStringsBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -35,7 +36,7 @@ class GetStringsBench extends BenchCase
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetStringsUsingPredis(array $params): void
+    public function GET_Strings_Predis(array $params): void
     {
         foreach ($params['keys'] as $key) {
             $this->predis->get($key);
@@ -43,6 +44,7 @@ class GetStringsBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -53,7 +55,7 @@ class GetStringsBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetStringsUsingCredis(array $params): void
+    public function GET_Strings_Credis(array $params): void
     {
         foreach ($params['keys'] as $key) {
             $this->credis->get($key);
@@ -61,6 +63,7 @@ class GetStringsBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -71,7 +74,7 @@ class GetStringsBench extends BenchCase
      *
      * @param  array<array<string>>  $params
      */
-    public function benchGetStringsUsingPhpRedis(array $params): void
+    public function GET_Strings_PhpRedis(array $params): void
     {
         foreach ($params['keys'] as $key) {
             $this->phpredis->get($key);
@@ -79,6 +82,7 @@ class GetStringsBench extends BenchCase
     }
 
     /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Sleep(100000)
@@ -89,7 +93,7 @@ class GetStringsBench extends BenchCase
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetStringsUsingRelay(array $params): void
+    public function GET_Strings_Relay_NoCache(array $params): void
     {
         foreach ($params['keys'] as $key) {
             $this->relay->get($key);
@@ -97,21 +101,41 @@ class GetStringsBench extends BenchCase
     }
 
     /**
+     * @Subject
+     * @Revs(1)
+     * @Iterations(10)
+     * @Sleep(100000)
+     * @OutputTimeUnit("milliseconds", precision=3)
+     * @ParamProviders("provideKeys")
+     * @BeforeMethods("setUpRelayCache")
+     * @Groups("relay")
+     *
+     * @param  array<array<mixed>>  $params
+     */
+    public function GET_Strings_Relay_ColdCache(array $params): void
+    {
+        foreach ($params['keys'] as $key) {
+            $this->relayCache->get($key);
+        }
+    }
+
+    /**
+     * @Subject
      * @Revs(1)
      * @Iterations(10)
      * @Warmup(1)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideKeys")
-     * @BeforeMethods("setUpRelay")
+     * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
      * @param  array<array<mixed>>  $params
      */
-    public function benchGetStringsUsingRelayWarmed(array $params): void
+    public function GET_Strings_Relay_WarmCache(array $params): void
     {
         foreach ($params['keys'] as $key) {
-            $this->relay->get($key);
+            $this->relayCache->get($key);
         }
     }
 
