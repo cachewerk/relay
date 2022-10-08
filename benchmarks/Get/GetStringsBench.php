@@ -34,12 +34,12 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_Predis(array $params): void
     {
         foreach ($params['keys'] as $key) {
-            $this->predis->get($key);
+            $this->predis->get((string) $key);
         }
     }
 
@@ -53,7 +53,7 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param  array<array<string>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_Credis(array $params): void
     {
@@ -72,7 +72,7 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param  array<array<string>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_PhpRedis(array $params): void
     {
@@ -91,7 +91,7 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_Relay_NoCache(array $params): void
     {
@@ -110,7 +110,7 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_Relay_ColdCache(array $params): void
     {
@@ -130,7 +130,7 @@ class GetStringsBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Strings_Relay_WarmCache(array $params): void
     {
@@ -142,7 +142,7 @@ class GetStringsBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array<mixed>>
+     * @return \Generator<string, array{keys: array<int, string>}>
      */
     public function provideKeys()
     {

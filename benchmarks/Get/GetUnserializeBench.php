@@ -37,7 +37,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param  array<array<string>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_Predis($params): void
     {
@@ -56,7 +56,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param  array<array<string>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_Credis($params): void
     {
@@ -75,7 +75,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param  array<array<string>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_PhpRedis($params): void
     {
@@ -96,7 +96,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_Relay_NoCache($params): void
     {
@@ -117,7 +117,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_Relay_ColdCache($params): void
     {
@@ -139,7 +139,7 @@ class GetUnserializeBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<mixed>>  $params
+     * @param  array{keys: array<int, string>}  $params
      */
     public function GET_Unserialize_Relay_WarmCache($params): void
     {
@@ -153,7 +153,7 @@ class GetUnserializeBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array<mixed>>
+     * @return \Generator<string, array{keys: array<int, string>}>
      */
     public function provideKeys()
     {

@@ -35,7 +35,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param  array<array<array<mixed>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_Predis($params): void
     {
@@ -54,7 +54,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param  array<array<array<mixed>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_Credis($params): void
     {
@@ -73,7 +73,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param  array<array<array<string>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_PhpRedis($params): void
     {
@@ -94,7 +94,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param  array<array<array<string>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_Relay_NoCache($params): void
     {
@@ -115,7 +115,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<array<string>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_Relay_ColdCache($params): void
     {
@@ -137,7 +137,7 @@ class MgetBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array<array<array<string>>>  $params
+     * @param  array{chunks: array<int, array<int, string>>}  $params
      */
     public function MGET_Relay_WarmCache($params): void
     {
@@ -151,7 +151,7 @@ class MgetBench extends BenchCase
     /**
      * Provides the keys for each benchmark.
      *
-     * @return \Generator<string, array<mixed>>
+     * @return \Generator<string, array{chunks: array<int, array<int, string>>}>
      */
     public function provideChunks()
     {
