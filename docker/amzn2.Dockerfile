@@ -27,7 +27,7 @@ RUN pecl install msgpack && \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.4.5
+ARG RELAY=v0.4.6
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
@@ -39,4 +39,4 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
   && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
-RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
+RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so

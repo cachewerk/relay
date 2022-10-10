@@ -18,7 +18,7 @@ ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 ENV PHP_INI_DIR=/etc/opt/remi/php80/php.d/
 ENV PHP_EXT_DIR=/opt/remi/php80/root/usr/lib64/php/modules/
 
-ARG RELAY=v0.4.5
+ARG RELAY=v0.4.6
 
 # Relay requires the `msgpack` and `igbinary` extension
 RUN yum install -y \
@@ -35,4 +35,4 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
   && cp "/tmp/relay-$RELAY-php8.0-centos8-$PLATFORM/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
-RUN sed -i "s/BIN:31415926-5358-9793-2384-626433832795/BIN:$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
+RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"

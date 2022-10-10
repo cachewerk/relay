@@ -95,7 +95,7 @@ $ php --ri relay
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
 ```
-docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.5 .
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.4.6 .
 ```
 
 To install the nightly developments builds use the `dev` version:
