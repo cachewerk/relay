@@ -36,7 +36,7 @@ class RelayNewRelic
      * Executes Relay methods inside New Relic datastore segment function.
      *
      * @param  string  $name
-     * @param  array  $arguments
+     * @param  array<mixed>  $arguments
      * @return mixed
      */
     public function __call(string $name, array $arguments)
@@ -51,7 +51,7 @@ class RelayNewRelic
      * Executes static Relay methods inside New Relic datastore segment function.
      *
      * @param  string  $name
-     * @param  array  $arguments
+     * @param  array<mixed>  $arguments
      * @return mixed
      */
     public static function __callStatic(string $name, array $arguments)
@@ -69,7 +69,7 @@ class RelayNewRelic
      * @param  mixed  $match
      * @param  int  $count
      * @param  ?string  $type
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function scan(&$iterator, $match = null, int $count = 0, ?string $type = null)
     {
@@ -88,7 +88,7 @@ class RelayNewRelic
      * @param  mixed  $iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function hscan($key, &$iterator, $match = null, int $count = 0)
     {
@@ -107,7 +107,7 @@ class RelayNewRelic
      * @param  mixed  $iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function sscan($key, &$iterator, $match = null, int $count = 0)
     {
@@ -126,7 +126,7 @@ class RelayNewRelic
      * @param  mixed  &$iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function zscan($key, &$iterator, $match = null, int $count = 0)
     {

@@ -8,6 +8,7 @@ use Relay\Relay;
 
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
+use OpenTelemetry\API\Trace\TracerProviderInterface;
 
 class RelayOpenTelemetry
 {
@@ -19,7 +20,7 @@ class RelayOpenTelemetry
     protected Relay $relay;
 
     /**
-     * The OpenTelemetry tracer instance.
+     * The OpenTelemetry tracer provider instance.
      *
      * @var \OpenTelemetry\API\Trace\TracerInterface
      */
@@ -29,29 +30,28 @@ class RelayOpenTelemetry
      * Creates a new `NewRelicRelay` instance.
      *
      * @param  \Relay\Relay  $relay
-     * @param  \OpenTelemetry\API\Trace\TracerInterface  $tracer
+     * @param  \OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
      * @return void
      */
-    public function __construct(Relay $relay, TracerInterface $tracer)
+    public function __construct(Relay $relay, TracerProviderInterface $tracerProvider)
     {
-        $this->relay = new $relay;
-        $this->tracer = new $tracer;
+        $this->relay = $relay;
+        $this->tracer = $tracerProvider->getTracer('Relay', (string) phpversion('relay'));
     }
 
     /**
      * Executes Relay methods inside OpenTelemetry span.
      *
      * @param  string  $name
-     * @param  array  $arguments
+     * @param  array<mixed>  $arguments
      * @return mixed
      */
     public function __call(string $name, array $arguments)
     {
-        $span = $this->tracer->spanBuilder('Relay') // TODO: What's the name?
-            ->setAttribute('command', strtolower($name))
-            ->setSpanKind(SpanKind::KIND_CLIENT) // TODO: Is this the correct kind?
-            ->startSpan()
-            ->activate(); // TODO: Is this needed?
+        $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
+            ->setAttribute('db.operation', strtoupper($name))
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
 
         $result = $this->relay->{$name}(...$arguments);
 
@@ -61,15 +61,15 @@ class RelayOpenTelemetry
     }
 
     /**
-     * Executes static Relay methods inside OpenTelemetry span.
+     * Executes static Relay methods.
      *
      * @param  string  $name
-     * @param  array  $arguments
+     * @param  array<mixed>  $arguments
      * @return mixed
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        //
+        return Relay::{$name}(...$arguments);
     }
 
     /**
@@ -79,11 +79,20 @@ class RelayOpenTelemetry
      * @param  mixed  $match
      * @param  int  $count
      * @param  ?string  $type
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function scan(&$iterator, $match = null, int $count = 0, ?string $type = null)
     {
-        //
+        $span = $this->tracer->spanBuilder('Relay::scan')
+            ->setAttribute('db.operation', 'SCAN')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
+
+        $result = $this->relay->scan($iterator, $match, $count, $type);
+
+        $span->end();
+
+        return $result;
     }
 
     /**
@@ -93,11 +102,20 @@ class RelayOpenTelemetry
      * @param  mixed  $iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function hscan($key, &$iterator, $match = null, int $count = 0)
     {
-        //
+        $span = $this->tracer->spanBuilder('Relay::hscan')
+            ->setAttribute('db.operation', 'HSCAN')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
+
+        $result = $this->relay->hscan($key, $iterator, $match, $count);
+
+        $span->end();
+
+        return $result;
     }
 
     /**
@@ -107,11 +125,20 @@ class RelayOpenTelemetry
      * @param  mixed  $iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function sscan($key, &$iterator, $match = null, int $count = 0)
     {
-        //
+        $span = $this->tracer->spanBuilder('Relay::sscan')
+            ->setAttribute('db.operation', 'SSCAN')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
+
+        $result = $this->relay->sscan($key, $iterator, $match, $count);
+
+        $span->end();
+
+        return $result;
     }
 
     /**
@@ -121,10 +148,19 @@ class RelayOpenTelemetry
      * @param  mixed  $iterator
      * @param  mixed  $match
      * @param  int  $count
-     * @return array|false
+     * @return array<mixed>|false
      */
     public function zscan($key, &$iterator, $match = null, int $count = 0)
     {
-        //
+        $span = $this->tracer->spanBuilder('Relay::zscan')
+            ->setAttribute('db.operation', 'ZSCAN')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
+
+        $result = $this->relay->zscan($key, $iterator, $match, $count);
+
+        $span->end();
+
+        return $result;
     }
 }

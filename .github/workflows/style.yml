@@ -24,7 +24,10 @@ jobs:
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-relay
 
       - name: Download stubs
-        run: wget https://cachewerk.s3.amazonaws.com/relay/dev/relay.stub.php
+        run: |
+          cd stubs
+          wget https://cachewerk.s3.amazonaws.com/relay/dev/relay.stub.php
+          wget https://raw.githubusercontent.com/JetBrains/phpstorm-stubs/master/newrelic/newrelic.php
 
       - name: Run PHPStan
         run: composer run stan

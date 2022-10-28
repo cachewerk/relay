@@ -2,8 +2,8 @@ parameters:
 
   level: max
 
-  scanFiles:
-    - relay.stub.php
+  scanDirectories:
+    - stubs/
 
   paths:
     - benchmarks/
