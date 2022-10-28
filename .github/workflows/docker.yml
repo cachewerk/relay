@@ -21,6 +21,7 @@ jobs:
           - amzn2
           - centos7
           - centos8
+          - rocky8
           - debian10
           - debian10-zts
           - ubuntu20
@@ -76,6 +77,7 @@ jobs:
         package:
           - centos7-yum
           - centos8-dnf
+          - rocky8-dnf
           - debian11-apt
           - ubuntu18-apt
           - ubuntu22-apt
