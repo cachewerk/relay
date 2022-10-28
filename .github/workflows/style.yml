@@ -25,7 +25,7 @@ jobs:
 
       - name: Download stubs
         run: |
-          cd stubs
+          mkdir -p stubs && cd stubs
           wget https://cachewerk.s3.amazonaws.com/relay/dev/relay.stub.php
           wget https://raw.githubusercontent.com/JetBrains/phpstorm-stubs/master/newrelic/newrelic.php
 
