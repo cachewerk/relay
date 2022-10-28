@@ -72,6 +72,16 @@ $ php --ri relay
 
 See [centos8.Dockerfile](/docker/centos8.Dockerfile) for the manual installation.
 
+## Rocky Linux 8
+
+```bash
+docker build --pull --tag relay-rocky8 --file rocky8-dnf.Dockerfile .
+docker run -it relay-rocky8 bash
+$ php --ri relay
+```
+
+See [rocky8.Dockerfile](/docker/rocky8.Dockerfile) for the manual installation.
+
 ## LiteSpeed
 
 ```bash
