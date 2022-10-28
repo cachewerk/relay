@@ -8,12 +8,12 @@ ARG RELAY=v0.4.6
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM.tar.gz" | tar xz -C /tmp
+  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM%2Blibssl3.tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM/relay.ini" "$PHP_INI_DIR/60-relay.ini" \
-  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
+  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM+libssl3/relay.ini" "$PHP_INI_DIR/60-relay.ini" \
+  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM+libssl3/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
