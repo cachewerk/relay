@@ -1,4 +1,4 @@
-FROM centos:7
+FROM --platform=linux/amd64 centos:7
 
 RUN yum install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
 RUN yum install -y "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"

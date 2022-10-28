@@ -1,4 +1,4 @@
-FROM centos:8.4.2105
+FROM --platform=linux/amd64 centos:8.4.2105
 
 # CentOS Linux 8 is EOL (https://stackoverflow.com/a/70930049)
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
