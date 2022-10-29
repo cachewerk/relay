@@ -50,6 +50,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
             ->setAttribute('db.operation', strtoupper($name))
+            ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -85,6 +86,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::scan')
             ->setAttribute('db.operation', 'SCAN')
+            ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -108,6 +110,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::hscan')
             ->setAttribute('db.operation', 'HSCAN')
+            ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -131,6 +134,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::sscan')
             ->setAttribute('db.operation', 'SSCAN')
+            ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -154,6 +158,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::zscan')
             ->setAttribute('db.operation', 'ZSCAN')
+            ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
