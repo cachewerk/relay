@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CacheWerk\Relay\Psr\Tracing;
 
 use Relay\Relay;
+use Relay\Exception;
 
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
@@ -54,11 +55,16 @@ class RelayOpenTelemetry
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
-        $result = $this->relay->{$name}(...$arguments);
+        try {
+            $result = $this->relay->{$name}(...$arguments);
+            $span->end();
 
-        $span->end();
+            return $result;
+        } catch (Exception $exception) {
+            $span->recordException($exception)->end();
 
-        return $result;
+            throw $exception;
+        }
     }
 
     /**
@@ -90,11 +96,16 @@ class RelayOpenTelemetry
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
-        $result = $this->relay->scan($iterator, $match, $count, $type);
+        try {
+            $result = $this->relay->scan($iterator, $match, $count, $type);
+            $span->end();
 
-        $span->end();
+            return $result;
+        } catch (Exception $exception) {
+            $span->recordException($exception)->end();
 
-        return $result;
+            throw $exception;
+        }
     }
 
     /**
@@ -114,11 +125,16 @@ class RelayOpenTelemetry
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
-        $result = $this->relay->hscan($key, $iterator, $match, $count);
+        try {
+            $result = $this->relay->hscan($key, $iterator, $match, $count);
+            $span->end();
 
-        $span->end();
+            return $result;
+        } catch (Exception $exception) {
+            $span->recordException($exception)->end();
 
-        return $result;
+            throw $exception;
+        }
     }
 
     /**
@@ -138,11 +154,16 @@ class RelayOpenTelemetry
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
-        $result = $this->relay->sscan($key, $iterator, $match, $count);
+        try {
+            $result = $this->relay->sscan($key, $iterator, $match, $count);
+            $span->end();
 
-        $span->end();
+            return $result;
+        } catch (Exception $exception) {
+            $span->recordException($exception)->end();
 
-        return $result;
+            throw $exception;
+        }
     }
 
     /**
@@ -162,10 +183,15 @@ class RelayOpenTelemetry
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
-        $result = $this->relay->zscan($key, $iterator, $match, $count);
+        try {
+            $result = $this->relay->zscan($key, $iterator, $match, $count);
+            $span->end();
 
-        $span->end();
+            return $result;
+        } catch (Exception $exception) {
+            $span->recordException($exception)->end();
 
-        return $result;
+            throw $exception;
+        }
     }
 }
