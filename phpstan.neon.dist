@@ -2,8 +2,8 @@ parameters:
 
   level: max
 
-  scanFiles:
-    - relay.stub.php
+  scanDirectories:
+    - stubs/
 
   paths:
     - benchmarks/
@@ -14,3 +14,4 @@ parameters:
     - '#Parameter .+? expects Redis, Relay\\Relay given#'
     - '#Return type \(Relay\\Relay\) of method .+? should be compatible with return type \(Redis\) of method#'
     - '#PHPDoc type Relay\\Relay of property .+? is not covariant with PHPDoc type Redis#'
+    - '#Method .+?\\RelayNewRelic::[\w]?scan\(\) should return .+? but returns mixed#'
