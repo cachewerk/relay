@@ -31,10 +31,10 @@ class RelayNewRelic
             throw new LogicException('Function `newrelic_record_datastore_segment()` was not found');
         }
 
-        $this->relay = newrelic_record_datastore_segment($client, [
-            'product' => 'Redis',
-            'operation' => '__construct'
-        ]);
+        $this->relay = newrelic_record_datastore_segment( // @phpstan-ignore-line
+            $client,
+            [ 'product' => 'Redis', 'operation' => '__construct']
+        );
     }
 
     /**
