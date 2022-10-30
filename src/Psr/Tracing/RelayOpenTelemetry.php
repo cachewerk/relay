@@ -58,7 +58,8 @@ class RelayOpenTelemetry
         try {
             return $this->relay->{$name}(...$arguments);
         } catch (Exception $exception) {
-            $span->recordException($exception)->end();
+            $span->recordException($exception);
+
             throw $exception;
         } finally {
             $span->end();
@@ -97,7 +98,8 @@ class RelayOpenTelemetry
         try {
             return $this->relay->scan($iterator, $match, $count, $type);
         } catch (Exception $exception) {
-            $span->recordException($exception)->end();
+            $span->recordException($exception);
+
             throw $exception;
         } finally {
             $span->end();
@@ -124,7 +126,8 @@ class RelayOpenTelemetry
         try {
             return $this->relay->hscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
-            $span->recordException($exception)->end();
+            $span->recordException($exception);
+
             throw $exception;
         } finally {
             $span->end();
@@ -151,7 +154,8 @@ class RelayOpenTelemetry
         try {
             return $this->relay->sscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
-            $span->recordException($exception)->end();
+            $span->recordException($exception);
+
             throw $exception;
         } finally {
             $span->end();
@@ -178,7 +182,8 @@ class RelayOpenTelemetry
         try {
             return $this->relay->zscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
-            $span->recordException($exception)->end();
+            $span->recordException($exception);
+
             throw $exception;
         } finally {
             $span->end();
