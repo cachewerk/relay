@@ -56,14 +56,12 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            $result = $this->relay->{$name}(...$arguments);
-            $span->end();
-
-            return $result;
+            return $this->relay->{$name}(...$arguments);
         } catch (Exception $exception) {
             $span->recordException($exception)->end();
-
             throw $exception;
+        } finally {
+            $span->end();
         }
     }
 
@@ -97,14 +95,12 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            $result = $this->relay->scan($iterator, $match, $count, $type);
-            $span->end();
-
-            return $result;
+            return $this->relay->scan($iterator, $match, $count, $type);
         } catch (Exception $exception) {
             $span->recordException($exception)->end();
-
             throw $exception;
+        } finally {
+            $span->end();
         }
     }
 
@@ -126,14 +122,12 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            $result = $this->relay->hscan($key, $iterator, $match, $count);
-            $span->end();
-
-            return $result;
+            return $this->relay->hscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
             $span->recordException($exception)->end();
-
             throw $exception;
+        } finally {
+            $span->end();
         }
     }
 
@@ -155,14 +149,12 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            $result = $this->relay->sscan($key, $iterator, $match, $count);
-            $span->end();
-
-            return $result;
+            return $this->relay->sscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
             $span->recordException($exception)->end();
-
             throw $exception;
+        } finally {
+            $span->end();
         }
     }
 
@@ -184,14 +176,12 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            $result = $this->relay->zscan($key, $iterator, $match, $count);
-            $span->end();
-
-            return $result;
+            return $this->relay->zscan($key, $iterator, $match, $count);
         } catch (Exception $exception) {
             $span->recordException($exception)->end();
-
             throw $exception;
+        } finally {
+            $span->end();
         }
     }
 }
