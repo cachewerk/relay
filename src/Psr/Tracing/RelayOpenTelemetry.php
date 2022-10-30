@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Psr\Tracing;
 
+use Throwable;
+
 use Relay\Relay;
 use Relay\Exception;
 
@@ -57,7 +59,7 @@ class RelayOpenTelemetry
 
         try {
             return $this->relay->{$name}(...$arguments);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $span->recordException($exception);
 
             throw $exception;
@@ -97,7 +99,7 @@ class RelayOpenTelemetry
 
         try {
             return $this->relay->scan($iterator, $match, $count, $type);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $span->recordException($exception);
 
             throw $exception;
@@ -125,7 +127,7 @@ class RelayOpenTelemetry
 
         try {
             return $this->relay->hscan($key, $iterator, $match, $count);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $span->recordException($exception);
 
             throw $exception;
@@ -153,7 +155,7 @@ class RelayOpenTelemetry
 
         try {
             return $this->relay->sscan($key, $iterator, $match, $count);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $span->recordException($exception);
 
             throw $exception;
@@ -181,7 +183,7 @@ class RelayOpenTelemetry
 
         try {
             return $this->relay->zscan($key, $iterator, $match, $count);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $span->recordException($exception);
 
             throw $exception;
