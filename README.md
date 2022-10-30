@@ -22,6 +22,10 @@ composer require cachewerk/relay
 First set the `REDIS_HOST` and `REDIS_PORT` in the `phpbench.json`, then run the benchmarks:
 
 ```bash
+git clone git@github.com:cachewerk/relay.git
+cd relay
+composer install
+
 composer run bench
 composer run bench:verbose
 ```
