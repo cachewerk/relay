@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CacheWerk\Relay\Psr\Tracing;
 
 use Throwable;
+use LogicException;
 
 use Relay\Relay;
-use Relay\Exception;
 
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
@@ -20,7 +20,7 @@ class RelayOpenTelemetry
      *
      * @var \Relay\Relay
      */
-    protected Relay $relay;
+    protected $relay;
 
     /**
      * The OpenTelemetry tracer provider instance.
@@ -30,16 +30,30 @@ class RelayOpenTelemetry
     protected TracerInterface $tracer;
 
     /**
-     * Creates a new `NewRelicRelay` instance.
+     * Creates a new instance.
      *
-     * @param  \Relay\Relay  $relay
+     * @param  callable  $client
      * @param  \OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
      * @return void
      */
-    public function __construct(Relay $relay, TracerProviderInterface $tracerProvider)
+    public function __construct(callable $client, TracerProviderInterface $tracerProvider)
     {
-        $this->relay = $relay;
         $this->tracer = $tracerProvider->getTracer('Relay', (string) phpversion('relay'));
+
+        $span = $this->tracer->spanBuilder('Relay::__construct')
+            ->setAttribute('db.system', 'redis')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
+
+        try {
+            $this->relay = $client();
+        } catch (Throwable $exception) {
+            $span->recordException($exception);
+
+            throw $exception;
+        } finally {
+            $span->end();
+        }
     }
 
     /**
@@ -73,11 +87,11 @@ class RelayOpenTelemetry
      *
      * @param  string  $name
      * @param  array<mixed>  $arguments
-     * @return mixed
+     * @return void
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        return Relay::{$name}(...$arguments);
+        throw new LogicException('Unable to trace calls to static methods');
     }
 
     /**

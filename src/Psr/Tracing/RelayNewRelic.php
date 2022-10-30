@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Psr\Tracing;
 
-use Relay\Relay;
 use LogicException;
+
+use Relay\Relay;
+
 use function newrelic_record_datastore_segment;
 
 class RelayNewRelic
@@ -15,21 +17,24 @@ class RelayNewRelic
      *
      * @var \Relay\Relay
      */
-    protected Relay $relay;
+    protected $relay;
 
     /**
-     * Creates a new `NewRelicRelay` instance.
+     * Creates a new instance.
      *
-     * @param  \Relay\Relay $relay
+     * @param  callable  $client
      * @return void
      */
-    public function __construct(Relay $relay)
+    public function __construct(callable $client)
     {
         if (! function_exists('newrelic_record_datastore_segment')) {
             throw new LogicException('Function `newrelic_record_datastore_segment()` was not found');
         }
 
-        $this->relay = new $relay;
+        $this->relay = newrelic_record_datastore_segment($client, [
+            'product' => 'Redis',
+            'operation' => '__construct'
+        ]);
     }
 
     /**
