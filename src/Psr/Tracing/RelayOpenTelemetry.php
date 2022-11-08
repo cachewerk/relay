@@ -26,7 +26,7 @@ class RelayOpenTelemetry
     /**
      * The OpenTelemetry tracer provider instance.
      *
-     * @var ?\OpenTelemetry\API\Trace\TracerInterface
+     * @var \OpenTelemetry\API\Trace\TracerInterface
      */
     protected TracerInterface $tracer;
 
@@ -45,12 +45,12 @@ class RelayOpenTelemetry
 
         $this->tracer = $tracerProvider->getTracer('Relay', (string) phpversion('relay'));
 
-        try {
-            $span = $this->tracer->spanBuilder('Relay::__construct')
-                ->setAttribute('db.system', 'redis')
-                ->setSpanKind(SpanKind::KIND_CLIENT)
-                ->startSpan();
+        $span = $this->tracer->spanBuilder('Relay::__construct')
+            ->setAttribute('db.system', 'redis')
+            ->setSpanKind(SpanKind::KIND_CLIENT)
+            ->startSpan();
 
+        try {
             $this->relay = $client();
         } catch (Throwable $exception) {
             $span->recordException($exception);
