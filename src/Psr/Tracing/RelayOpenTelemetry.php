@@ -12,6 +12,7 @@ use Relay\Relay;
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
+use OpenTelemetry\API\Common\Instrumentation\Globals;
 
 class RelayOpenTelemetry
 {
@@ -25,7 +26,7 @@ class RelayOpenTelemetry
     /**
      * The OpenTelemetry tracer provider instance.
      *
-     * @var \OpenTelemetry\API\Trace\TracerInterface
+     * @var ?\OpenTelemetry\API\Trace\TracerInterface
      */
     protected TracerInterface $tracer;
 
@@ -33,19 +34,23 @@ class RelayOpenTelemetry
      * Creates a new instance.
      *
      * @param  callable  $client
-     * @param  \OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
+     * @param  ?\OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
      * @return void
      */
-    public function __construct(callable $client, TracerProviderInterface $tracerProvider)
+    public function __construct(callable $client, ?TracerProviderInterface $tracerProvider = null)
     {
+        if (! $tracerProvider) {
+            $tracerProvider = Globals::tracerProvider();
+        }
+
         $this->tracer = $tracerProvider->getTracer('Relay', (string) phpversion('relay'));
 
-        $span = $this->tracer->spanBuilder('Relay::__construct')
-            ->setAttribute('db.system', 'redis')
-            ->setSpanKind(SpanKind::KIND_CLIENT)
-            ->startSpan();
-
         try {
+            $span = $this->tracer->spanBuilder('Relay::__construct')
+                ->setAttribute('db.system', 'redis')
+                ->setSpanKind(SpanKind::KIND_CLIENT)
+                ->startSpan();
+
             $this->relay = $client();
         } catch (Throwable $exception) {
             $span->recordException($exception);
