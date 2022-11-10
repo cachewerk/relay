@@ -1,6 +1,6 @@
 name: Code style
 
-on: [push, pull_request]
+on: push
 
 jobs:
 
@@ -30,7 +30,7 @@ jobs:
           wget https://raw.githubusercontent.com/JetBrains/phpstorm-stubs/master/newrelic/newrelic.php
 
       - name: Run PHPStan
-        run: composer run stan
+        run: composer run phpstan
 
   editorconfig:
 

@@ -107,7 +107,7 @@ class RelayCache implements CacheInterface
 
         if (! \is_array($keys)) {
             throw new InvalidArgumentException(
-                \sprintf('Cache keys must be array or Traversable, "%s" given.', \gettype($keys))
+                \sprintf('Cache keys must be array or Traversable, "%s" given', \gettype($keys))
             );
         }
 
@@ -135,7 +135,7 @@ class RelayCache implements CacheInterface
 
         if (! \is_array($values)) {
             throw new InvalidArgumentException(
-                \sprintf('Cache keys must be array or Traversable, "%s" given.', \gettype($values))
+                \sprintf('Cache keys must be array or Traversable, "%s" given', \gettype($values))
             );
         }
 
@@ -171,7 +171,7 @@ class RelayCache implements CacheInterface
 
         if (! \is_array($keys)) {
             throw new InvalidArgumentException(
-                \sprintf('Cache keys must be array or Traversable, "%s" given.', \gettype($keys))
+                \sprintf('Cache keys must be array or Traversable, "%s" given', \gettype($keys))
             );
         }
 

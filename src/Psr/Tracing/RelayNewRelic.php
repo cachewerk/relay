@@ -17,7 +17,39 @@ class RelayNewRelic
      *
      * @var \Relay\Relay
      */
-    protected $relay;
+    protected Relay $relay;
+
+    /**
+     * Untraced client methods.
+     *
+     * @var array<int, string>
+     */
+    public const Untraced = [
+        'listen',
+        'onFlushed',
+        'onInvalidated',
+        'dispatchEvents',
+        'endpointId',
+        'socketId',
+        'idleTime',
+        'option',
+        'getOption',
+        'setOption',
+        'readTimeout',
+        'getReadTimeout',
+        'getHost',
+        'getPort',
+        'getAuth',
+        'getDbNum',
+        'getMode',
+        'getLastError',
+        'clearLastError',
+        '_serialize',
+        '_unserialize',
+        '_pack',
+        '_unpack',
+        '_prefix',
+    ];
 
     /**
      * Creates a new instance.
@@ -31,10 +63,16 @@ class RelayNewRelic
             throw new LogicException('Function `newrelic_record_datastore_segment()` was not found');
         }
 
-        $this->relay = newrelic_record_datastore_segment( // @phpstan-ignore-line
+        $relay = newrelic_record_datastore_segment(
             $client,
-            [ 'product' => 'Redis', 'operation' => '__construct']
+            ['product' => 'Redis', 'operation' => '__construct']
         );
+
+        if (! $relay instanceof Relay) {
+            throw new LogicException('Client is not a Relay instance');
+        }
+
+        $this->relay = $relay;
     }
 
     /**
@@ -46,6 +84,10 @@ class RelayNewRelic
      */
     public function __call(string $name, array $arguments)
     {
+        if (in_array($name, self::Untraced)) {
+            return $this->relay->{$name}(...$arguments);
+        }
+
         return newrelic_record_datastore_segment(
             fn () => $this->relay->{$name}(...$arguments),
             ['product' => 'Redis', 'operation' => $name]
@@ -82,7 +124,7 @@ class RelayNewRelic
             return $this->relay->scan($iterator, $match, $count, $type);
         }, [
             'product' => 'Redis',
-            'operation' => 'scan'
+            'operation' => 'scan',
         ]);
     }
 
@@ -101,7 +143,7 @@ class RelayNewRelic
             return $this->relay->hscan($key, $iterator, $match, $count);
         }, [
             'product' => 'Redis',
-            'operation' => 'hscan'
+            'operation' => 'hscan',
         ]);
     }
 
@@ -120,7 +162,7 @@ class RelayNewRelic
             return $this->relay->sscan($key, $iterator, $match, $count);
         }, [
             'product' => 'Redis',
-            'operation' => 'sscan'
+            'operation' => 'sscan',
         ]);
     }
 
@@ -139,7 +181,66 @@ class RelayNewRelic
             return $this->relay->zscan($key, $iterator, $match, $count);
         }, [
             'product' => 'Redis',
-            'operation' => 'zscan'
+            'operation' => 'zscan',
+        ]);
+    }
+
+    /**
+     * Hijack pipelines.
+     *
+     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     */
+    public function pipeline()
+    {
+        return new Transaction($this, Relay::PIPELINE);
+    }
+
+    /**
+     * Hijack pipelines.
+     *
+     * @param  int  $mode
+     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     */
+    public function multi(int $mode = Relay::MULTI)
+    {
+        return new Transaction($this, $mode);
+    }
+
+    /**
+     * Block non-chained transactions.
+     *
+     * @return void
+     */
+    public function exec()
+    {
+        throw new LogicException('Non-chained transactions are not supported');
+    }
+
+    /**
+     * Executes buffered transaction inside New Relic's datastore segment function.
+     *
+     * @phpstan-return mixed
+     *
+     * @param  \CacheWerk\Relay\Psr\Tracing\Transaction  $transaction
+     * @return array<int, mixed>|bool
+     */
+    public function executeBufferedTransaction(Transaction $transaction)
+    {
+        $method = $transaction->type === Relay::PIPELINE
+            ? 'pipeline'
+            : 'multi';
+
+        return newrelic_record_datastore_segment(function () use ($method, $transaction) {
+            $pipe = $this->relay->{$method}();
+
+            foreach ($transaction->commands as $command) {
+                $pipe->{$command[0]}(...$command[1]);
+            }
+
+            return $pipe->exec();
+        }, [
+            'product' => 'Redis',
+            'operation' => 'exec',
         ]);
     }
 }

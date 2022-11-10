@@ -49,7 +49,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
-        throw new LogicException('Relay does not support clusters, at this point.');
+        throw new LogicException('Relay does not support clusters, at this point');
     }
 
     /**
