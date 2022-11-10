@@ -240,7 +240,7 @@ class RelayNewRelic
             return $pipe->exec();
         }, [
             'product' => 'Redis',
-            'operation' => $method,
+            'operation' => 'exec',
         ]);
     }
 }
