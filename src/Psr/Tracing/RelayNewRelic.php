@@ -213,11 +213,13 @@ class RelayNewRelic
      */
     public function exec()
     {
-        throw new LogicException('Non-chained transactions are not supported.');
+        throw new LogicException('Non-chained transactions are not supported');
     }
 
     /**
      * Executes buffered transaction inside New Relic's datastore segment function.
+     *
+     * @phpstan-return mixed
      *
      * @param  \CacheWerk\Relay\Psr\Tracing\Transaction  $transaction
      * @return array<int, mixed>|bool

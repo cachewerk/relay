@@ -65,6 +65,10 @@ class Transaction
      */
     public function exec()
     {
+        if (! method_exists($this->client, 'executeBufferedTransaction')) {
+            throw new LogicException('Client cannot execute buffered transactions');
+        }
+
         return $this->client->executeBufferedTransaction($this);
     }
 
@@ -75,7 +79,7 @@ class Transaction
      */
     public function pipeline()
     {
-        throw new LogicException('Nested transactions are not supported.');
+        throw new LogicException('Nested transactions are not supported');
     }
 
     /**
@@ -86,6 +90,6 @@ class Transaction
      */
     public function multi(int $mode = Relay::MULTI)
     {
-        throw new LogicException('Nested transactions are not supported.');
+        throw new LogicException('Nested transactions are not supported');
     }
 }

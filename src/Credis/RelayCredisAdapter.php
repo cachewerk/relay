@@ -52,7 +52,7 @@ class RelayCredisAdapter
      */
     public function connect(): void
     {
-        throw new LogicException('Connection must be established in Relay.');
+        throw new LogicException('Connection must be established in Relay');
     }
 
     /**
