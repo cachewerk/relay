@@ -21,7 +21,7 @@ class RelayOpenTelemetry
      *
      * @var \Relay\Relay
      */
-    protected $relay;
+    protected Relay $relay;
 
     /**
      * The OpenTelemetry tracer provider instance.
