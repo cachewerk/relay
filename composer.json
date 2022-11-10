@@ -6,7 +6,7 @@
     "scripts": {
         "bench": "phpbench run --report=redis",
         "bench:verbose": "phpbench run --report=redis --progress=blinken",
-        "stan": "phpstan analyse"
+        "phpstan": "phpstan analyse"
     },
     "require": {
         "php": "^7.4|^8.0",
