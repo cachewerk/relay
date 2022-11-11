@@ -113,7 +113,7 @@ class RelayOpenTelemetry
         }
 
         $operation = strtoupper($name);
-        $stmt = $this->fmtStmt($operation, $arguments);
+        $stmt = $this->fmtCommand($operation, $arguments);
 
         $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
             ->setAttribute('db.system', 'redis')
@@ -310,9 +310,11 @@ class RelayOpenTelemetry
             ? 'pipeline'
             : 'multi';
 
-        $span = $this->tracer->spanBuilder('Relay::exec')
-            ->setAttribute('db.operation', 'EXEC')
+        $stmt = $this->fmtCommands($transaction->commands);
+        $span = $this->tracer->spanBuilder('Relay::' . $method)
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', 'EXEC')
+            ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -334,27 +336,64 @@ class RelayOpenTelemetry
     }
 
     /**
-     * Formats $name and $arguments for db.statement attribute.
+     * Formats multiple commands for db.statement attribute.
+     *
+     * @param  array<mixed> $commands
+     * @return string
+     */
+    protected function fmtCommands(array $commands)
+    {
+        $acc = [];
+        $len = 0;
+        foreach ($commands as $command) {
+            $command = $this->fmtCommand($command[0], $command[1]);
+            $len += strlen($command);
+            if ($len > 5000) {
+                break;
+            }
+            array_push($acc, $command);
+        }
+        return implode(PHP_EOL, $acc);
+    }
+
+    /**
+     * Formats a single command for db.statement attribute.
      *
      * @param  string       $name
      * @param  array<mixed> $arguments
      * @return string
      */
-    protected function fmtStmt(string $name, array $arguments)
+    protected function fmtCommand(string $operation, array $arguments)
     {
-        $acc = [$name];
-
+        $acc = [$operation];
         $len = 0;
+        $this->fmtArguments($acc, $len, $arguments);
+        return implode(' ', $acc);
+    }
+
+    /**
+     * Formats passed arguments as strings.
+     *
+     * @param  array<string> $acc
+     * @param  array<mixed>  $arguments
+     * @return void
+     */
+    protected function fmtArguments(&$acc, int &$len, $arguments)
+    {
         foreach ($arguments as $value) {
+            if (is_array($value)) {
+                $this->fmtArguments($acc, $len, $value);
+                continue;
+            }
+
             $str = strval($value);
             $len += strlen($str);
             if ($len > 1000) {
+                array_push($acc, '...');
                 break;
             }
             array_push($acc, $str);
         }
-
-        return implode(' ', $acc);
     }
 
     /**
@@ -368,7 +407,7 @@ class RelayOpenTelemetry
      * @param  ?string $type
      * @return string
      */
-    protected function fmtScan($name, $key, $iterator, $match = null, int $count = 0, ?string $type = null)
+    protected function fmtScan(string $name, $key, $iterator, $match = null, int $count = 0, ?string $type = null)
     {
         $args = [$name];
         if ($key) {
