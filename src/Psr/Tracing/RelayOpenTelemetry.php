@@ -112,12 +112,12 @@ class RelayOpenTelemetry
             return $this->relay->{$name}(...$arguments);
         }
 
-        $stmt = $name . ' ' . implode(' ', $arguments);
-        $stmt = substr($stmt, 0, 1000);
+        $operation = strtoupper($name);
+        $stmt = $this->fmtStmt($operation, $arguments);
 
         $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
-            ->setAttribute('db.operation', strtoupper($name))
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', $operation)
             ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -156,9 +156,11 @@ class RelayOpenTelemetry
      */
     public function scan(&$iterator, $match = null, int $count = 0, ?string $type = null)
     {
+        $stmt = $this->fmtScan('SCAN', null, $iterator, $match, $count, $type);
         $span = $this->tracer->spanBuilder('Relay::scan')
-            ->setAttribute('db.operation', 'SCAN')
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', 'SCAN')
+            ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -184,9 +186,11 @@ class RelayOpenTelemetry
      */
     public function hscan($key, &$iterator, $match = null, int $count = 0)
     {
+        $stmt = $this->fmtScan('HSCAN', $key, $iterator, $match, $count);
         $span = $this->tracer->spanBuilder('Relay::hscan')
-            ->setAttribute('db.operation', 'HSCAN')
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', 'HSCAN')
+            ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -212,9 +216,11 @@ class RelayOpenTelemetry
      */
     public function sscan($key, &$iterator, $match = null, int $count = 0)
     {
+        $stmt = $this->fmtScan('SSCAN', $key, $iterator, $match, $count);
         $span = $this->tracer->spanBuilder('Relay::sscan')
-            ->setAttribute('db.operation', 'SSCAN')
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', 'SSCAN')
+            ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -240,9 +246,11 @@ class RelayOpenTelemetry
      */
     public function zscan($key, &$iterator, $match = null, int $count = 0)
     {
+        $stmt = $this->fmtScan('ZSCAN', $key, $iterator, $match, $count);
         $span = $this->tracer->spanBuilder('Relay::zscan')
-            ->setAttribute('db.operation', 'ZSCAN')
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', 'ZSCAN')
+            ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -323,5 +331,59 @@ class RelayOpenTelemetry
         } finally {
             $span->end();
         }
+    }
+
+    /**
+     * Formats $name and $arguments for db.statement attribute.
+     *
+     * @param  string       $name
+     * @param  array<mixed> $arguments
+     * @return string
+     */
+    protected function fmtStmt(string $name, array $arguments)
+    {
+        $acc = [$name];
+
+        $len = 0;
+        foreach ($arguments as $value) {
+            $str = strval($value);
+            $len += strlen($str);
+            if ($len > 1000) {
+                break;
+            }
+            array_push($acc, $str);
+        }
+
+        return implode(' ', $acc);
+    }
+
+    /**
+     * Formats SCAN command arguments.
+     *
+     * @param  string  $name
+     * @param  mixed   $key
+     * @param  mixed   $iterator
+     * @param  mixed   $match
+     * @param  int     $count
+     * @param  ?string $type
+     * @return string
+     */
+    protected function fmtScan($name, $key, $iterator, $match = null, int $count = 0, ?string $type = null)
+    {
+        $args = [$name];
+        if ($key) {
+            array_push($args, $key);
+        }
+        array_push($args, $iterator);
+        if ($match) {
+            array_push($args, 'MATCH', $match);
+        }
+        if ($count > 0) {
+            array_push($args, 'COUNT', $count);
+        }
+        if ($type) {
+            array_push($args, 'TYPE', $type);
+        }
+        return implode(' ', $args);
     }
 }
