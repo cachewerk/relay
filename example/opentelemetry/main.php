@@ -45,6 +45,12 @@ function handleRequest($tracer, $redis) {
           ->get('key2')
           ->exec();
 
+    $it = NULL;
+    do {
+        // Scan for some keys
+        $arr_keys = $redis->scan($it);
+    } while ($it > 0);
+
     $spanScope->detach();
     $span->end();
 

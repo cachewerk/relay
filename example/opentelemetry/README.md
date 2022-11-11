@@ -76,7 +76,7 @@ alerting:
           for: 5m
 ```
 
-See [Alerting and Notifications](https://uptrace.dev/get/alerting.html) for details.
+See [Converting spans to metrics](https://uptrace.dev/get/span-metrics.html) for details.
 
 ## Redis monitoring
 
