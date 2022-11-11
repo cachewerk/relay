@@ -313,7 +313,7 @@ class RelayOpenTelemetry
         $stmt = $this->fmtCommands($transaction->commands);
         $span = $this->tracer->spanBuilder('Relay::' . $method)
             ->setAttribute('db.system', 'redis')
-            ->setAttribute('db.operation', 'EXEC')
+            ->setAttribute('db.operation', $method)
             ->setAttribute('db.statement', $stmt)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
