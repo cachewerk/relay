@@ -4,6 +4,7 @@
 - [Twitter](https://twitter.com/RelayPHP)
 - [Discord](https://discord.gg/exYBXqTXgY)
 - [Discussions](https://github.com/cachewerk/relay/discussions)
+- [API](https://relay.so/api)
 
 ## Installation
 
