@@ -31,4 +31,4 @@ composer run bench
 composer run bench:verbose
 ```
 
-> Note: While we're huge fans of New Relic, having the APM agent enabled will significantly slow down Relay and skew the benchmarks.
+> Note: Running these benchmarks with New Relic or similar profilers enabled will significantly slow down Relay and skew the benchmarks.
