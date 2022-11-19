@@ -31,4 +31,5 @@ composer run bench
 composer run bench:verbose
 ```
 
-> Note: Running these benchmarks with New Relic or similar profilers enabled will significantly slow down Relay and skew the benchmarks.
+> Caveat 1: The results on Silicon are misleading, run the benchmark on your actual x86 infrastructure.   
+> Caveat 2: New Relic and similar profilers will significantly slow down Relay and skew the benchmarks.
