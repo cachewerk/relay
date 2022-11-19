@@ -12,7 +12,7 @@ class DataCompression extends BenchCase
     /**
      * @Subject
      * @Revs(10)
-     * @Iterations(5)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideData")
@@ -39,7 +39,7 @@ class DataCompression extends BenchCase
     /**
      * @Subject
      * @Revs(10)
-     * @Iterations(5)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideData")
@@ -66,7 +66,7 @@ class DataCompression extends BenchCase
     /**
      * @Subject
      * @Revs(10)
-     * @Iterations(5)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideData")
@@ -92,7 +92,7 @@ class DataCompression extends BenchCase
     /**
      * @Subject
      * @Revs(10)
-     * @Iterations(5)
+     * @Iterations(2)
      * @Sleep(100000)
      * @OutputTimeUnit("milliseconds", precision=3)
      * @ParamProviders("provideData")
