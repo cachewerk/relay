@@ -33,22 +33,17 @@ class CompressionWorkloadBench extends BenchCase
      *
      * @param  array{data: array<int, string>}  $params
      */
-    public function GET_Unserialize_Predis($params): void
+    public function SET_GET_zstd_igbinary_Predis($params): void
     {
-        $serialize = 'igbinary_serialize';
-        $unserialize = 'igbinary_unserialize';
-
-        $compress = 'zstd_compress';
-        $uncompress = 'zstd_uncompress';
-
-        $compress = 'gzcompress';
-        $uncompress = 'gzuncompress';
+        // Ideally we'd skip this benchmark (trigger a notice), but PHPBench won't allow either
+        $compress = function_exists('zstd_compress') ? 'zstd_compress' : 'gzcompress';
+        $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
         foreach ($params['data'] as $key => $value) {
-            $this->predis->set($key, $compress($serialize($value)));
+            $this->predis->set($key, $compress(igbinary_serialize($value)));
 
             for ($i = 0; $i < 10; $i++) {
-                $unserialize($uncompress($this->predis->get($key)));
+                igbinary_unserialize($uncompress($this->predis->get($key)));
             }
         }
     }
@@ -65,19 +60,17 @@ class CompressionWorkloadBench extends BenchCase
      *
      * @param  array{data: array<int, string>}  $params
      */
-    public function GET_Unserialize_Credis($params): void
+    public function SET_GET_zstd_igbinary_Credis($params): void
     {
-        $serialize = 'igbinary_serialize';
-        $unserialize = 'igbinary_unserialize';
-
-        $compress = 'zstd_compress';
-        $uncompress = 'zstd_uncompress';
+        // Ideally we'd skip this benchmark (trigger a notice), but PHPBench won't allow either
+        $compress = function_exists('zstd_compress') ? 'zstd_compress' : 'gzcompress';
+        $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
         foreach ($params['data'] as $key => $value) {
-            $this->credis->set($key, $compress($serialize($value)));
+            $this->credis->set($key, $compress(igbinary_serialize($value)));
 
             for ($i = 0; $i < 10; $i++) {
-                $unserialize($uncompress($this->credis->get($key)));
+                igbinary_unserialize($uncompress($this->credis->get($key)));
             }
         }
     }
@@ -94,7 +87,7 @@ class CompressionWorkloadBench extends BenchCase
      *
      * @param  array{data: array<int, string>}  $params
      */
-    public function GET_Unserialize_PhpRedis($params): void
+    public function SET_GET_zstd_igbinary_PhpRedis($params): void
     {
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
         $this->phpredis->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
@@ -120,7 +113,7 @@ class CompressionWorkloadBench extends BenchCase
      *
      * @param  array{data: array<int, string>}  $params
      */
-    public function GET_Unserialize_Relay_NoCache($params): void
+    public function SET_GET_zstd_igbinary_Relay_NoCache($params): void
     {
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
         $this->relay->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
@@ -147,7 +140,7 @@ class CompressionWorkloadBench extends BenchCase
      *
      * @param  array{data: array<int, string>}  $params
      */
-    public function GET_Unserialize_Relay_WarmCache($params): void
+    public function SET_GET_zstd_igbinary_Relay_WarmCache($params): void
     {
         $this->relayCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
         $this->relayCache->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
