@@ -31,7 +31,7 @@ class CompressionWorkloadBench extends BenchCase
      * @BeforeMethods("setUpPredis")
      * @Groups("predis")
      *
-     * @param  array{data: array<int, string>}  $params
+     * @param  array{data: array<string, mixed>}  $params
      */
     public function SET_GET_zstd_igbinary_Predis($params): void
     {
@@ -58,7 +58,7 @@ class CompressionWorkloadBench extends BenchCase
      * @BeforeMethods("setUpCredis")
      * @Groups("credis")
      *
-     * @param  array{data: array<int, string>}  $params
+     * @param  array{data: array<string, mixed>}  $params
      */
     public function SET_GET_zstd_igbinary_Credis($params): void
     {
@@ -85,7 +85,7 @@ class CompressionWorkloadBench extends BenchCase
      * @BeforeMethods("setUpPhpRedis")
      * @Groups("phpredis")
      *
-     * @param  array{data: array<int, string>}  $params
+     * @param  array{data: array<string, mixed>}  $params
      */
     public function SET_GET_zstd_igbinary_PhpRedis($params): void
     {
@@ -111,7 +111,7 @@ class CompressionWorkloadBench extends BenchCase
      * @BeforeMethods("setUpRelay")
      * @Groups("relay")
      *
-     * @param  array{data: array<int, string>}  $params
+     * @param  array{data: array<string, mixed>}  $params
      */
     public function SET_GET_zstd_igbinary_Relay_NoCache($params): void
     {
@@ -138,7 +138,7 @@ class CompressionWorkloadBench extends BenchCase
      * @BeforeMethods("setUpRelayCache")
      * @Groups("relay")
      *
-     * @param  array{data: array<int, string>}  $params
+     * @param  array{data: array<string, mixed>}  $params
      */
     public function SET_GET_zstd_igbinary_Relay_WarmCache($params): void
     {
@@ -157,7 +157,7 @@ class CompressionWorkloadBench extends BenchCase
     /**
      * Provides the data for each benchmark.
      *
-     * @return \Generator<string, array{keys: array<int, string>}>
+     * @return \Generator<string, array{data: array<non-falsy-string, mixed>}>
      */
     public function provideData()
     {
