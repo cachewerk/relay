@@ -63,6 +63,13 @@ class RelayOpenTelemetry
     ];
 
     /**
+     * Maximum string length when formatting commands for OpenTelemetry.
+     *
+     * @var int
+     */
+    protected const MAX_STR_LEN = 100;
+
+    /**
      * Creates a new instance.
      *
      * @param  callable  $client
@@ -387,6 +394,10 @@ class RelayOpenTelemetry
             }
 
             $str = strval($value);
+            if (strlen($str) > self::MAX_STR_LEN) {
+                $str = substr($str, 0, self::MAX_STR_LEN - 3) + '...';
+            }
+
             $len += strlen($str);
             if ($len > 1000) {
                 array_push($acc, '...');
