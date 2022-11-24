@@ -75,7 +75,7 @@ class RelayOpenTelemetry
             $tracerProvider = Globals::tracerProvider();
         }
 
-        $this->tracer = $tracerProvider->getTracer('Relay', (string) phpversion('relay'));
+        $this->tracer = $tracerProvider->getTracer('Relay', Relay::Version);
 
         $span = $this->tracer->spanBuilder('Relay::__construct')
             ->setAttribute('db.system', 'redis')
