@@ -5,6 +5,8 @@
 
 /.github export-ignore
 /docker export-ignore
+/benchmarks export-ignore
+/resources export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
