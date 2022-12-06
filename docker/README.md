@@ -100,6 +100,16 @@ docker run -it relay-apache2 bash
 $ php --ri relay
 ```
 
+## PHP Images
+
+This image uses `mlocati/php-extension-installer` to install the extension.
+
+```bash
+docker build --pull --tag relay-php81 --file php81-cli.Dockerfile .
+docker run -it relay-php81 bash
+$ php --ri relay
+```
+
 ## Versions / Nightly builds
 
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
