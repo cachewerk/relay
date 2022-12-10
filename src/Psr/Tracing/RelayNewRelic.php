@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CacheWerk\Relay\Psr\Tracing;
 
 use LogicException;
+use ReflectionClass;
 
 use Relay\Relay;
 
@@ -20,36 +21,11 @@ class RelayNewRelic
     protected Relay $relay;
 
     /**
-     * Untraced client methods.
+     * Whether the method should be traced.
      *
-     * @var array<int, string>
+     * @var array<string, bool>
      */
-    public const Untraced = [
-        'listen',
-        'onFlushed',
-        'onInvalidated',
-        'dispatchEvents',
-        'endpointId',
-        'socketId',
-        'idleTime',
-        'option',
-        'getOption',
-        'setOption',
-        'readTimeout',
-        'getReadTimeout',
-        'getHost',
-        'getPort',
-        'getAuth',
-        'getDbNum',
-        'getMode',
-        'getLastError',
-        'clearLastError',
-        '_serialize',
-        '_unserialize',
-        '_pack',
-        '_unpack',
-        '_prefix',
-    ];
+    protected static array $traced = [];
 
     /**
      * Creates a new instance.
@@ -84,7 +60,9 @@ class RelayNewRelic
      */
     public function __call(string $name, array $arguments)
     {
-        if (in_array($name, self::Untraced)) {
+        isset(self::$traced[$name]) || self::setMethodTraceability($name);
+
+        if (! self::$traced[$name]) {
             return $this->relay->{$name}(...$arguments);
         }
 
@@ -103,6 +81,12 @@ class RelayNewRelic
      */
     public static function __callStatic(string $name, array $arguments)
     {
+        isset(self::$traced[$name]) || self::setMethodTraceability($name);
+
+        if (! self::$traced[$name]) {
+            return Relay::{$name}(...$arguments);
+        }
+
         return newrelic_record_datastore_segment(
             fn () => Relay::{$name}(...$arguments),
             ['product' => 'Redis', 'operation' => strtolower($name)]
@@ -242,5 +226,29 @@ class RelayNewRelic
             'product' => 'Redis',
             'operation' => 'exec',
         ]);
+    }
+
+    /**
+     * Set whether the method should be traced.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    protected static function setMethodTraceability(string $name)
+    {
+        $class = new ReflectionClass(Relay::class);
+        $method = $class->getMethod($name);
+
+        $attributes = array_map(
+            fn ($attribute) => $attribute->getName(),
+            $method->getAttributes()
+        );
+
+        $matches = array_diff([
+            'Relay\Attributes\Server',
+            'Relay\Attributes\RedisCommand',
+        ], $attributes);
+
+        self::$traced[$name] = count($matches) <> 2;
     }
 }
