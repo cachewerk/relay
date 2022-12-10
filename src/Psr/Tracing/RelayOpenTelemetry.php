@@ -6,6 +6,7 @@ namespace CacheWerk\Relay\Psr\Tracing;
 
 use Throwable;
 use LogicException;
+use ReflectionMethod;
 
 use Relay\Relay;
 
@@ -31,36 +32,18 @@ class RelayOpenTelemetry
     protected TracerInterface $tracer;
 
     /**
-     * Untraced client methods.
+     * Whether the method should be traced.
      *
-     * @var array<int, string>
+     * @var array<string, bool>
      */
-    public const Untraced = [
-        'listen',
-        'onFlushed',
-        'onInvalidated',
-        'dispatchEvents',
-        'endpointId',
-        'socketId',
-        'idleTime',
-        'option',
-        'getOption',
-        'setOption',
-        'readTimeout',
-        'getReadTimeout',
-        'getHost',
-        'getPort',
-        'getAuth',
-        'getDbNum',
-        'getMode',
-        'getLastError',
-        'clearLastError',
-        '_serialize',
-        '_unserialize',
-        '_pack',
-        '_unpack',
-        '_prefix',
-    ];
+    protected array $traced = [];
+
+    /**
+     * Whether the method should be traced.
+     *
+     * @var array<string, bool>
+     */
+    protected array $command = [];
 
     /**
      * Creates a new instance.
@@ -108,13 +91,24 @@ class RelayOpenTelemetry
      */
     public function __call(string $name, array $arguments)
     {
-        if (in_array($name, self::Untraced)) {
+        if (! isset($this->traced[$name])) {
+            $this->setMethodAttributes($name);
+        }
+
+        if (! $this->traced[$name]) {
             return $this->relay->{$name}(...$arguments);
         }
 
         $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
-            ->setAttribute('db.operation', strtoupper($name))
             ->setAttribute('db.system', 'redis')
+            ->setAttribute('db.operation', $this->command[$name]
+                ? strtoupper($name)
+                : null
+            )
+            ->setAttribute('db.statement', $this->command[$name]
+                ? sprintf('%s %s', $this->command[$name], implode(' ', $arguments))
+                : null
+            )
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
@@ -154,6 +148,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::scan')
             ->setAttribute('db.operation', 'SCAN')
+            ->setAttribute('db.statement', 'SCAN ' . implode(" ", array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -182,6 +177,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::hscan')
             ->setAttribute('db.operation', 'HSCAN')
+            ->setAttribute('db.statement', 'HSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -210,6 +206,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::sscan')
             ->setAttribute('db.operation', 'SSCAN')
+            ->setAttribute('db.statement', 'SSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -238,6 +235,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::zscan')
             ->setAttribute('db.operation', 'ZSCAN')
+            ->setAttribute('db.statement', 'ZSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -319,5 +317,26 @@ class RelayOpenTelemetry
         } finally {
             $span->end();
         }
+    }
+
+    /**
+     * Set the method's attributes.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    protected function setMethodAttributes(string $name)
+    {
+        $method = new ReflectionMethod($this->relay::class, $name);
+
+        $attributes = array_flip(array_map(
+            fn ($attribute) => $attribute->getName(),
+            $method->getAttributes()
+        ));
+
+        $this->command[$name] = isset($attributes['Relay\Attributes\RedisCommand']);
+
+        $this->traced[$name] = $this->command[$name]
+            || isset($attributes['Relay\Attributes\Server']);
     }
 }
