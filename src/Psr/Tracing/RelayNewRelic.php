@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CacheWerk\Relay\Psr\Tracing;
 
 use LogicException;
-use ReflectionClass;
+use ReflectionMethod;
 
 use Relay\Relay;
 
@@ -236,8 +236,7 @@ class RelayNewRelic
      */
     protected static function setMethodTraceability(string $name)
     {
-        $class = new ReflectionClass(Relay::class);
-        $method = $class->getMethod($name);
+        $method = new ReflectionMethod(Relay::class, $name);
 
         $attributes = array_map(
             fn ($attribute) => $attribute->getName(),
