@@ -1,0 +1,404 @@
+name: Installer testing
+
+on:
+  push:
+
+  pull_request:
+
+  workflow_dispatch:
+
+concurrency:
+  group: installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  help:
+    name: Show help message
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2']
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}    
+      
+      - name: Run Relay script to show the help message
+        run: |
+          sh universal-installer/installer.sh --help
+
+  alpine:
+    name: Alpine PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7', '8']
+
+    container:
+      image: alpine:3.15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update system
+        run: |
+          apk add openssl curl php${{ matrix.php}} php${{ matrix.php}}-dev php${{ matrix.php}}-pecl-msgpack php${{ matrix.php}}-pecl-igbinary lz4-libs zstd-libs
+      
+      - name: Install missing extension for PHP 7
+        if: matrix.php == 7
+        run: |
+          apk add php7-json
+
+
+      - name: Fix small PHP 8 issue
+        if: matrix.php == 8
+        run: |
+          ln -s /usr/bin/php${{ matrix.php}} /usr/bin/php
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  alpine-to-fail:
+    name: Alpine (Fail to install)
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7']
+
+    container:
+      image: alpine:3.15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update system
+        run: |
+          apk add curl php${{ matrix.php}} php${{ matrix.php}}-dev php${{ matrix.php}}-pecl-msgpack php${{ matrix.php}}-pecl-igbinary
+      
+      - name: Install Relay
+        continue-on-error: true
+        run: |
+          sh universal-installer/installer.sh
+      
+      - name: Install missing json
+        run: |
+          apk add php7-json
+
+      - name: Install Relay
+        continue-on-error: true
+        run: |
+          sh universal-installer/installer.sh
+      
+      - name: Install missing openssl
+        run: |
+          apk add openssl
+      
+      - name: Install Relay
+        continue-on-error: true
+        run: |
+          sh universal-installer/installer.sh
+
+      - name: Install missing lz4 zstd
+        run: |
+          apk add lz4-libs zstd-libs
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh          
+
+  amazn:
+    name: Amazon Linux PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        php: ['7.4', '8.0', '8.1']
+
+    container:
+      image: amazonlinux:2
+
+    steps:
+      - name: Install required files
+        run: |
+          yum -y install tar gzip
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update system
+        run: |
+          yum -y install gcc make tar yum-utils which
+          yum remove php*
+          amazon-linux-extras enable php${{ matrix.php }}
+          yum install -y php-cli php-fpm php-pear php-devel openssl11 libzstd-devel
+          pecl config-set php_ini /etc/php.ini
+          pecl install msgpack && echo "extension = msgpack.so" > $(php-config --ini-dir)/40-msgpack.ini
+          pecl install igbinary && echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini          
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  centos:
+    name: Centos ${{ matrix.centos }} PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        php: ['74', '80', '81']
+        centos: ['7', '8.4.2105']
+
+    container:
+      image: --platform=linux/amd64 centos:${{ matrix.centos }}
+
+    steps:
+      - name: Prepare Centos 8
+        if: matrix.centos == '8.4.2105'
+        run: |
+          sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-* 
+          dnf -y install tar gzip which
+
+      - name: Install required files
+        if: matrix.centos == 7      
+        run: |
+          yum -y install tar gzip which
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update system for centos 8
+        if: matrix.centos == '8.4.2105'
+        run: |
+          dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+          dnf install -y "https://rpms.remirepo.net/enterprise/remi-release-8.4.rpm"
+          dnf install -y yum-utils openssl
+          dnf install -y php${{ matrix.php }} php${{ matrix.php }}-php-cli php${{ matrix.php }}-php-fpm which
+          dnf install -y php${{ matrix.php }}-php-igbinary php${{ matrix.php }}-php-msgpack          
+
+      - name: Update system for centos 7
+        if: matrix.centos == 7
+        run: |
+          yum install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${{ matrix.centos }}.noarch.rpm"
+          yum install -y "https://rpms.remirepo.net/enterprise/remi-release-${{ matrix.centos }}.rpm"
+          yum install -y yum-utils
+          yum install -y php${{ matrix.php }} php${{ matrix.php }}-php-cli php${{ matrix.php }}-php-fpm which
+          yum install -y openssl11 libzstd lz4
+          yum install -y php${{ matrix.php }}-php-igbinary php${{ matrix.php }}-php-msgpack
+      
+      - name: Setup the correct link
+        run: ln -s /opt/remi/php${{ matrix.php }}/root/usr/bin/php /usr/bin/php
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  debian:
+    name: Debian ${{ matrix.debian }} PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2']
+        debian: ['10.10', '11']
+
+    container:
+      image: debian:${{ matrix.debian }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update system
+        run: |
+          apt-get update && apt upgrade -y
+          apt-get install -y gnupg lsb-release apt-transport-https ca-certificates software-properties-common curl wget
+          wget -q "https://packages.sury.org/php/apt.gpg" -O- | apt-key add -
+          add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -sc) main"
+          apt-get update
+          ln -s /bin/sed /usr/bin/sed
+          apt-get install -y php${{ matrix.php }}-dev
+          apt-get install -y lz4 zstd php${{ matrix.php }}-msgpack php${{ matrix.php }}-igbinary
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  litespeed:
+    name: Litespeed PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['74', '80']
+
+    container:
+      image: litespeedtech/litespeed:6.0.8-lsphp${{ matrix.php }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  rockylinux:
+    name: Rocky linux ${{ matrix.rocky }} PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        php: ['74', '80', '81']
+        rocky: ['8.6', '9']
+        include:
+          - epel: 8
+          - rocky: 8.6
+            epel: 8
+
+    container:
+      image: --platform=linux/amd64 rockylinux:${{ matrix.rocky }}
+
+    steps:
+      - name: Install requirements for pulling the code
+        run: |
+          dnf -y install tar gzip which
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Update the system
+        run: |
+          dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${{ matrix.epel }}.noarch.rpm"
+          dnf install -y "https://rpms.remirepo.net/enterprise/remi-release-${{ matrix.rocky }}.rpm"
+          dnf install -y yum-utils which openssl
+          dnf install -y php${{ matrix.php }} php${{ matrix.php }}-php-cli php${{ matrix.php }}-php-fpm
+          dnf install -y php${{ matrix.php }}-php-igbinary php${{ matrix.php }}-php-msgpack
+
+      - name: Required for Rocky 9
+        if: matrix.rocky == 9
+        run: dnf install -y compat-openssl11
+
+      - name: Setup the correct link
+        run: ln -s /opt/remi/php${{ matrix.php }}/root/usr/bin/php /usr/bin/php
+      
+      - name: Install Relay
+        run: |
+          sh universal-installer/installer.sh
+
+  ubuntu:
+    name: Ubuntu ${{ matrix.ubuntu }} PHP ${{ matrix.php }}
+    
+    runs-on: ubuntu-${{ matrix.ubuntu }}
+    
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2']
+        ubuntu: ['18.04', '20.04', '22.04'] 
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, msgpack, igbinary
+      
+      - name: Install Relay
+        run: |
+          sudo sh universal-installer/installer.sh
+
+  mac:
+    if: false
+    name: macOS ${{ matrix.macos }} PHP ${{ matrix.php }}
+    
+    runs-on: macos-${{ matrix.macos }}
+    
+    strategy:
+      fail-fast: true
+      matrix:
+        # php: ['7.4', '8.0', '8.1', '8.2']
+        # macos: ['10.15', '11', '12'] 
+        php: ['7.4']
+        macos: ['12'] 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, msgpack, igbinary
+      
+      - name: Install Relay
+        run: |
+          sudo sh universal-installer/installer.sh
