@@ -86,15 +86,23 @@ supported_os() {
 is_php_supported() {
     info "Checking installed php version"
 
-    if ! command_exists php; then
-        error "PHP is not installed"
-        exit 1;
+    if [ -z ${PHP_BINARY} ]; then
+
+        if ! command_exists php; then
+            error "PHP is not installed"
+            exit 1;
+        fi
+
+        PHP_BINARY=`command -v php`
+
+        if [ $? -gt 0 ]; then
+            error "PHP is not installed, please make sure you install php first then run the script again."
+            exit 1;
+        fi    
     fi
 
-    PHP_BINARY=`command -v php`
-
-    if [ $? -gt 0 ]; then
-        error "PHP is not installed, please make sure you install php first then run the script again."
+    if [ ! -r ${PHP_BINARY} ]; then
+        error "The php binary path that you have provided ${PHP_BINARY} does not exists"
         exit 1;
     fi
 
