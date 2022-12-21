@@ -30,7 +30,7 @@ ARG RELAY=dev
 
 # Download Relay
 RUN PHP=$(php -r "echo substr(PHP_VERSION, 0, 3);") \
-  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php$PHP-debian-x86-64%2Bzts.tar.gz" | tar xz -C /tmp \
+  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-x86-64%2Bzts.tar.gz" | tar xz -C /tmp \
   && cd /tmp/relay-* \
   && sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" relay-pkg.so \
   && mkdir -p $(php-config --extension-dir) \

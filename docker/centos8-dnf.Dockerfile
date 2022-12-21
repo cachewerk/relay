@@ -15,7 +15,7 @@ RUN dnf install -y \
 ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 
 # Add Relay repository
-RUN curl -s -o /etc/yum.repos.d/cachewerk.repo "https://cachewerk.s3.amazonaws.com/repos/rpm/el.repo"
+RUN curl -s -o /etc/yum.repos.d/cachewerk.repo "https://repos.r2.relay.so/rpm/el.repo"
 
 # Install Relay
 RUN yum install -y \

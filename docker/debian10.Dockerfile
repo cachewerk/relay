@@ -31,7 +31,7 @@ ARG RELAY=v0.5.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && wget -c "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
+  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

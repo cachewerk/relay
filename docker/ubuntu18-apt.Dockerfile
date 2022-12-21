@@ -16,8 +16,8 @@ RUN apt-get install -y \
   php8.1-fpm
 
 # Add Relay repository
-RUN curl -s "https://cachewerk.s3.amazonaws.com/repos/key.gpg" | apt-key add -
-RUN add-apt-repository "deb https://cachewerk.s3.amazonaws.com/repos/deb $(lsb_release -cs) main"
+RUN curl -s "https://repos.r2.relay.so/key.gpg" | apt-key add -
+RUN add-apt-repository "deb https://repos.r2.relay.so/deb $(lsb_release -cs) main"
 
 # Install Relay
 RUN apt-get install -y \
