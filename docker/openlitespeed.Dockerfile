@@ -8,7 +8,7 @@ ARG RELAY=v0.5.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && curl -L "https://cachewerk.s3.amazonaws.com/relay/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM%2Blibssl3.tar.gz" | tar xz -C /tmp
+  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM%2Blibssl3.tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
