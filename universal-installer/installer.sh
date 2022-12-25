@@ -5,7 +5,7 @@ set -e
 
 RELAY_VERSION="v0.5.1"
 RELAY_KEY="${1:-0000}"
-RELAY_STORAGE="https://cachewerk.s3.amazonaws.com/relay"
+RELAY_STORAGE="https://github.com/cachewerk/relay/releases/download"
 RELAY_GITHUB="https://github.com/cachewerk/relay"
 RELAY_INSTALLER_URL="https://get.relay.so"
 
