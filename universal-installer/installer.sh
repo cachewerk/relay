@@ -262,7 +262,7 @@ required_libraries() {
         **debian** )
             number_of_installed_libraries=$(echo `ldconfig -p | grep -e "lz4" -e "zstd" -c`)
             if [ $(openssl_version | cut -c 1) -eq 3 ]; then
-                relay_filename="relay-${RELAY_VERSION}-php${PHP_VERSION}-${RELAY_DISTRO}-${RELAY_ARCH}%2Blibssl3.tar.gz"
+                relay_filename="relay-${RELAY_VERSION}-php${PHP_VERSION}-${RELAY_DISTRO}-${RELAY_ARCH}.libssl3.tar.gz"
             fi            
             ;;
         * )
