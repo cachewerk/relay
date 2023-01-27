@@ -28,10 +28,10 @@ class DataCompression extends BenchCase
         $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
         foreach ($params['data'] as $value) {
-            $value = $compress(igbinary_serialize($value));
+            $value = $compress((string) igbinary_serialize($value));
 
             for ($i = 0; $i < 10; $i++) {
-                igbinary_unserialize($uncompress($value));
+                igbinary_unserialize((string) $uncompress((string) $value));
             }
         }
     }
@@ -55,10 +55,10 @@ class DataCompression extends BenchCase
         $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
         foreach ($params['data'] as $value) {
-            $value = $compress(igbinary_serialize($value));
+            $value = $compress((string) igbinary_serialize($value));
 
             for ($i = 0; $i < 10; $i++) {
-                igbinary_unserialize($uncompress($value));
+                igbinary_unserialize((string) $uncompress((string) $value));
             }
         }
     }
