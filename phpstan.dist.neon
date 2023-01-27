@@ -11,8 +11,8 @@ parameters:
     - src/
 
   ignoreErrors:
-    - '#Parameter .+? expects Redis, Relay\\Relay given#'
-    - '#Return type \(Relay\\Relay\) of method .+? should be compatible with return type \(Redis\) of method#'
-    - '#PHPDoc type Relay\\Relay of property .+? is not covariant with PHPDoc type Redis#'
-    - '#Method .+?\\RelayNewRelic::[\w]?scan\(\) should return .+? but returns mixed#'
-    - '#Call to an undefined method Redis::_(un)?pack\(\)#'
+    - '#^Parameter \S+ expects Redis, Relay\\Relay given#'
+    - '#^Return type \(Relay\\Relay\) of method \S+ should be compatible with return type \(Redis\) of method#'
+    - '#^PHPDoc type Relay\\Relay of property \S+ is not covariant with PHPDoc type Redis#'
+    - '#^Method \S+\\RelayNewRelic::scan\(\) should return \S+ but returns mixed#'
+    - '#^Call to an undefined method Redis::(_pack|_unpack)\(\)#'
