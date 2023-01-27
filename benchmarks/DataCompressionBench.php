@@ -27,7 +27,7 @@ class DataCompression extends BenchCase
         $compress = function_exists('zstd_compress') ? 'zstd_compress' : 'gzcompress';
         $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
-        foreach ($params['data'] as $key => $value) {
+        foreach ($params['data'] as $value) {
             $value = $compress(igbinary_serialize($value));
 
             for ($i = 0; $i < 10; $i++) {
@@ -54,7 +54,7 @@ class DataCompression extends BenchCase
         $compress = function_exists('zstd_compress') ? 'zstd_compress' : 'gzcompress';
         $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
 
-        foreach ($params['data'] as $key => $value) {
+        foreach ($params['data'] as $value) {
             $value = $compress(igbinary_serialize($value));
 
             for ($i = 0; $i < 10; $i++) {
@@ -80,7 +80,7 @@ class DataCompression extends BenchCase
         $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
         $this->phpredis->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
 
-        foreach ($params['data'] as $key => $value) {
+        foreach ($params['data'] as $value) {
             $value = $this->phpredis->_pack($value);
 
             for ($i = 0; $i < 10; $i++) {
@@ -106,7 +106,7 @@ class DataCompression extends BenchCase
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
         $this->relay->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
 
-        foreach ($params['data'] as $key => $value) {
+        foreach ($params['data'] as $value) {
             $value = $this->relay->_pack($value);
 
             for ($i = 0; $i < 10; $i++) {
