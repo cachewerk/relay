@@ -11,7 +11,8 @@ parameters:
     - src/
 
   ignoreErrors:
-    - '#^Parameter \S+ expects Redis, Relay\\Relay given#'
+    - '#^Parameter \#1 \$client of class CacheWerk\\Relay\\Laravel\\RelayConnection constructor expects Redis, Relay\\Relay given\.$#'
+    - '#^Parameter \#1 \$client of method Illuminate\\Redis\\Connectors\\PhpRedisConnector::establishConnection\(\) expects Redis, Relay\\Relay given\.$#'
     - '#^Return type \(Relay\\Relay\) of method \S+ should be compatible with return type \(Redis\) of method#'
     - '#^PHPDoc type Relay\\Relay of property \S+ is not covariant with PHPDoc type Redis#'
     - '#^Method \S+\\RelayNewRelic::(scan|hscan|sscan|zscan)\(\) should return \S+ but returns mixed#'
