@@ -21,17 +21,17 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
-          coverage: none
+          php-version: '8.2'
+          extensions: relay
           tools: composer
+          coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-relay
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Download stubs
         run: |
           mkdir -p stubs && cd stubs
-          wget https://builds.r2.relay.so/dev/relay.stub.php
           wget https://raw.githubusercontent.com/JetBrains/phpstorm-stubs/master/newrelic/newrelic.php
 
       - name: Run PHPStan
