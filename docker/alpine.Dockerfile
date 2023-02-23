@@ -16,7 +16,7 @@ RUN apk add \
   lz4-libs \
   zstd-libs
 
-ARG RELAY=v0.6.0
+ARG RELAY=v0.6.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
