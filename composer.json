@@ -14,8 +14,8 @@
     },
     "require-dev": {
         "colinmollenhour/credis": "^1.12",
-        "open-telemetry/api": "^0.0.16",
         "illuminate/redis": "^7|^8|^9|^10",
+        "open-telemetry/api": "^0.0.17|^1.0",
         "phpbench/phpbench": "^1.2",
         "phpstan/phpstan": "^1.7",
         "predis/predis": "^1.1|^2.0",
