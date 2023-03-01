@@ -1,7 +1,7 @@
 # Relay session handler
 
 ```php
-$relay = new Relay\Relay
+$relay = new Relay\Relay;
 $relay->connect('127.0.0.1', 6379);
 
 $handler = new CacheWerk\Relay\Session\RelaySessionHandler($relay);

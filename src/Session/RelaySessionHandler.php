@@ -7,11 +7,10 @@ namespace CacheWerk\Relay\Session;
 use Relay\Relay;
 use Relay\Exception;
 
-use SessionIdInterface;
 use SessionHandlerInterface;
 use SessionUpdateTimestampHandlerInterface;
 
-class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface, SessionUpdateTimestampHandlerInterface
+class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimestampHandlerInterface
 {
     /**
      * The of seconds after which data will be seen as 'garbage' and cleaned up.
@@ -23,16 +22,16 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
     /**
      * Session id of prefetched data.
      *
-     * @var string
+     * @var ?string
      */
-    private ?string $sessionId;
+    protected ?string $sessionId;
 
     /**
      * Session data of prefetched data.
      *
-     * @var mixed
+     * @var ?string
      */
-    private mixed $sessionData;
+    protected ?string $sessionData;
 
     /**
      * Creates a new session handler instance.
@@ -76,7 +75,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
      */
     public function read(#[\SensitiveParameter] string $id): string|false
     {
-        if ($this->sessionId === $id) {
+        if (isset($this->sessionId, $this->sessionData) && $this->sessionId === $id) {
             $data = $this->sessionData;
 
             unset($this->sessionId, $this->sessionData);
@@ -87,11 +86,9 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
         try {
             $data = $this->relay->get($id);
 
-            return empty($data)
-                ? false
-                : $this->unserialize($data);
+            return is_string($data) ? $data : '';
         } catch (Exception) {
-            return false;
+            return '';
         }
     }
 
@@ -105,7 +102,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
     public function write(#[\SensitiveParameter] string $id, string $data): bool
     {
         try {
-            return $this->relay->setex($id, $this->ttl, $this->serialize($data));
+            return $this->relay->setex($id, $this->ttl, $data);
         } catch (Exception) {
             return false;
         }
@@ -127,19 +124,6 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
     }
 
     /**
-     * Creates a session identifier that mimics PHP's native session id format.
-     *
-     * @return string
-     */
-    public function create_sid(): string
-    {
-        return implode('', array_map(
-            fn () => base_convert((string) random_int(0, 36), 10, 36),
-            array_fill(0, 26, 42)
-        ));
-    }
-
-    /**
      * Validates the given session id.
      *
      * @param  string  $id
@@ -148,13 +132,15 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
     public function validateId(#[\SensitiveParameter] string $id): bool
     {
         try {
-            $this->sessionId = $id;
-            $this->sessionData = $this->unserialize($this->relay->get($id));
+            $data = $this->relay->get($id);
         } catch (Exception) {
             return false;
+        } finally {
+            $this->sessionId = $id;
+            $this->sessionData = is_string($data ?? null) ? $data : '';
         }
 
-        return $this->sessionData !== false;
+        return true;
     }
 
     /**
@@ -192,35 +178,5 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionIdInterface
     public function close(): bool
     {
         return false;
-    }
-
-    /**
-     * Serialize given data, if Relay has no serializer configured.
-     *
-     * @param  mixed  $data
-     * @return mixed
-     */
-    protected function serialize(mixed $data)
-    {
-        if ($this->relay->getOption(Relay::OPT_SERIALIZER) === Relay::SERIALIZER_NONE) {
-            return serialize($data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * Unserialize given data, if Relay has no serializer configured.
-     *
-     * @param  mixed  $data
-     * @return mixed
-     */
-    protected function unserialize(mixed $data)
-    {
-        if ($this->relay->getOption(Relay::OPT_SERIALIZER) === Relay::SERIALIZER_NONE) {
-            return unserialize($data);
-        }
-
-        return $data;
     }
 }
