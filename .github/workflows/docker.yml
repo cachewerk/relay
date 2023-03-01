@@ -1,6 +1,9 @@
 name: Docker builds
 
-on: [push, workflow_dispatch]
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 20 * * *' # 12:00 PT
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
