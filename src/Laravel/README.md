@@ -10,18 +10,24 @@ Be sure to follow the [installation instructions](https://relay.so/docs/installa
 composer require cachewerk/relay
 ```
 
-The Service Provider and Facade are auto-discovered.
+The Relay Service Provider and Facade are auto-discovered.
 
-Simply set your `REDIS_CLIENT` to `relay`, or update your the `redis.client` in your `config/database.php` configuration file.
+To use Relay for all Redis connections, set your `REDIS_CLIENT` in your `.env` file:
+
+```
+REDIS_CLIENT=relay
+```
+
+Or set the `redis.client` option in the `config/database.php` configuration file to `relay`.
 
 ## Usage
 
-Laravel will use Relay for all its Redis connections, depending on your configuration.
-
-Use the cache, sessions, queues and broadcasting modules as usual.
+You can use Laravel's cache, sessions and queues as usual.
 
 You may also use the Relay facade directly:
 
 ```php
+use CacheWerk\Relay\Laravel\Relay;
+
 Relay::stats();
 ```
