@@ -22,12 +22,19 @@ Or set the `redis.client` option in the `config/database.php` configuration file
 
 ## Usage
 
-You can use Laravel's cache, sessions and queues as usual.
-
-You may also use the Relay facade directly:
+You can use Laravel's cache, sessions and queues as usual. For Relay-specific methods, you can use it's facade:
 
 ```php
 use CacheWerk\Relay\Laravel\Relay;
 
-Relay::stats();
+// dump statistics
+dump(Relay::stats());
+
+// register event handlers
+Relay::listen(function (\Relay\Event $event) {
+    match ($event->type) {
+        $event::Flushed => flushCache(),
+        $event::Invalidated => deleteFromCache($event->key),
+    };
+});
 ```
