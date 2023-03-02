@@ -28,13 +28,11 @@ You can use Laravel's cache, sessions and queues as usual. For Relay-specific me
 use CacheWerk\Relay\Laravel\Relay;
 
 // dump statistics
-dump(Relay::stats());
+Relay::stats();
 
-// register event handlers
-Relay::listen(function (\Relay\Event $event) {
-    match ($event->type) {
-        $event::Flushed => flushCache(),
-        $event::Invalidated => deleteFromCache($event->key),
-    };
-});
+// register Relay event callback
+Relay::onFlushed(fn ($event) => dd($event));
+
+// register Relay event callback
+Relay::onInvalidated(fn ($event) => dd($event->key));
 ```
