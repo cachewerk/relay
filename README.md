@@ -10,7 +10,7 @@
 
 First, follow the [installation instructions](https://relay.so/docs/installation) to set up the Relay extension for PHP.
 
-Next, either try the [Laravel](https://github.com/cachewerk/relay/tree/main/src/Laravel), [WordPress](https://objectcache.pro/docs/relay/) or [Magento](https://github.com/cachewerk/magento-relay) integrations.
+Next, try the [Laravel](https://github.com/cachewerk/relay/tree/main/src/Laravel), [Symfony](https://symfony.com/doc/current/components/cache/adapters/redis_adapter.html), [WordPress](https://objectcache.pro/docs/relay/), [Drupal](https://www.drupal.org/project/redis) or [Magento](https://github.com/cachewerk/magento-relay) integrations.
 
 Alternatively, grab the Composer package and run the benchmarks:
 
