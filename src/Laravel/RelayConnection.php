@@ -97,7 +97,7 @@ class RelayConnection extends PhpRedisConnection implements Connection
     /**
      * Returns information about the license.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function license()
     {
@@ -107,7 +107,7 @@ class RelayConnection extends PhpRedisConnection implements Connection
     /**
      * Returns statistics about Relay.
      *
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public function stats()
     {
@@ -130,9 +130,9 @@ class RelayConnection extends PhpRedisConnection implements Connection
      * When given an endpoint and database index, only that database
      * for that connection will be flushed.
      *
-     * @param  int  $db
      * @param  string|null  $endpointId
      * @param  int|null  $db
+     * @return bool
      */
     public function flushMemory(?string $endpointId = null, int $db = null)
     {
