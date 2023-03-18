@@ -16,16 +16,15 @@ ENV PHP_EXT_DIR=/usr/lib64/php/modules
 ARG RELAY=v0.6.1
 
 # Relay requires the `msgpack` and `igbinary` extension
-RUN yum install -y php-igbinary php-msgpack
+RUN dnf install -y php-igbinary php-msgpack
 
 # Download Relay
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  RELAY_ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.2-centos8-$PLATFORM.tar.gz" \
+RUN RELAY_ARCH=$(uname -m | sed 's/_/-/') \
+  RELAY_ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.2-el9-$RELAY_ARCH.tar.gz" \
   && curl -L $RELAY_ARTIFACT | tar -xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
+RUN cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
   && cp "/tmp/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
