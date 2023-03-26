@@ -39,8 +39,16 @@ $ php --ri relay
 ## Amazon Linux 2
 
 ```bash
-docker build --pull --tag relay-amazon2 --file amzn2.Dockerfile .
+docker build --pull --tag relay-amazon2 --file al2.Dockerfile .
 docker run -it relay-amazon2 bash
+$ php --ri relay
+```
+
+## Amazon Linux 2023
+
+```bash
+docker build --pull --tag relay-amazon2023 --file al2023.Dockerfile .
+docker run -it relay-amazon2023 bash
 $ php --ri relay
 ```
 
