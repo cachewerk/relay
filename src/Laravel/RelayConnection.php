@@ -130,8 +130,8 @@ class RelayConnection extends PhpRedisConnection implements Connection
      * When given an endpoint and database index, only that database
      * for that connection will be flushed.
      *
-     * @param  string|null  $endpointId
-     * @param  int|null  $db
+     * @param  ?string  $endpointId
+     * @param  ?int  $db
      * @return bool
      */
     public function flushMemory(?string $endpointId = null, int $db = null)
