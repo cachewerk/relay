@@ -25,10 +25,12 @@ jobs:
           - dev
         build:
           - alpine
-          - amzn2
+          - al2
+          - al2023
           - centos7
           - centos8
           - rocky8
+          - el9
           - debian10
           - debian10-zts
           - ubuntu20
@@ -82,9 +84,11 @@ jobs:
       fail-fast: false
       matrix:
         package:
+          - apache2
           - centos7-yum
           - centos8-dnf
           - rocky8-dnf
+          - el9-dnf
           - debian11-apt
           - ubuntu18-apt
           - ubuntu22-apt
