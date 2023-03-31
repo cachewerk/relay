@@ -1,10 +1,10 @@
 FROM amazonlinux:2023
 
 RUN dnf install -y \
-  curl \
   php-cli \
   php-pear \
-  php-devel
+  php-devel \
+  gzip
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack && \
@@ -16,14 +16,13 @@ RUN pecl install igbinary && \
 
 ARG RELAY=v0.6.2
 
-# Download Relay
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-alpine3.17-$PLATFORM.tar.gz" | tar xz --strip-components=1 -C /tmp
+RUN ARCH=$(uname -m | sed 's/_/-/') \
+  ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-alpine3.17-$ARCH.tar.gz" \
+  && curl -sfSL $ARTIFACT | tar xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay.ini" $(php-config --ini-dir)/50-relay.ini \
-  && cp "/tmp/relay.so" $(php-config --extension-dir)/relay.so
+RUN cp "/tmp/relay.ini" $(php-config --ini-dir)/50-relay.ini \
+  && cp "/tmp/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so

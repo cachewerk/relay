@@ -90,6 +90,20 @@ $ php --ri relay
 
 See [rocky8.Dockerfile](/docker/rocky8.Dockerfile) for the manual installation.
 
+## EL 9
+
+```bash
+docker build --pull --tag relay-el9 --file el9.Dockerfile .
+docker run -it relay-el9 bash
+$ php --ri relay
+```
+
+```bash
+docker build --pull --tag relay-el9-dnf --file el9-dnf.Dockerfile .
+docker run -it relay-el9-dnf bash
+$ php --ri relay
+```
+
 ## LiteSpeed
 
 ```bash

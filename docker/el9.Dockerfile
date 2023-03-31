@@ -2,14 +2,14 @@ FROM rockylinux/rockylinux:9
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-RUN dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
-RUN dnf module reset php
-RUN dnf module install php:remi-8.2
+RUN dnf -y module reset php
+RUN dnf -y module install php:remi-8.2
 
-RUN dnf update
-RUN dnf install php-cli
+RUN dnf -y update
+RUN dnf -y install php-cli
 
 # Instead of using `php-config` let's hard code these
 ENV PHP_INI_DIR=/etc/php.d/
@@ -18,7 +18,9 @@ ENV PHP_EXT_DIR=/usr/lib64/php/modules
 ARG RELAY=v0.6.2
 
 # Relay requires the `msgpack` and `igbinary` extension
-RUN dnf install php-igbinary php-msgpack
+RUN dnf -y install \
+  php-msgpack \
+  php-igbinary
 
 # Download Relay
 RUN RELAY_ARCH=$(uname -m | sed 's/_/-/') \
