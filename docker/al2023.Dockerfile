@@ -14,7 +14,7 @@ RUN pecl install msgpack && \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.6.2
+ARG RELAY=v0.6.3
 
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-el9-$ARCH.tar.gz" \
