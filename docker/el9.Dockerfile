@@ -23,9 +23,9 @@ RUN dnf -y install \
   php-igbinary
 
 # Download Relay
-RUN RELAY_ARCH=$(uname -m | sed 's/_/-/') \
-  RELAY_ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.2-el9-$RELAY_ARCH.tar.gz" \
-  && curl -L $RELAY_ARTIFACT | tar -xz --strip-components=1 -C /tmp
+RUN ARCH=$(uname -m | sed 's/_/-/') \
+  ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.2-el9-$ARCH.tar.gz" \
+  && curl -L $ARTIFACT | tar -xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
