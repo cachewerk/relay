@@ -33,4 +33,4 @@ RUN cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
 
 # Inject UUID
 RUN UUID=$(cat /proc/sys/kernel/random/uuid) \
-  sed -i "s/00000000-0000-0000-0000-000000000000/$UUID/" "$PHP_EXT_DIR/relay.so"
+  && sed -i "s/00000000-0000-0000-0000-000000000000/$UUID/" "$PHP_EXT_DIR/relay.so"
