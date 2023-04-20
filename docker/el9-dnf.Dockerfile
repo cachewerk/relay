@@ -13,4 +13,4 @@ RUN dnf install -y php-cli
 RUN curl -s -o /etc/yum.repos.d/cachewerk.repo "https://repos.r2.relay.so/rpm/el.repo"
 
 # Install Relay
-RUN dnf install -y php82-php-relay
+RUN dnf install -y --nobest php-relay
