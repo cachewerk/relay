@@ -18,7 +18,7 @@ function pct(float $a, float $b): string {
         : '0%';
 }
 
-function humansize($size, $precision = 2) {
+function humansize(int $size, int $precision = 2): string {
     for($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) {}
     return round($size, $precision) . ' ' . ['B', 'KB', 'MB', 'GB', 'TB'][$i];
 }
@@ -55,24 +55,24 @@ function humansize($size, $precision = 2) {
                         <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">maxmemory</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($maxmem); ?></code>
+                                <code class="text-purple-600"><?php echo humansize((int) $maxmem); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right" colspan="2"></td>
                         </tr>
                         <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">limit</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($mem['limit']); ?></code>
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['limit']); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right" colspan="2"></td>
                         </tr>
                         <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">used</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($mem['used']); ?></code>
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['used']); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($mem['total']); ?></code>
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['total']); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                 <code class="text-purple-600"><?php echo pct($mem['used'], $mem['total']) ?></code>
@@ -82,10 +82,10 @@ function humansize($size, $precision = 2) {
                         <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">active</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($mem['active']); ?> </code>
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['active']); ?> </code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize($mem['limit']); ?></code>
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['limit']); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                 <code class="text-purple-600"><?php echo pct($mem['active'], $mem['limit']); ?></code>
@@ -163,7 +163,7 @@ function humansize($size, $precision = 2) {
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                     <code class="text-purple-600">
                                         <?php if (strpos($name, 'bytes_') === 0) : ?>
-                                            <?php echo humansize($stats[$name]); ?>
+                                            <?php echo humansize((int) $stats[$name]); ?>
                                         <?php elseif (strpos($name, '_usec')) : ?>
                                             <?php echo number_format($stats[$name] / 1000, 2); ?> ms
                                         <?php else : ?>
