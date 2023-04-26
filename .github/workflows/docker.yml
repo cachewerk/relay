@@ -33,7 +33,7 @@ jobs:
           - el9/el9
           - debian/debian10
           - debian/debian10-zts
-          - debian/ubuntu20
+          - ubuntu/ubuntu20
           - litespeed
           - openlitespeed
 
