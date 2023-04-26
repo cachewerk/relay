@@ -1,4 +1,4 @@
-FROM debian:10
+FROM --platform=linux/amd64 debian:10
 
 RUN apt-get update && \
   apt-get install -y \
@@ -26,7 +26,7 @@ RUN curl --output php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}
   make -j$(nproc) && \
   make install
 
-ARG RELAY=dev
+ARG RELAY=v0.6.3
 
 # Download Relay
 RUN PHP=$(php -r "echo substr(PHP_VERSION, 0, 3);") \

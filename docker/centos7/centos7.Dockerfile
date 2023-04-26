@@ -7,9 +7,8 @@ RUN yum install -y yum-utils
 RUN yum-config-manager --disable 'remi-php*' \
   yum-config-manager --enable remi-safe
 
-RUN yum install -y php80 \
-  php80-php-cli \
-  php80-php-fpm
+RUN yum install -y \
+  php80-php-cli
 
 ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 
