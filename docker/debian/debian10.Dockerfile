@@ -27,7 +27,7 @@ RUN apt-get install -y \
   php8.1-msgpack \
   php8.1-igbinary
 
-ARG RELAY=v0.6.3
+ARG RELAY=v0.6.4
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
