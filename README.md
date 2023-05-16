@@ -20,15 +20,12 @@ composer require cachewerk/relay
 
 ## Benchmarks
 
-First set the `REDIS_HOST` and `REDIS_PORT` in the `phpbench.json`, then run the benchmarks:
-
 ```bash
 git clone git@github.com:cachewerk/relay.git
 cd relay
 composer install
 
-composer run bench
-composer run bench:verbose
+composer run bench -- --redis=tcp://127.0.0.1:6379
 ```
 
 > Caveat 1: The results on Silicon are misleading, run the benchmark on your actual x86 infrastructure.   
