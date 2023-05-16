@@ -26,17 +26,18 @@ abstract class Benchmark
         $this->port = $port;
     }
 
-    protected function redis()
+    protected function flush()
     {
-        return $this->setUpPredis();
+        return $this->createPredis()->flushall();
     }
 
     protected function loadJson(string $file): array
     {
         $keys = [];
-        $redis = $this->redis();
         $json = file_get_contents(__DIR__ . "/data/{$file}");
         $data = json_decode($json);
+
+        $redis = $this->createPredis();
 
         foreach ($data as $item) {
             $redis->set($item->id, serialize($item));
@@ -46,29 +47,42 @@ abstract class Benchmark
         return $keys;
     }
 
-    protected function setUpRelay()
+    protected function setUpClients()
+    {
+        $this->predis = $this->createPredis();
+        $this->phpredis = $this->createPhpRedis();
+        $this->relay = $this->createRelay();
+        $this->relayCache = $this->createRelayCache();
+    }
+
+    protected function createRelay()
     {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_USE_CACHE, false);
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
-        $relay->connect($this->host, $this->port, 0.5, 0.5);
+        $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
-        return $relay;
-    }
-
-    protected function setUpRelayCache()
-    {
-        $relay = new Relay;
-        $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
-        $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
         $relay->connect($this->host, $this->port, 0.5, 0.5);
         $relay->flushMemory();
 
         return $relay;
     }
 
-    protected function setUpPredis()
+    protected function createRelayCache()
+    {
+        $relay = new Relay;
+        $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
+        $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
+        $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
+
+        $relay->connect($this->host, $this->port, 0.5, 0.5);
+        $relay->flushMemory();
+
+        return $relay;
+    }
+
+    protected function createPredis()
     {
         return new Predis([
             'host' => $this->host,
@@ -80,7 +94,7 @@ abstract class Benchmark
         ]);
     }
 
-    protected function setUpPhpRedis()
+    protected function createPhpRedis()
     {
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
