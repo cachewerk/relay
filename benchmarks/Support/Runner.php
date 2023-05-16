@@ -2,9 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use Exception;
 use Predis\Client as Predis;
-use Throwable;
 
 class Runner
 {
@@ -111,13 +109,15 @@ class Runner
                         'mem' => $memory,
                     ];
 
+                    $ops_sec = ($ops * $revolutions) / ($ms / 1000);
+
                     // printf(
-                    //     "Executed %s %s using %s in %sms (%s/sec) consuming %s\n",
+                    //     "Executed %s %s using %s in %sms (%s ops/s) consuming %s\n",
                     //     number_format($ops),
                     //     $benchmark::Name,
                     //     $client,
                     //     number_format($ms, 2),
-                    //     number_format($ops / ($ms / 1000)),
+                    //     $this->humanNumber($ops_sec),
                     //     $this->humanMemory($memory)
                     // );
                 }
@@ -131,6 +131,12 @@ class Runner
         $i = floor(log($bytes, 1024));
 
         return round($bytes / pow(1024, $i), [0, 0, 2, 2, 3][$i]) . ['b', 'kb', 'mb', 'gb'][$i];
+    }
+
+    function humanNumber($number) {
+        $i = $number > 0 ? floor(log($number, 1000)) : 0;
+
+        return number_format($number / pow(1000, $i), [0, 2, 2, 2][$i], '.', ' ') . ['', 'K', 'M', 'B'][$i];
     }
 
     function resultSummary($results)
@@ -151,13 +157,13 @@ class Runner
         $ops_sec = ($ops * $revs) / ($ms_median / 1000);
 
         printf(
-            "Executed %d iterations of %s %s using %s in %sms (%s/sec) consuming %s [±%.5f%%]\n",
+            "Executed %d iterations of %s %s using %s in %sms (%s ops/s) consuming %s [±%.5f%%]\n",
             count($results['iterations']),
             number_format($ops * $revs),
             $results['name'],
             $results['client'],
             number_format($ms_median, 2),
-            number_format($ops_sec),
+            $this->humanNumber($ops_sec),
             $this->humanMemory($memory_median),
             $rstdev
         );
