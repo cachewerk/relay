@@ -8,9 +8,12 @@ require __DIR__ . '/../vendor/autoload.php';
 
 array_shift($argv);
 
+// TODO: test Unix socket...
+// getopt()
+
 $benchmarks = array_map(function ($file) {
     if (is_readable($file)) {
-        return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__, '', $file), 1, -4);
+        return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__ . '/', '', $file), 0, -4);
     }
 
     throw new InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);

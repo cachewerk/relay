@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkGet extends Support\Benchmark
+class BenchmarkGET extends Support\Benchmark
 {
     const Name = 'GET';
 
@@ -18,20 +18,16 @@ class BenchmarkGet extends Support\Benchmark
 
     public function setUp(): void
     {
-        $this->redis()->flushall();
+        $this->flush();
+        $this->setUpClients();
 
         $this->keys = $this->loadJson('meteorites.json');
-
-        $this->predis = $this->setUpPredis();
-        $this->phpredis = $this->setUpPhpRedis();
-        $this->relay = $this->setUpRelay();
-        $this->relayCache = $this->setUpRelayCache();
     }
 
     public function benchmarkPredis(): void
     {
         foreach ($this->keys as $key) {
-            $this->predis->get((string) $key);
+            unserialize($this->predis->get((string) $key));
         }
     }
 
