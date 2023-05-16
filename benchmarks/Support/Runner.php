@@ -2,7 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use Exception;
 use Predis\Client as Predis;
+use Throwable;
 
 class Runner
 {
@@ -28,12 +30,14 @@ class Runner
             "Using PHP %s (OPcache: %s, Xdebug: %s)\n",
             PHP_VERSION,
             opcache_get_status() ? 'On' : 'Off',
-            opcache_get_status() ? '????' : '???'
+            false ? 'TODO' : 'TODO'
         );
 
         $redis = new Predis([
             'host' => $this->host,
             'port' => $this->port,
+            'timeout' => 0.5,
+            'read_write_timeout' => 0.5,
         ], [
             'exceptions' => true,
         ]);
@@ -46,7 +50,7 @@ class Runner
         );
     }
 
-    public function run(array $benchmarks, int $iterations)
+    public function run(array $benchmarks)
     {
         foreach ($benchmarks as $class) {
             $benchmark = new $class($this->host, $this->port);
@@ -60,6 +64,8 @@ class Runner
             $results = [];
 
             $ops = $benchmark::Operations;
+            $iterations = $benchmark::Iterations;
+            $revolutions = $benchmark::Revolutions;
 
             printf(
                 "Executing %d iterations (%d warmup) of %s %s...\n",
@@ -76,11 +82,14 @@ class Runner
                 $results[$class][$method]['client'] = $client;
                 $results[$class][$method]['ops'] = $ops;
                 $results[$class][$method]['its'] = $iterations;
+                $results[$class][$method]['revs'] = $revolutions;
 
                 usleep(500000); // 500ms
 
                 for ($i = 0; $i < $benchmark::Warmup; $i++) {
-                    $benchmark->{$method}();
+                    for ($i = 1; $i <= $revolutions; $i++) {
+                        $benchmark->{$method}();
+                    }
                 }
 
                 for ($i = 0; $i < $iterations; $i++) {
@@ -89,8 +98,9 @@ class Runner
 
                     $start = hrtime(true);
 
-                    // TODO: add revolutions...
-                    $benchmark->{$method}();
+                    for ($r = 1; $r <= $revolutions; $r++) {
+                        $benchmark->{$method}();
+                    }
 
                     $end = hrtime(true);
                     $memory = memory_get_peak_usage();
@@ -125,10 +135,10 @@ class Runner
 
     function resultSummary($results)
     {
-        $its = $results['its'];
         $iterations = $results['iterations'];
 
         $ops = $results['ops'];
+        $revs = $results['revs'];
 
         $times = array_column($iterations, 'ms');
         $ms_median = Statistics::median($times);
@@ -138,14 +148,16 @@ class Runner
 
         $rstdev = Statistics::rstdev($times);
 
+        $ops_sec = ($ops * $revs) / ($ms_median / 1000);
+
         printf(
-            "Executed %d iterations of %s %s using %s in %sms (%s/sec) consuming %s [±%.2f%%]\n",
-            $its,
-            number_format($ops),
+            "Executed %d iterations of %s %s using %s in %sms (%s/sec) consuming %s [±%.5f%%]\n",
+            count($results['iterations']),
+            number_format($ops * $revs),
             $results['name'],
             $results['client'],
             number_format($ms_median, 2),
-            number_format($ops / ($ms_median / 1000)),
+            number_format($ops_sec),
             $this->humanMemory($memory_median),
             $rstdev
         );

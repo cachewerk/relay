@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+array_shift($argv);
+
+$benchmarks = array_map(function ($file) {
+    if (is_readable(__DIR__ . "/{$file}")) {
+        return 'CacheWerk\\Relay\\Benchmarks\\' . substr($file, 0, -4);
+    }
+
+    throw new InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
+}, empty($argv) ? glob('Benchmark*.php') : $argv);
+
+$runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
+    $_SERVER['REDIS_HOST'] ?? '127.0.0.1',
+    $_SERVER['REDIS_PORT'] ?? 6379,
+);
+
+$runner->run($benchmarks);
+
+// TODO: Mention this is SINGLE core SINGLE worker...
+// TODO: Redis CPU...
+// TODO: OCP compression + batching...
+// TODO: benchmark how many network bytes were transferred!!!
+// TODO: https://github.com/sharkdp/hyperfine

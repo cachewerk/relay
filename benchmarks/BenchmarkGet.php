@@ -2,11 +2,15 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkGet extends Benchmark
+class BenchmarkGet extends Support\Benchmark
 {
     const Name = 'GET';
 
     const Operations = 1000;
+
+    const Iterations = 5;
+
+    const Revolutions = 10;
 
     const Warmup = 1;
 
@@ -21,7 +25,7 @@ class BenchmarkGet extends Benchmark
         $this->predis = $this->setUpPredis();
         $this->phpredis = $this->setUpPhpRedis();
         $this->relay = $this->setUpRelay();
-        $this->relayNC = $this->setUpRelayNC();
+        $this->relayCache = $this->setUpRelayCache();
     }
 
     public function benchmarkPredis(): void
@@ -38,17 +42,17 @@ class BenchmarkGet extends Benchmark
         }
     }
 
-    public function benchmarkRelayNC(): void
-    {
-        foreach ($this->keys as $key) {
-            $this->relayNC->get((string) $key);
-        }
-    }
-
     public function benchmarkRelay(): void
     {
         foreach ($this->keys as $key) {
             $this->relay->get((string) $key);
+        }
+    }
+
+    public function benchmarkRelayCache(): void
+    {
+        foreach ($this->keys as $key) {
+            $this->relayCache->get((string) $key);
         }
     }
 }

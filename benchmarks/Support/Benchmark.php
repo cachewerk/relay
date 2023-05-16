@@ -1,6 +1,6 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Redis as PhpRedis;
 use Relay\Relay as Relay;
@@ -14,7 +14,7 @@ abstract class Benchmark
 
     protected Relay $relay;
 
-    protected Relay $relayNC;
+    protected Relay $relayCache;
 
     protected Predis $predis;
 
@@ -35,7 +35,7 @@ abstract class Benchmark
     {
         $keys = [];
         $redis = $this->redis();
-        $json = file_get_contents(__DIR__ . "/Support/data/{$file}");
+        $json = file_get_contents(__DIR__ . "/data/{$file}");
         $data = json_decode($json);
 
         foreach ($data as $item) {
@@ -48,32 +48,22 @@ abstract class Benchmark
 
     protected function setUpRelay()
     {
-        $relay = new Relay(
-            $this->host,
-            $this->port,
-            0.5,
-            0.5
-        );
-
-        $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
-        $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
-
-        return $relay;
-    }
-
-    protected function setUpRelayNC()
-    {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_USE_CACHE, false);
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
+        $relay->connect($this->host, $this->port, 0.5, 0.5);
 
-        $relay->connect(
-            $this->host,
-            $this->port,
-            0.5,
-            0.5
-        );
+        return $relay;
+    }
+
+    protected function setUpRelayCache()
+    {
+        $relay = new Relay;
+        $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
+        $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
+        $relay->connect($this->host, $this->port, 0.5, 0.5);
+        $relay->flushMemory();
 
         return $relay;
     }
@@ -83,6 +73,8 @@ abstract class Benchmark
         return new Predis([
             'host' => $this->host,
             'port' => $this->port,
+            'timeout' => 0.5,
+            'read_write_timeout' => 0.5,
         ], [
             'exceptions' => true,
         ]);
@@ -91,16 +83,7 @@ abstract class Benchmark
     protected function setUpPhpRedis()
     {
         $phpredis = new PhpRedis;
-
-        $phpredis->connect(
-            $this->host,
-            $this->port,
-            0.5,
-            '',
-            0,
-            0.5
-        );
-
+        $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
 
         return $phpredis;
