@@ -4,8 +4,7 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "bench": "phpbench run --report=redis",
-        "bench:verbose": "phpbench run --report=redis --progress=blinken",
+        "bench": "@php benchmarks/run",
         "phpstan": "phpstan analyse"
     },
     "require": {
