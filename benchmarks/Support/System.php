@@ -47,8 +47,9 @@ class System
         }
 
         foreach (explode("\n", trim($info)) as $line) {
-            if ( ! trim($line))
+            if (! trim($line)) {
                 continue;
+            }
 
             [$key, $value] = explode(':', $line);
 
