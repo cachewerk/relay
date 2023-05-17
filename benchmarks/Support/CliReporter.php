@@ -10,7 +10,7 @@ class CliReporter extends Reporter
         $revs = $benchmark::Revolutions;
 
         printf(
-            "Executing %d iterations (%d warmup) of %s %s...\n",
+            "Executing %d iterations (%d warmup) of %s %s...\n\n",
             $benchmark::Iterations,
             $benchmark::Warmup ?? 'no',
             number_format($ops * $revs),
@@ -27,15 +27,15 @@ class CliReporter extends Reporter
 
         $ops_sec = ($ops * $revs) / ($iteration->ms / 1000);
 
-        printf(
-            "Executed %s %s using %s in %sms (%s ops/s) consuming %s\n",
-            number_format($ops * $revs),
-            $benchmark::Name,
-            $iteration->subject->client(),
-            number_format($iteration->ms, 2),
-            $this->humanNumber($ops_sec),
-            $this->humanMemory($iteration->memory)
-        );
+        // printf(
+        //     "Executed %s %s using %s in %sms (%s ops/s) consuming %s\n",
+        //     number_format($ops * $revs),
+        //     $benchmark::Name,
+        //     $iteration->subject->client(),
+        //     number_format($iteration->ms, 2),
+        //     $this->humanNumber($ops_sec),
+        //     $this->humanMemory($iteration->memory)
+        // );
     }
 
     public function finishedSubject(Subject $subject)
@@ -70,20 +70,21 @@ class CliReporter extends Reporter
         $subjects = $subjects->sortByTime();
         $baseMsMedian = $subjects[0]->msMedian();
 
-        echo PHP_EOL;
-
         $i = 0;
+
+        echo "\n";
 
         foreach ($subjects as $subject) {
             $msMedian = $subject->msMedian();
-            $diff = (1 - ($msMedian / $baseMsMedian)) * 100;
+            $diff = -(1 - ($msMedian / $baseMsMedian)) * 100;
+            $multiple = 1 / ($msMedian / $baseMsMedian);
 
             printf(
-                "%s (%sms) [%.2fx, %s%%]\n",
+                "%s (%sms) [%sx, %s%%]\n",
                 $subject->client(),
                 number_format($msMedian, 2),
-                1 / ($msMedian / $baseMsMedian),
-                $i === 0 ? 0 : number_format($diff, 1),
+                $i === 0 ? '1.0' : number_format($multiple, $multiple < 2 ? 2 : 1),
+                $i === 0 ? '0' : number_format($diff, 1),
             );
 
             $i++;
