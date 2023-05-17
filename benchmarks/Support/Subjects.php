@@ -26,7 +26,7 @@ class Subjects
     {
         $subjects = $this->subjects;
 
-        usort($subjects, fn ($a, $b) => $b->msMedian() < $a->msMedian() ? 1 : -1);
+        usort($subjects, fn ($a, $b) => $a->msMedian() < $b->msMedian() ? 1 : -1);
 
         return $subjects;
     }
