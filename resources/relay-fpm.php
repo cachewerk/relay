@@ -5,7 +5,6 @@ $refresh = intval($_GET['refresh'] ?? 60);
 $info = \Relay\Relay::stats();
 $license = \Relay\Relay::license();
 
-$maxmem = \Relay\Relay::maxMemory();
 $mem = $info['memory'];
 $endpoints = $info['endpoints'];
 $stats = $info['stats'];
@@ -19,7 +18,7 @@ function pct(float $a, float $b): string {
 }
 
 function humansize(int $size, int $precision = 2): string {
-    for($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) {}
+    for ($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) { }
     return round($size, $precision) . ' ' . ['B', 'KB', 'MB', 'GB', 'TB'][$i];
 }
 
@@ -47,32 +46,28 @@ function humansize(int $size, int $precision = 2): string {
                     <thead class="text-sm font-semibold text-gray-600 pb-2 pr-2 border-b-2 border-gray-200">
                         <td class="py-1 pr-2 border-b border-gray-200">Metric</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Value</td>
-                        <td class="py-1 pr-2 border-b border-gray-200 text-right">Total</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Percentage</td>
                     </thead>
 
                     <tbody class="text-sm">
                         <tr>
-                            <td class="py-1 pr-2 border-b border-gray-200">maxmemory</td>
-                            <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize((int) $maxmem); ?></code>
-                            </td>
-                            <td class="py-1 pr-2 border-b border-gray-200 text-right" colspan="2"></td>
-                        </tr>
-                        <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">limit</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize((int) $mem['limit']); ?></code>
+                                <code class="text-purple-600"><?php echo $mem['limit'] < 0 ? -1 : humansize((int) $mem['limit']); ?></code>
                             </td>
-                            <td class="py-1 pr-2 border-b border-gray-200 text-right" colspan="2"></td>
+                            <td class="py-1 pr-2 border-b border-gray-200 text-right"></td>
+                        </tr>
+                        <tr>
+                            <td class="py-1 pr-2 border-b border-gray-200">total</td>
+                            <td class="py-1 pr-2 border-b border-gray-200 text-right">
+                                <code class="text-purple-600"><?php echo humansize((int) $mem['total']); ?></code>
+                            </td>
+                            <td class="py-1 pr-2 border-b border-gray-200 text-right"></td>
                         </tr>
                         <tr>
                             <td class="py-1 pr-2 border-b border-gray-200">used</td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                 <code class="text-purple-600"><?php echo humansize((int) $mem['used']); ?></code>
-                            </td>
-                            <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize((int) $mem['total']); ?></code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                 <code class="text-purple-600"><?php echo pct($mem['used'], $mem['total']) ?></code>
@@ -85,11 +80,8 @@ function humansize(int $size, int $precision = 2): string {
                                 <code class="text-purple-600"><?php echo humansize((int) $mem['active']); ?> </code>
                             </td>
                             <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo humansize((int) $mem['limit']); ?></code>
-                            </td>
-                            <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                <code class="text-purple-600"><?php echo pct($mem['active'], $mem['limit']); ?></code>
-                                <meter value="<?php echo $mem['active']; ?>" min="0" max="<?php echo $mem['limit']; ?>">
+                                <code class="text-purple-600"><?php echo pct($mem['active'], $mem['total']); ?></code>
+                                <meter value="<?php echo $mem['active']; ?>" min="0" max="<?php echo $mem['total']; ?>">
                             </td>
                         </tr>
                     </tbody>
@@ -285,8 +277,8 @@ function humansize(int $size, int $precision = 2): string {
                 <table class="w-full text-left border-collapse mb-12">
                     <thead class="text-sm font-semibold text-gray-600 pb-2 pr-2 border-b-2 border-gray-200">
                         <td class="py-1 pr-2 border-b border-gray-200">ID</td>
-                        <td class="py-1 pr-2 border-b border-gray-200 text-right">Connections</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Redis</td>
+                        <td class="py-1 pr-2 border-b border-gray-200 text-right">Connections</td>
                         <td class="py-1 pr-2 border-b border-gray-200 text-right">Keys</td>
                     </thead>
                     <tbody class="text-sm">
@@ -296,10 +288,10 @@ function humansize(int $size, int $precision = 2): string {
                                     <code class="text-purple-600 break-all"><?php echo $endpoint; ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                    <code class="text-purple-600"><?php echo count($info['connections']); ?></code>
+                                    <code class="text-purple-600"><?php echo $info['redis']['redis_version']; ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
-                                    <code class="text-purple-600"><?php echo $info['redis']['redis_version']; ?></code>
+                                    <code class="text-purple-600"><?php echo count($info['connections']); ?></code>
                                 </td>
                                 <td class="py-1 pr-2 border-b border-gray-200 text-right">
                                     <code class="text-purple-600"><?php echo number_format(
