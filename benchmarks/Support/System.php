@@ -47,6 +47,9 @@ class System
         }
 
         foreach (explode("\n", trim($info)) as $line) {
+            if ( ! trim($line))
+                continue;
+
             [$key, $value] = explode(':', $line);
 
             $result[strtolower(trim($key))] = trim($value);
@@ -55,7 +58,7 @@ class System
         return (object) [
             'type' => $result['model name'],
             'cores' => $result['cpu cores'],
-            'arch' => $result['architecture'],
+            'arch' => trim((string) shell_exec('uname -m')),
         ];
     }
 }
