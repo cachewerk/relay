@@ -8,9 +8,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 array_shift($argv);
 
-// TODO: test Unix socket...
-// getopt()
-
 $benchmarks = array_map(function ($file) {
     if (is_readable($file)) {
         return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__ . '/', '', $file), 0, -4);
@@ -26,8 +23,8 @@ $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
 
 $runner->run($benchmarks);
 
+// TODO: test Unix socket...
 // TODO: Mention this is SINGLE core SINGLE worker...
 // TODO: Redis CPU...
 // TODO: OCP compression + batching...
-// TODO: benchmark how many network bytes were transferred!!!
 // TODO: https://github.com/sharkdp/hyperfine

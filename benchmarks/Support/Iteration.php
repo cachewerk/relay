@@ -23,4 +23,11 @@ class Iteration
 
         $this->subject = $subject;
     }
+
+    public function opsPerSec()
+    {
+        $benchmark = $this->subject->benchmark;
+
+        return $benchmark->opsTotal() / ($this->ms / 1000);
+    }
 }

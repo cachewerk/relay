@@ -13,7 +13,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
     const Iterations = 5;
 
-    const Revolutions = 10;
+    const Revolutions = 50;
 
     const Warmup = 1;
 
@@ -85,11 +85,9 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     {
         $this->relayNoCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
         $this->relayNoCache->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
-        // $this->relayNoCache->setOption(Relay::OPT_COMPRESSION_LEVEL, (string) -5);
 
         $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
         $this->relay->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
-        // $this->relay->setOption(Relay::OPT_COMPRESSION_LEVEL, (string) -5);
 
         foreach ($this->data as $item) {
             $this->relayNoCache->set("relay:{$item->id}", $item);

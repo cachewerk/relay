@@ -10,7 +10,7 @@ class BenchmarkGET extends Support\Benchmark
 
     const Iterations = 5;
 
-    const Revolutions = 10;
+    const Revolutions = 50;
 
     const Warmup = 1;
 
