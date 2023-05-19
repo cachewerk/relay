@@ -17,6 +17,10 @@ class CliReporter extends Reporter
 
     public function finishedIteration(Iteration $iteration)
     {
+        if (! $this->verbose) {
+            return;
+        }
+
         $benchmark = $iteration->subject->benchmark;
 
         printf(
@@ -33,6 +37,10 @@ class CliReporter extends Reporter
 
     public function finishedSubject(Subject $subject)
     {
+        if (! $this->verbose) {
+            return;
+        }
+
         $benchmark = $subject->benchmark;
 
         $ops = $benchmark::Operations;
@@ -48,7 +56,7 @@ class CliReporter extends Reporter
         $ops_sec = ($ops * $revs) / ($ms_median / 1000);
 
         printf(
-            "Executed %d iterations of %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n",
+            "Executed %d iterations of %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n\n",
             count($subject->iterations),
             number_format($benchmark->opsTotal()),
             $name,
@@ -69,24 +77,10 @@ class CliReporter extends Reporter
 
         $i = 0;
 
-        echo "\n";
         $mask = "| %-16.16s | %4.4s | %4.4s | %-16.16s | %10.10s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s |\n";
 
-        printf(
-            $mask,
-            'Client',
-            'Its',
-            'Revs',
-            'Operation',
-            'Time',
-            'rstdev',
-            'ops/s',
-            'Memory',
-            'Network',
-            'diff',
-            'diff'
-        );
-
+        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
+        printf($mask, 'Client', 'Its', 'Revs', 'Operation', 'Time', 'rstdev', 'ops/s', 'Memory', 'Network', 'diff', 'diff');
         printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
 
         foreach ($subjects as $subject) {

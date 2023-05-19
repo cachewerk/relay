@@ -12,6 +12,8 @@ abstract class Benchmark
 
     protected int $port;
 
+    protected ?string $auth;
+
     protected Relay $relay;
 
     protected Relay $relayNoCache;
@@ -20,10 +22,11 @@ abstract class Benchmark
 
     protected PhpRedis $phpredis;
 
-    public function __construct(string $host, int $port)
+    public function __construct(string $host, int $port, ?string $auth)
     {
         $this->host = $host;
         $this->port = $port;
+        $this->auth = $auth;
     }
 
     public function its()
@@ -77,6 +80,11 @@ abstract class Benchmark
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
 
         $relay->connect($this->host, $this->port, 0.5, 0.5);
+
+        if ($this->auth) {
+            $relay->auth($this->auth);
+        }
+
         $relay->flushMemory();
 
         return $relay;
@@ -90,6 +98,11 @@ abstract class Benchmark
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
 
         $relay->connect($this->host, $this->port, 0.5, 0.5);
+
+        if ($this->auth) {
+            $relay->auth($this->auth);
+        }
+
         $relay->flushMemory();
 
         return $relay;
@@ -101,6 +114,10 @@ abstract class Benchmark
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
 
+        if ($this->auth) {
+            $phpredis->auth($this->auth);
+        }
+
         return $phpredis;
     }
 
@@ -109,6 +126,7 @@ abstract class Benchmark
         return new Predis([
             'host' => $this->host,
             'port' => $this->port,
+            'password' => $this->auth,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ], [
