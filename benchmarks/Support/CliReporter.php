@@ -75,15 +75,13 @@ class CliReporter extends Reporter
         $subjects = $subjects->sortByTime();
         $baseMsMedian = $subjects[0]->msMedian();
 
-        $i = 0;
+        $headers = ['Client', 'Its', 'Revs', 'Operation', 'Time', 'rstdev', 'ops/s', 'Memory', 'Network', 'diff', 'diff'];
+        $alignment = ['L', 'R', 'R', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 'R'];
+        $alignment = array_map(function ($v) { $v == 'L' ? STR_PAD_RIGHT : STR_PAD_LEFT; }, $alignment);
 
-        $mask = "| %-16.16s | %4.4s | %4.4s | %-16.16s | %10.10s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s |\n";
+        $rows[] = $headers;
 
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
-        printf($mask, 'Client', 'Its', 'Revs', 'Operation', 'Time', 'rstdev', 'ops/s', 'Memory', 'Network', 'diff', 'diff');
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
-
-        foreach ($subjects as $subject) {
+        foreach ($subjects as $i => $subject) {
             $msMedian = $subject->msMedian();
             $memoryMedian = $subject->memoryMedian();
             $bytesMedian = $subject->bytesMedian();
@@ -92,8 +90,7 @@ class CliReporter extends Reporter
             $rstdev = number_format($subject->msRstDev(), 2);
             $opsMedian = $subject->opsMedian();
 
-            printf(
-                $mask,
+            $rows[] = [
                 $subject->client(),
                 $benchmark->its(),
                 $benchmark->revs(),
@@ -105,11 +102,81 @@ class CliReporter extends Reporter
                 $this->humanMemory($bytesMedian),
                 $i === 0 ? '1.0×' : number_format($multiple, $multiple < 2 ? 2 : 1) . '×',
                 $i === 0 ? '0%' : number_format($diff, 1) . '%'
-            );
-
-            $i++;
+            ];
         }
 
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
+        foreach ($rows as $row) {
+            foreach ($row as $col => $val) {
+                if ( ! isset($widths[$col]) || $widths[$col] < mb_strlen($val))
+                    $widths[$col] = mb_strlen($val);
+            }
+        }
+
+        $this->printHeader($widths, '-');
+
+        foreach ($rows as $row) {
+            echo '| ';
+            foreach ($row as $n => $col) {
+                $this->printColumn($col, $widths[$n], $alignment[$n], $n == count($row) - 1);
+            }
+            echo "\n";
+        }
+
+        $this->printHeader($widths, '-');
     }
+
+    protected function printColumn($column, $width, $alignment, $tail) {
+        echo $this->mb_str_pad($column, $width, ' ', $alignment);
+        echo $tail ? ' |' : ' | ';
+    }
+
+    protected function printHeader($widths, $char) {
+        echo "| ";
+        foreach ($widths as $n => $width) {
+            $this->printColumn(str_repeat($char, $width), $width, STR_PAD_LEFT, $n == count($widths) - 1);
+        }
+        echo "\n";
+    }
+
+    /* Stolen from the internet: https://stackoverflow.com/a/14773638/3605157 */
+    protected function mb_str_pad($input, $pad_length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8')
+    {
+        $input_length = mb_strlen($input, $encoding);
+        $pad_string_length = mb_strlen($pad_string, $encoding);
+
+        if ($pad_length <= 0 || ($pad_length - $input_length) <= 0) {
+            return $input;
+        }
+
+        $num_pad_chars = $pad_length - $input_length;
+
+        switch ($pad_type) {
+            case STR_PAD_RIGHT:
+                $left_pad = 0;
+                $right_pad = $num_pad_chars;
+                break;
+
+            case STR_PAD_LEFT:
+                $left_pad = $num_pad_chars;
+                $right_pad = 0;
+                break;
+
+            case STR_PAD_BOTH:
+                $left_pad = floor($num_pad_chars / 2);
+                $right_pad = $num_pad_chars - $left_pad;
+                break;
+        }
+
+        $result = '';
+        for ($i = 0; $i < $left_pad; ++$i) {
+            $result .= mb_substr($pad_string, $i % $pad_string_length, 1, $encoding);
+        }
+        $result .= $input;
+        for ($i = 0; $i < $right_pad; ++$i) {
+            $result .= mb_substr($pad_string, $i % $pad_string_length, 1, $encoding);
+        }
+
+        return $result;
+    }
+
 }
