@@ -14,7 +14,7 @@ abstract class Benchmark
 
     protected Relay $relay;
 
-    protected Relay $relayCache;
+    protected Relay $relayNoCache;
 
     protected Predis $predis;
 
@@ -52,13 +52,12 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
-        $this->relayCache = $this->createRelayCache();
+        $this->relayNoCache = $this->createRelayNoCache();
     }
 
     protected function createRelay()
     {
         $relay = new Relay;
-        $relay->setOption(Relay::OPT_USE_CACHE, false);
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
         $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
@@ -69,9 +68,10 @@ abstract class Benchmark
         return $relay;
     }
 
-    protected function createRelayCache()
+    protected function createRelayNoCache()
     {
         $relay = new Relay;
+        $relay->setOption(Relay::OPT_USE_CACHE, false);
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
         $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);

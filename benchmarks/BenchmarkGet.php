@@ -38,17 +38,17 @@ class BenchmarkGET extends Support\Benchmark
         }
     }
 
+    public function benchmarkRelayNoCache(): void
+    {
+        foreach ($this->keys as $key) {
+            $this->relayNoCache->get((string) $key);
+        }
+    }
+
     public function benchmarkRelay(): void
     {
         foreach ($this->keys as $key) {
             $this->relay->get((string) $key);
-        }
-    }
-
-    public function benchmarkRelayCache(): void
-    {
-        foreach ($this->keys as $key) {
-            $this->relayCache->get((string) $key);
         }
     }
 }

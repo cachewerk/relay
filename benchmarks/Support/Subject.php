@@ -16,9 +16,9 @@ class Subject
         $this->benchmark = $benchmark;
     }
 
-    public function addIteration(float $ms, int $memory)
+    public function addIteration(float $ms, int $memory, int $bytesIn, int $bytesOut)
     {
-        $iterations = new Iteration($ms, $memory, $this);
+        $iterations = new Iteration($ms, $memory, $bytesIn, $bytesOut, $this);
 
         $this->iterations[] = $iterations;
 
@@ -55,5 +55,14 @@ class Subject
         }, $this->iterations);
 
         return Statistics::median($times);
+    }
+
+    public function bytesMedian()
+    {
+        $bytes = array_map(function (Iteration $iteration) {
+            return $iteration->bytesIn + $iteration->bytesOut;
+        }, $this->iterations);
+
+        return Statistics::median($bytes);
     }
 }
