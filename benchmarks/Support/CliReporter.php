@@ -96,7 +96,7 @@ class CliReporter extends Reporter
             $diff = -(1 - ($msMedian / $baseMsMedian)) * 100;
             $multiple = 1 / ($msMedian / $baseMsMedian);
             $rstdev = number_format($subject->msRstDev(), 2);
-            $opsMedian = number_format($subject->opsMedian(), 2);
+            $opsMedian = $subject->opsMedian();
 
             printf(
                 $mask,
