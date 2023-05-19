@@ -4,6 +4,12 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 abstract class Reporter
 {
+    protected bool $verbose;
+
+    public function __construct(bool $verbose)
+    {
+        $this->verbose = $verbose;
+    }
     abstract function startingBenchmark(Benchmark $benchmark);
 
     abstract function finishedIteration(Iteration $iteration);

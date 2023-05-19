@@ -33,9 +33,18 @@ composer run bench
 To run specific benchmarks, use:
 
 ```bash
+# Run specific benchmarks
 ./run BenchmarkMGET.php BenchmarkGET.php
 
+# Pass Redis host and port
 ./run -h 127.0.0.1 -p 7000
 
-./run -s /tmp/redis.sock -a p4ssw0rd
+# Use unix socket
+./run -s /tmp/redis.sock
+
+# Pass Redis password
+./run -a p4ssw0rd
+
+# Output verbose information
+./run -v [--verbose]
 ```

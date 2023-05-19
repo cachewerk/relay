@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$opt = getopt('h:p:s:a:');
+$opt = getopt('h:p:s:a:v', ['verbose']);
 
 array_splice($argv, 0, 1 + (count($opt) * 2));
 
@@ -22,10 +22,12 @@ $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
     $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
     $opt['p'] ?? (isset($opt['s']) ? -1 : 6379),
     $opt['a'] ?? null,
+    isset($opt['v']) || isset($opt['verbose'])
 );
 
 $runner->run($benchmarks);
 
+// TODO: support PHP 7.4
 // TODO: test `-a` password parameter
 // TODO: test `-c` socket parameter
 // TODO: detect New Relic extension and whether it's active

@@ -10,15 +10,19 @@ class Runner
 
     protected int $port;
 
+    protected ?string $auth;
+
+    protected bool $verbose = false;
+
     protected Predis $redis;
 
-    protected string $auth;
-
-    public function __construct($host, $port, $auth)
+    public function __construct($host, $port, $auth, bool $verbose)
     {
-        $this->host = $host;
+        $this->verbose = $verbose;
+
+        $this->host = (string) $host;
         $this->port = (int) $port;
-        $this->auth = (int) $auth;
+        $this->auth = empty($auth) ? null : $auth;
 
         $cpu = System::cpu();
 
@@ -30,7 +34,7 @@ class Runner
         );
 
         printf(
-            "Using PHP %s (OPcache: %s, Xdebug: %s)\n",
+            "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: ???)\n",
             PHP_VERSION,
             opcache_get_status() ? 'On' : 'Off',
             function_exists('xdebug_info') && ! in_array('off', xdebug_info('mode')) ? 'On' : 'Off'
@@ -51,6 +55,7 @@ class Runner
         $this->redis = new Predis([
             'host' => $this->host,
             'port' => $this->port,
+            'password' => $this->auth,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ], [
@@ -61,12 +66,12 @@ class Runner
     public function run(array $benchmarks)
     {
         foreach ($benchmarks as $class) {
-            $benchmark = new $class($this->host, $this->port);
+            $benchmark = new $class($this->host, $this->port, $this->auth);
             $benchmark->setUp();
 
             $subjects = new Subjects($benchmark);
 
-            $reporter = new CliReporter($benchmark);
+            $reporter = new CliReporter($this->verbose);
             $reporter->startingBenchmark($benchmark);
 
             $methods = array_filter(
