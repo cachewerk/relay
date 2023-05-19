@@ -10,6 +10,8 @@ class Runner
 
     protected int $port;
 
+    protected Predis $redis;
+
     public function __construct($host, $port)
     {
         $this->host = $host;
@@ -31,7 +33,19 @@ class Runner
             function_exists('xdebug_info') && ! in_array('off', xdebug_info('mode')) ? 'On' : 'Off'
         );
 
-        $redis = new Predis([
+        $this->setUpRedis();
+
+        printf(
+            "Connected to Redis (%s) at tcp://%s:%s\n\n",
+            $this->redis->info()['Server']['redis_version'],
+            $host,
+            $port
+        );
+    }
+
+    protected function setUpRedis()
+    {
+        $this->redis = new Predis([
             'host' => $this->host,
             'port' => $this->port,
             'timeout' => 0.5,
@@ -39,13 +53,6 @@ class Runner
         ], [
             'exceptions' => true,
         ]);
-
-        printf(
-            "Connected to Redis (%s) at tcp://%s:%s\n\n",
-            $redis->info()['Server']['redis_version'],
-            $host,
-            $port
-        );
     }
 
     public function run(array $benchmarks)
@@ -76,7 +83,9 @@ class Runner
                 }
 
                 for ($i = 0; $i < $benchmark::Iterations; $i++) {
+                    $this->redis->config('RESETSTAT');
                     memory_reset_peak_usage();
+
                     usleep(100000); // 100ms
 
                     $start = hrtime(true);
@@ -89,7 +98,11 @@ class Runner
                     $memory = memory_get_peak_usage();
                     $ms = ($end - $start) / 1e+6;
 
-                    $iteration = $subject->addIteration($ms, $memory);
+                    $usage = $this->redis->info('STATS')['Stats'];
+                    $bytesIn = $usage['total_net_input_bytes'];
+                    $bytesOut = $usage['total_net_output_bytes'];
+
+                    $iteration = $subject->addIteration($ms, $memory, $bytesIn, $bytesOut);
 
                     $reporter->finishedIteration($iteration);
                 }

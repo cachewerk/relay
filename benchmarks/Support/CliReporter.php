@@ -10,7 +10,7 @@ class CliReporter extends Reporter
         $revs = $benchmark::Revolutions;
 
         printf(
-            "Executing %d iterations (%d warmup) of %s %s...\n\n",
+            "\nExecuting %d iterations (%d warmup) of %s %s...\n\n",
             $benchmark::Iterations,
             $benchmark::Warmup ?? 'no',
             number_format($ops * $revs),
@@ -27,15 +27,16 @@ class CliReporter extends Reporter
 
         $ops_sec = ($ops * $revs) / ($iteration->ms / 1000);
 
-        // printf(
-        //     "Executed %s %s using %s in %sms (%s ops/s) consuming %s\n",
-        //     number_format($ops * $revs),
-        //     $benchmark::Name,
-        //     $iteration->subject->client(),
-        //     number_format($iteration->ms, 2),
-        //     $this->humanNumber($ops_sec),
-        //     $this->humanMemory($iteration->memory)
-        // );
+        printf(
+            "Executed %s %s using %s in %sms (%s ops/s) consuming %s transferring %s\n",
+            number_format($ops * $revs),
+            $benchmark::Name,
+            $iteration->subject->client(),
+            number_format($iteration->ms, 2),
+            $this->humanNumber($ops_sec),
+            $this->humanMemory($iteration->memory),
+            $this->humanMemory($iteration->bytesIn + $iteration->bytesOut)
+        );
     }
 
     public function finishedSubject(Subject $subject)
@@ -43,24 +44,27 @@ class CliReporter extends Reporter
         $benchmark = $subject->benchmark;
 
         $ops = $benchmark::Operations;
+        $its = $benchmark::Iterations;
         $revs = $benchmark::Revolutions;
         $name = $benchmark::Name;
 
         $ms_median = $subject->msMedian();
         $memory_median = $subject->memoryMedian();
+        $bytes_median = $subject->bytesMedian();
         $rstdev = $subject->msRstDev();
 
         $ops_sec = ($ops * $revs) / ($ms_median / 1000);
 
         printf(
-            "Executed %d iterations of %s %s using %s in %sms (%s ops/s) consuming %s [±%.2f%%]\n",
+            "Executed %d iterations of %s %s using %s in %sms (%s ops/s) consuming %s transferring %s [±%.2f%%]\n",
             count($subject->iterations),
             number_format($ops * $revs),
             $name,
             $subject->client(),
             number_format($ms_median, 2),
             $this->humanNumber($ops_sec),
-            $this->humanMemory($memory_median),
+            $this->humanMemory($memory_median * $its),
+            $this->humanMemory($bytes_median * $its),
             $rstdev
         );
     }
@@ -76,13 +80,17 @@ class CliReporter extends Reporter
 
         foreach ($subjects as $subject) {
             $msMedian = $subject->msMedian();
+            $memoryMedian = $subject->memoryMedian();
+            $bytesMedian = $subject->bytesMedian();
             $diff = -(1 - ($msMedian / $baseMsMedian)) * 100;
             $multiple = 1 / ($msMedian / $baseMsMedian);
 
             printf(
-                "%s (%sms) [%sx, %s%%]\n",
+                "%s (%sms, memory:%s, network:%s) [%sx, %s%%]\n",
                 $subject->client(),
                 number_format($msMedian, 2),
+                $this->humanMemory($memoryMedian),
+                $this->humanMemory($bytesMedian),
                 $i === 0 ? '1.0' : number_format($multiple, $multiple < 2 ? 2 : 1),
                 $i === 0 ? '0' : number_format($diff, 1),
             );
