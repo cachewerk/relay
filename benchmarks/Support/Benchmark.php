@@ -50,7 +50,7 @@ abstract class Benchmark
     {
         $keys = [];
         $json = file_get_contents(__DIR__ . "/data/{$file}");
-        $data = json_decode($json);
+        $data = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
 
         $redis = $this->createPredis();
 

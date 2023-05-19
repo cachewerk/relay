@@ -6,7 +6,9 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-array_shift($argv);
+$opt = getopt('h:p:s:a:');
+
+array_splice($argv, 0, 1 + (count($opt) * 2));
 
 $benchmarks = array_map(function ($file) {
     if (is_readable($file)) {
@@ -17,14 +19,17 @@ $benchmarks = array_map(function ($file) {
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
 $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
-    $_SERVER['REDIS_HOST'] ?? '127.0.0.1',
-    $_SERVER['REDIS_PORT'] ?? 6379,
+    $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
+    $opt['p'] ?? (isset($opt['s']) ? -1 : 6379),
+    $opt['a'] ?? null,
 );
 
 $runner->run($benchmarks);
 
-// TODO: test Unix socket...
+// TODO: test `-a` password parameter
+// TODO: test `-c` socket parameter
+
 // TODO: Mention this is SINGLE core SINGLE worker...
-// TODO: Redis CPU...
+// TODO: Can we track Redis CPU usage?
 // TODO: OCP compression + batching...
-// TODO: https://github.com/sharkdp/hyperfine
+// https://github.com/sharkdp/hyperfine
