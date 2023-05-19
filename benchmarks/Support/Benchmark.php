@@ -26,6 +26,21 @@ abstract class Benchmark
         $this->port = $port;
     }
 
+    public function its()
+    {
+        return static::Iterations;
+    }
+
+    public function revs()
+    {
+        return static::Revolutions;
+    }
+
+    public function opsTotal()
+    {
+        return static::Operations * static::Revolutions;
+    }
+
     protected function flush()
     {
         return $this->createPredis()->flushall();
@@ -60,7 +75,6 @@ abstract class Benchmark
         $relay = new Relay;
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
-        $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
         $relay->connect($this->host, $this->port, 0.5, 0.5);
         $relay->flushMemory();
@@ -74,12 +88,20 @@ abstract class Benchmark
         $relay->setOption(Relay::OPT_USE_CACHE, false);
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
-        $relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_PHP);
 
         $relay->connect($this->host, $this->port, 0.5, 0.5);
         $relay->flushMemory();
 
         return $relay;
+    }
+
+    protected function createPhpRedis()
+    {
+        $phpredis = new PhpRedis;
+        $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
+        $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
+
+        return $phpredis;
     }
 
     protected function createPredis()
@@ -92,14 +114,5 @@ abstract class Benchmark
         ], [
             'exceptions' => true,
         ]);
-    }
-
-    protected function createPhpRedis()
-    {
-        $phpredis = new PhpRedis;
-        $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
-        $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
-
-        return $phpredis;
     }
 }

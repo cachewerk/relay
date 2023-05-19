@@ -65,4 +65,13 @@ class Subject
 
         return Statistics::median($bytes);
     }
+
+    public function opsMedian()
+    {
+        $ops = array_map(function (Iteration $iteration) {
+            return $iteration->opsPerSec();
+        }, $this->iterations);
+
+        return Statistics::median($ops);
+    }
 }
