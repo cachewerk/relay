@@ -113,16 +113,22 @@ class CliReporter extends Reporter
         }
 
         $this->printHeader($widths, '-');
+        $this->printRow(array_shift($rows), $widths, $alignment);
+        $this->printHeader($widths, '-');
 
         foreach ($rows as $row) {
-            echo '| ';
-            foreach ($row as $n => $col) {
-                $this->printColumn($col, $widths[$n], $alignment[$n], $n == count($row) - 1);
-            }
-            echo "\n";
+            $this->printRow($row, $widths, $alignment);
         }
 
         $this->printHeader($widths, '-');
+    }
+
+    protected function printRow($row, $widths, $alignment) {
+        echo '| ';
+        foreach ($row as $n => $col) {
+            $this->printColumn($col, $widths[$n], $alignment[$n], $n == count($row) - 1);
+        }
+        echo "\n";
     }
 
     protected function printColumn($column, $width, $alignment, $tail) {
