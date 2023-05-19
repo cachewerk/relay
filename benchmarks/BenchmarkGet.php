@@ -27,7 +27,7 @@ class BenchmarkGET extends Support\Benchmark
     public function benchmarkPredis(): void
     {
         foreach ($this->keys as $key) {
-            unserialize($this->predis->get((string) $key));
+            $this->predis->get((string) $key);
         }
     }
 

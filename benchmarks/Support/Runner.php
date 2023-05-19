@@ -12,10 +12,13 @@ class Runner
 
     protected Predis $redis;
 
-    public function __construct($host, $port)
+    protected string $auth;
+
+    public function __construct($host, $port, $auth)
     {
         $this->host = $host;
         $this->port = (int) $port;
+        $this->auth = (int) $auth;
 
         $cpu = System::cpu();
 
