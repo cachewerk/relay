@@ -1,0 +1,19 @@
+{
+  "name": "relay/example-opentelemetry",
+  "authors": [
+    {
+      "name": "Vladimir Mihailenco",
+      "email": "vladimir.webdev@gmail.com"
+    }
+  ],
+  "require": {
+    "cachewerk/relay": "^0.5.1",
+    "uptrace/uptrace": "0.1.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "CacheWerk\\Relay\\": "../../src/"
+    }
+  },
+  "minimum-stability": "dev"
+}
