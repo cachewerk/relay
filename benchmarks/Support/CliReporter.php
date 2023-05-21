@@ -3,6 +3,8 @@
 namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableCellStyle;
 use Symfony\Component\Console\Output\StreamOutput;
 
 class CliReporter extends Reporter
@@ -79,9 +81,10 @@ class CliReporter extends Reporter
         $table = new Table($output);
 
         $table->setHeaders([
-            'Client', 'Its', 'Revs', 'Operation', 'Time',
-            'rstdev', 'ops/s', 'Memory', 'Network',
-            'diff', 'diff',
+            'Client', 'Operation', 'Its', 'Revs',
+            'Memory', 'Network', 'IOPS',
+            'rstdev', 'Time',
+            'Speed', 'Decrease',
         ]);
 
         $benchmark = $subjects->benchmark;
@@ -99,18 +102,22 @@ class CliReporter extends Reporter
             $rstdev = number_format($subject->msRstDev(), 2);
             $opsMedian = $subject->opsMedian();
 
+            $time = number_format($msMedian, $msMedian > 999 ? 0 : 2);
+            $speed = $i === 0 ? 1 : number_format($multiple, 2);
+            $foo = $i === 0 ? 0 : number_format($diff, 1);
+
             $table->addRow([
                 $subject->client(),
-                $benchmark->its(),
-                $benchmark->revs(),
                 number_format($benchmark->opsTotal()) . ' ' . $benchmark::Name,
-                number_format($msMedian, $msMedian > 999 ? 0 : 2) . ' ms',
-                "±{$rstdev}%",
-                $this->humanNumber($opsMedian),
-                $this->humanMemory($memoryMedian),
-                $this->humanMemory($bytesMedian),
-                $i === 0 ? '1.0x' : number_format($multiple, $multiple < 2 ? 2 : 1) . 'x',
-                $i === 0 ? '0%' : number_format($diff, 1) . '%'
+                new TableCell($benchmark->its(), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell($benchmark->revs(), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell($this->humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell($this->humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell($this->humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("±{$rstdev}%", ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("{$time}ms", ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("{$speed}x", ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("{$foo}%", ['style' => new TableCellStyle(['align' => 'right'])]),
             ]);
 
             $i++;
