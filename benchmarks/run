@@ -11,7 +11,7 @@ $opt = getopt('h:p:s:a:v', ['verbose']);
 array_splice($argv, 0, 1 + (count($opt) * 2));
 
 $benchmarks = array_map(function ($file) {
-    if (is_readable($file)) {
+    if (is_readable(__DIR__ . "/{$file}")) {
         return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__ . '/', '', $file), 0, -4);
     }
 
