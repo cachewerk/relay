@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkGET extends Support\Benchmark
+class BenchmarkGet extends Support\Benchmark
 {
     const Name = 'GET';
 
