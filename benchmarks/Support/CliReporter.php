@@ -2,6 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\StreamOutput;
+
 class CliReporter extends Reporter
 {
     public function startingBenchmark(Benchmark $benchmark)
@@ -71,17 +74,21 @@ class CliReporter extends Reporter
 
     public function finishedSubjects(Subjects $subjects)
     {
+        $output = new StreamOutput(fopen('php://stdout', 'w'));
+
+        $table = new Table($output);
+
+        $table->setHeaders([
+            'Client', 'Its', 'Revs', 'Operation', 'Time',
+            'rstdev', 'ops/s', 'Memory', 'Network',
+            'diff', 'diff',
+        ]);
+
         $benchmark = $subjects->benchmark;
         $subjects = $subjects->sortByTime();
         $baseMsMedian = $subjects[0]->msMedian();
 
         $i = 0;
-
-        $mask = "| %-16.16s | %4.4s | %4.4s | %-16.16s | %10.10s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s | %8.8s |\n";
-
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
-        printf($mask, 'Client', 'Its', 'Revs', 'Operation', 'Time', 'rstdev', 'ops/s', 'Memory', 'Network', 'diff', 'diff');
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
 
         foreach ($subjects as $subject) {
             $msMedian = $subject->msMedian();
@@ -92,8 +99,7 @@ class CliReporter extends Reporter
             $rstdev = number_format($subject->msRstDev(), 2);
             $opsMedian = $subject->opsMedian();
 
-            printf(
-                $mask,
+            $table->addRow([
                 $subject->client(),
                 $benchmark->its(),
                 $benchmark->revs(),
@@ -103,13 +109,13 @@ class CliReporter extends Reporter
                 $this->humanNumber($opsMedian),
                 $this->humanMemory($memoryMedian),
                 $this->humanMemory($bytesMedian),
-                $i === 0 ? '1.0×' : number_format($multiple, $multiple < 2 ? 2 : 1) . '×',
+                $i === 0 ? '1.0x' : number_format($multiple, $multiple < 2 ? 2 : 1) . 'x',
                 $i === 0 ? '0%' : number_format($diff, 1) . '%'
-            );
+            ]);
 
             $i++;
         }
 
-        printf($mask, ...array_fill(0, 20, str_repeat('-', 16)));
+        $table->render();
     }
 }

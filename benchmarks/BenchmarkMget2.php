@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMGET extends Support\Benchmark
+class BenchmarkMget extends Support\Benchmark
 {
     const Name = 'MGET';
 
