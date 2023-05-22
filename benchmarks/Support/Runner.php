@@ -36,7 +36,7 @@ class Runner
         printf(
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: ???)\n",
             PHP_VERSION,
-            opcache_get_status() ? 'On' : 'Off',
+            function_exists('opcache_get_status') && opcache_get_status() ? 'On' : 'Off',
             function_exists('xdebug_info') && ! in_array('off', xdebug_info('mode')) ? 'On' : 'Off'
         );
 
@@ -92,7 +92,9 @@ class Runner
 
                 for ($i = 0; $i < $benchmark::Iterations; $i++) {
                     $this->redis->config('RESETSTAT');
-                    memory_reset_peak_usage();
+                    if (function_exists('memory_reset_peak_usage')) {
+                        memory_reset_peak_usage();
+                    }
 
                     usleep(100000); // 100ms
 
