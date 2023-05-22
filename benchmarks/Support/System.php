@@ -6,10 +6,13 @@ class System
 {
     public static function cpu()
     {
-        return match (PHP_OS) {
-            'Darwin' => self::macCPU(),
-            'Linux' => self::linuxCPU(),
-            default => 'Unknown (' . PHP_OS . ')',
+        switch (PHP_OS) {
+            case 'Darwin':
+                return self::macCPU();
+            case 'Linux':
+                return self::linuxCPU();
+            default:
+                return 'Unknown (' . PHP_OS . ')';
         };
     }
 
