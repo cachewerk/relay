@@ -30,7 +30,6 @@ $runner->run($benchmarks);
 // TODO: support PHP 7.4
 // TODO: test `-a` password parameter
 // TODO: test `-c` socket parameter
-// TODO: detect New Relic extension and whether it's active
 
 // TODO: Mention this is SINGLE core SINGLE worker...
 // TODO: Can we track Redis CPU usage?
