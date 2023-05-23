@@ -28,7 +28,7 @@ composer run bench
 ```
 
 > Caveat 1: The results on Silicon are misleading, run the benchmarks on actual production infrastructure.   
-> Caveat 2: New Relic, Xdebug and similar profilers will significantly slow down Relay and skew the benchmarks.
+> Caveat 2: New Relic, Blacfire, Xdebug and similar profilers will significantly slow down Relay and skew the benchmarks.
 
 To run specific benchmarks, use:
 
