@@ -20,13 +20,9 @@ composer require cachewerk/relay
 
 ## Benchmarks
 
+Running the benchmarks is straightforward. For more in-depth information read the [benchmarking guide](benchmarks/README.md).
+
 ```bash
-git clone git@github.com:cachewerk/relay.git
-cd relay
 composer install
-
-composer run bench -- --redis=tcp://127.0.0.1:6379
+composer run bench
 ```
-
-> Caveat 1: The results on Silicon are misleading, run the benchmark on your actual x86 infrastructure.   
-> Caveat 2: New Relic and similar profilers will significantly slow down Relay and skew the benchmarks.
