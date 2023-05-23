@@ -2,6 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use ReflectionClass;
+
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
@@ -11,8 +13,11 @@ class CliReporter extends Reporter
 {
     public function startingBenchmark(Benchmark $benchmark)
     {
+        $reflect = new ReflectionClass($benchmark);
+
         printf(
-            "\nExecuting %d iterations (%d warmup) of %s %s...\n\n",
+            "\nExecuting `%s` benchmark with %d iterations (%d warmup) of %s %s operations...\n\n",
+            substr(basename($reflect->getShortName()), 9),
             $benchmark->its(),
             $benchmark::Warmup ?? 'no',
             number_format($benchmark->opsTotal()),
@@ -102,7 +107,7 @@ class CliReporter extends Reporter
             $rstdev = number_format($subject->msRstDev(), 2);
             $opsMedian = $subject->opsMedian();
 
-            $time = number_format($msMedian, $msMedian > 999 ? 0 : 2);
+            $time = number_format($msMedian, 0);
             $speed = $i === 0 ? 1 : number_format($multiple, 2);
             $foo = $i === 0 ? 0 : number_format($diff, 1);
 
