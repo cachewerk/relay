@@ -34,10 +34,11 @@ class Runner
         );
 
         printf(
-            "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: ???)\n",
+            "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
-            function_exists('opcache_get_status') && opcache_get_status() ? 'On' : 'Off',
-            function_exists('xdebug_info') && ! in_array('off', xdebug_info('mode')) ? 'On' : 'Off'
+            $this->opcache() ? '\033[31mOn\033[0m' : "Off",
+            $this->xdebug() ? '\033[31mOn\033[0m' : "Off",
+            $this->newrelic() ? '\033[31mOn\033[0m' : 'Off'
         );
 
         $this->setUpRedis();
@@ -122,5 +123,23 @@ class Runner
 
             $reporter->finishedSubjects($subjects);
         }
+    }
+
+    protected function opcache()
+    {
+        return function_exists('opcache_get_status')
+            && opcache_get_status();
+    }
+
+    protected function xdebug()
+    {
+        return function_exists('xdebug_info')
+            && ! in_array('off', xdebug_info('mode'));
+    }
+
+    protected function newrelic()
+    {
+        return extension_loaded('newrelic')
+            && ini_get('newrelic.enabled');
     }
 }
