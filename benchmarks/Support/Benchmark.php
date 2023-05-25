@@ -14,6 +14,8 @@ abstract class Benchmark
 
     protected ?string $auth;
 
+    protected bool $socket;
+
     protected Relay $relay;
 
     protected Relay $relayNoCache;
@@ -22,11 +24,12 @@ abstract class Benchmark
 
     protected PhpRedis $phpredis;
 
-    public function __construct(string $host, int $port, ?string $auth)
+    public function __construct(string $host, int $port, ?string $auth, bool $socket)
     {
         $this->host = $host;
         $this->port = $port;
         $this->auth = $auth;
+        $this->socket = $socket;
     }
 
     public function its()
@@ -123,13 +126,20 @@ abstract class Benchmark
 
     protected function createPredis()
     {
-        return new Predis([
+        $parameters = [
             'host' => $this->host,
             'port' => $this->port,
             'password' => $this->auth,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
-        ], [
+        ];
+
+        if ($this->socket) {
+            $parameters['scheme'] = 'unix';
+            $parameters['path'] = $this->host;
+        }
+
+        return new Predis($parameters, [
             'exceptions' => true,
         ]);
     }

@@ -16,10 +16,11 @@ class CliReporter extends Reporter
         $reflect = new ReflectionClass($benchmark);
 
         printf(
-            "\nExecuting `%s` benchmark with %d iterations (%d warmup) of %s %s operations...\n\n",
+            "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup, %d revs) of %s %s operations...\n\n",
             substr(basename($reflect->getShortName()), 9),
             $benchmark->its(),
             $benchmark::Warmup ?? 'no',
+            $benchmark->revs(),
             number_format($benchmark->opsTotal()),
             $benchmark::Name
         );
@@ -86,9 +87,8 @@ class CliReporter extends Reporter
         $table = new Table($output);
 
         $table->setHeaders([
-            'Client', 'Operation', 'Its', 'Revs',
-            'Memory', 'Network', 'IOPS',
-            'rstdev', 'Time',
+            'Client', 'Memory', 'Network',
+            'IOPS', 'rstdev', 'Time',
             'Speed', 'Decrease',
         ]);
 
@@ -113,9 +113,6 @@ class CliReporter extends Reporter
 
             $table->addRow([
                 $subject->client(),
-                number_format($benchmark->opsTotal()) . ' ' . $benchmark::Name,
-                new TableCell($benchmark->its(), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell($benchmark->revs(), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
