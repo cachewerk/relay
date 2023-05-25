@@ -12,12 +12,15 @@ class Runner
 
     protected ?string $auth;
 
+    protected bool $socket;
+
     protected bool $verbose = false;
 
     protected Predis $redis;
 
-    public function __construct($host, $port, $auth, bool $verbose)
+    public function __construct($host, $port, $auth, bool $socket, bool $verbose)
     {
+        $this->socket = $socket;
         $this->verbose = $verbose;
 
         $this->host = (string) $host;
@@ -36,30 +39,36 @@ class Runner
         printf(
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
-            $this->opcache() ? '\033[31mOn\033[0m' : "Off",
-            $this->xdebug() ? '\033[31mOn\033[0m' : "Off",
-            $this->newrelic() ? '\033[31mOn\033[0m' : 'Off'
+            $this->opcache() ? "\033[31mOn\033[0m" : "Off",
+            $this->xdebug() ? "\033[31mOn\033[0m" : "Off",
+            $this->newrelic() ? "\033[31mOn\033[0m" : 'Off'
         );
 
         $this->setUpRedis();
 
         printf(
-            "Connected to Redis (%s) at tcp://%s:%s\n\n",
+            "Connected to Redis (%s) at %s\n\n",
             $this->redis->info()['Server']['redis_version'],
-            $host,
-            $port
+            $this->socket ? "unix:{$host}" : "tcp://{$host}:{$port}",
         );
     }
 
     protected function setUpRedis()
     {
-        $this->redis = new Predis([
+        $parameters = [
             'host' => $this->host,
             'port' => $this->port,
             'password' => $this->auth,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
-        ], [
+        ];
+
+        if ($this->socket) {
+            $parameters['scheme'] = 'unix';
+            $parameters['path'] = $this->host;
+        }
+
+        $this->redis = new Predis($parameters, [
             'exceptions' => true,
         ]);
     }
@@ -67,7 +76,7 @@ class Runner
     public function run(array $benchmarks)
     {
         foreach ($benchmarks as $class) {
-            $benchmark = new $class($this->host, $this->port, $this->auth);
+            $benchmark = new $class($this->host, $this->port, $this->auth, $this->socket);
             $benchmark->setUp();
 
             $subjects = new Subjects($benchmark);
