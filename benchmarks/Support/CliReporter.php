@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 
 class CliReporter extends Reporter
 {
-    public function startingBenchmark(Benchmark $benchmark)
+    public function startingBenchmark(Benchmark $benchmark): void
     {
         $reflect = new ReflectionClass($benchmark);
 
@@ -26,7 +26,7 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedIteration(Iteration $iteration)
+    public function finishedIteration(Iteration $iteration): void
     {
         if (! $this->verbose) {
             return;
@@ -46,7 +46,7 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedSubject(Subject $subject)
+    public function finishedSubject(Subject $subject): void
     {
         if (! $this->verbose) {
             return;
@@ -80,7 +80,7 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedSubjects(Subjects $subjects)
+    public function finishedSubjects(Subjects $subjects): void
     {
         $output = new StreamOutput(fopen('php://stdout', 'w'));
 
@@ -89,10 +89,9 @@ class CliReporter extends Reporter
         $table->setHeaders([
             'Client', 'Memory', 'Network',
             'IOPS', 'rstdev', 'Time',
-            'Speed', 'Decrease',
+            '% Change', 'Factor',
         ]);
 
-        $benchmark = $subjects->benchmark;
         $subjects = $subjects->sortByTime();
         $baseMsMedian = $subjects[0]->msMedian();
 
@@ -108,8 +107,8 @@ class CliReporter extends Reporter
             $opsMedian = $subject->opsMedian();
 
             $time = number_format($msMedian, 0);
-            $speed = $i === 0 ? 1 : number_format($multiple, 2);
-            $foo = $i === 0 ? 0 : number_format($diff, 1);
+            $factor = $i === 0 ? 1 : number_format($multiple, 2);
+            $change = $i === 0 ? 0 : number_format($diff, 1);
 
             $table->addRow([
                 $subject->client(),
@@ -118,8 +117,8 @@ class CliReporter extends Reporter
                 new TableCell($this->humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell("±{$rstdev}%", ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell("{$time}ms", ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("{$speed}x", ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("{$foo}%", ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("{$change}%", ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell("{$factor}x", ['style' => new TableCellStyle(['align' => 'right'])]),
             ]);
 
             $i++;

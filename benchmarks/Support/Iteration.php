@@ -24,6 +24,9 @@ class Iteration
         $this->subject = $subject;
     }
 
+    /**
+     * @return int|float
+     */
     public function opsPerSec()
     {
         $benchmark = $this->subject->benchmark;

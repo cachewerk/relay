@@ -4,6 +4,11 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 class Statistics
 {
+    /**
+     * @param array<int, int|float> $values
+     * @param bool $sample
+     * @return float
+     */
     public static function stdev(array $values, bool $sample = false): float
     {
         $variance = self::variance($values, $sample);
@@ -11,6 +16,11 @@ class Statistics
         return \sqrt($variance);
     }
 
+    /**
+     * @param array<int, int|float> $values
+     * @param bool $sample
+     * @return int|float
+     */
     public static function variance(array $values, bool $sample = false)
     {
         $average = self::mean($values);
@@ -30,6 +40,10 @@ class Statistics
         return $variance;
     }
 
+    /**
+     * @param array<int, int|float> $values
+     * @return int|float
+     */
     public static function mean(array $values)
     {
         if (empty($values)) {
@@ -47,6 +61,10 @@ class Statistics
         return $sum / $count;
     }
 
+    /**
+     * @param array<int, int|float> $values
+     * @return int|float
+     */
     public static function median(array $values)
     {
         $count = count($values);
@@ -58,7 +76,8 @@ class Statistics
     }
 
     /**
-     * @param (int|float)[] $values
+     * @param array<int, int|float> $values
+     * @param bool $sample
      */
     public static function rstdev(array $values, bool $sample = false): float
     {

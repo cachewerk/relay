@@ -14,6 +14,9 @@ class BenchmarkMget extends Support\Benchmark
 
     const Warmup = 1;
 
+    /**
+     * @var array<int, array<int, string>>
+     */
     protected array $keyChunks;
 
     public function setUp(): void

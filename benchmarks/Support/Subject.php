@@ -8,6 +8,9 @@ class Subject
 
     public Benchmark $benchmark;
 
+    /**
+     * @var array<int, Iteration>
+     */
     public array $iterations = [];
 
     public function __construct(string $method, Benchmark $benchmark)
@@ -16,7 +19,7 @@ class Subject
         $this->benchmark = $benchmark;
     }
 
-    public function addIteration(float $ms, int $memory, int $bytesIn, int $bytesOut)
+    public function addIteration(float $ms, int $memory, int $bytesIn, int $bytesOut): Iteration
     {
         $iterations = new Iteration($ms, $memory, $bytesIn, $bytesOut, $this);
 
@@ -25,11 +28,14 @@ class Subject
         return $iterations;
     }
 
-    public function client()
+    public function client(): string
     {
         return substr($this->method, 9);
     }
 
+    /**
+     * @return int|float
+     */
     public function msMedian()
     {
         $times = array_map(function (Iteration $iteration) {
@@ -39,6 +45,9 @@ class Subject
         return Statistics::median($times);
     }
 
+    /**
+     * @return int|float
+     */
     public function msRstDev()
     {
         $times = array_map(function (Iteration $iteration) {
@@ -48,6 +57,9 @@ class Subject
         return Statistics::rstdev($times);
     }
 
+    /**
+     * @return int|float
+     */
     public function memoryMedian()
     {
         $times = array_map(function (Iteration $iteration) {
@@ -57,6 +69,9 @@ class Subject
         return Statistics::median($times);
     }
 
+    /**
+     * @return int|float
+     */
     public function bytesMedian()
     {
         $bytes = array_map(function (Iteration $iteration) {
@@ -66,6 +81,9 @@ class Subject
         return Statistics::median($bytes);
     }
 
+    /**
+     * @return int|float
+     */
     public function opsMedian()
     {
         $ops = array_map(function (Iteration $iteration) {
