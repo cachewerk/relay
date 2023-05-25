@@ -89,7 +89,7 @@ class CliReporter extends Reporter
         $table->setHeaders([
             'Client', 'Memory', 'Network',
             'IOPS', 'rstdev', 'Time',
-            '% Change', 'Factor',
+            'Change', 'Factor',
         ]);
 
         $subjects = $subjects->sortByTime();

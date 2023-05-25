@@ -46,17 +46,8 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
     public function benchmarkPredis(): void
     {
-        $uncompress = function_exists('zstd_compress') ? 'zstd_uncompress' : 'gzuncompress';
-
         foreach ($this->keys as $key) {
-            $value = igbinary_unserialize($uncompress($this->predis->get("predis:{$key}")));
-        }
-    }
-
-    public function benchmarkPredisRaw(): void
-    {
-        foreach ($this->keys as $key) {
-            $value = $this->predis->get("predis-raw:{$key}");
+            $value = $this->predis->get("predis:{$key}");
         }
     }
 
@@ -83,12 +74,8 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
     protected function seedPredis(): void
     {
-        $compress = function_exists('zstd_compress') ? 'zstd_compress' : 'gzcompress';
-
         foreach ($this->data as $item) {
-            $items = $this->randomItems();
-            $this->predis->set("predis-raw:{$item->id}", serialize($items));
-            $this->predis->set("predis:{$item->id}", $compress((string) igbinary_serialize($items)));
+            $this->predis->set("predis:{$item->id}", serialize($this->randomItems()));
         }
     }
 
