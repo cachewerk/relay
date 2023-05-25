@@ -12,15 +12,12 @@ class Runner
 
     protected ?string $auth;
 
-    protected bool $socket;
-
     protected bool $verbose = false;
 
     protected Predis $redis;
 
-    public function __construct($host, $port, $auth, bool $socket, bool $verbose)
+    public function __construct($host, $port, $auth, bool $verbose)
     {
-        $this->socket = $socket;
         $this->verbose = $verbose;
 
         $this->host = (string) $host;
@@ -49,7 +46,7 @@ class Runner
         printf(
             "Connected to Redis (%s) at %s\n\n",
             $this->redis->info()['Server']['redis_version'],
-            $this->socket ? "unix:{$host}" : "tcp://{$host}:{$port}",
+            $this->port ? "tcp://{$host}:{$port}" : "unix:{$host}",
         );
     }
 
@@ -63,7 +60,7 @@ class Runner
             'read_write_timeout' => 0.5,
         ];
 
-        if ($this->socket) {
+        if (! $this->port) {
             $parameters['scheme'] = 'unix';
             $parameters['path'] = $this->host;
         }
@@ -76,7 +73,7 @@ class Runner
     public function run(array $benchmarks)
     {
         foreach ($benchmarks as $class) {
-            $benchmark = new $class($this->host, $this->port, $this->auth, $this->socket);
+            $benchmark = new $class($this->host, $this->port, $this->auth);
             $benchmark->setUp();
 
             $subjects = new Subjects($benchmark);
