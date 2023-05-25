@@ -2,9 +2,6 @@ parameters:
 
   level: max
 
-  scanDirectories:
-    - stubs/
-
   paths:
     - benchmarks/
     - resources/

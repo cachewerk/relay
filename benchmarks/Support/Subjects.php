@@ -6,6 +6,9 @@ class Subjects
 {
     public Benchmark $benchmark;
 
+    /**
+     * @var array<int, Subject>
+     */
     public array $subjects = [];
 
     public function __construct(Benchmark $benchmark)
@@ -13,7 +16,7 @@ class Subjects
         $this->benchmark = $benchmark;
     }
 
-    public function add(string $method)
+    public function add(string $method): Subject
     {
         $subject = new Subject($method, $this->benchmark);
 
@@ -22,6 +25,9 @@ class Subjects
         return $subject;
     }
 
+    /**
+     * @return array<int, Subject>
+     */
     public function sortByTime()
     {
         $subjects = $this->subjects;

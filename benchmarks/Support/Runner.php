@@ -16,6 +16,13 @@ class Runner
 
     protected Predis $redis;
 
+    /**
+     * @param string $host
+     * @param string|int $port
+     * @param ?string $auth
+     * @param bool $verbose
+     * @return void
+     */
     public function __construct($host, $port, $auth, bool $verbose)
     {
         $this->verbose = $verbose;
@@ -24,14 +31,10 @@ class Runner
         $this->port = (int) $port;
         $this->auth = empty($auth) ? null : $auth;
 
+        /** @var object{type: string, cores: int, arch: string} $cpu */
         $cpu = System::cpu();
 
-        printf(
-            "Setting up on %s (%s cores, %s)\n",
-            $cpu->type,
-            $cpu->cores,
-            $cpu->arch
-        );
+        printf("Setting up on %s (%s cores, %s)\n", $cpu->type, $cpu->cores, $cpu->arch);
 
         printf(
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
@@ -50,7 +53,7 @@ class Runner
         );
     }
 
-    protected function setUpRedis()
+    protected function setUpRedis(): void
     {
         $parameters = [
             'host' => $this->host,
@@ -70,9 +73,14 @@ class Runner
         ]);
     }
 
-    public function run(array $benchmarks)
+    /**
+     * @param class-string[] $benchmarks
+     * @return void
+     */
+    public function run(array $benchmarks): void
     {
         foreach ($benchmarks as $class) {
+            /** @var Benchmark $benchmark */
             $benchmark = new $class($this->host, $this->port, $this->auth);
             $benchmark->setUp();
 
@@ -131,19 +139,19 @@ class Runner
         }
     }
 
-    protected function opcache()
+    protected function opcache(): bool
     {
         return function_exists('opcache_get_status')
             && opcache_get_status();
     }
 
-    protected function xdebug()
+    protected function xdebug(): bool
     {
         return function_exists('xdebug_info')
             && ! in_array('off', xdebug_info('mode'));
     }
 
-    protected function newrelic()
+    protected function newrelic(): bool
     {
         return extension_loaded('newrelic')
             && ini_get('newrelic.enabled');

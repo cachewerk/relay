@@ -33,11 +33,6 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Download stubs
-        run: |
-          mkdir -p stubs && cd stubs
-          wget https://raw.githubusercontent.com/JetBrains/phpstorm-stubs/master/newrelic/newrelic.php
-
       - name: Run PHPStan
         run: composer run phpstan
 

@@ -14,6 +14,9 @@ class BenchmarkGet extends Support\Benchmark
 
     const Warmup = 1;
 
+    /**
+     * @var array<int, string>
+     */
     protected array $keys;
 
     public function setUp(): void

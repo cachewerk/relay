@@ -29,27 +29,31 @@ abstract class Benchmark
         $this->auth = $auth;
     }
 
-    public function its()
+    public function its(): int
     {
         return static::Iterations;
     }
 
-    public function revs()
+    public function revs(): int
     {
         return static::Revolutions;
     }
 
-    public function opsTotal()
+    public function opsTotal(): int
     {
         return static::Operations * static::Revolutions;
     }
 
-    protected function flush()
+    protected function flush(): void
     {
-        return $this->createPredis()->flushall();
+        $this->createPredis()->flushall();
     }
 
-    protected function loadJson(string $file): array
+    /**
+     * @param string $file
+     * @return array<int, string>
+     */
+    protected function loadJson(string $file)
     {
         $keys = [];
         $json = file_get_contents(__DIR__ . "/data/{$file}");
@@ -59,13 +63,13 @@ abstract class Benchmark
 
         foreach ($data as $item) {
             $redis->set($item->id, serialize($item));
-            $keys[] = $item->id;
+            $keys[] = (string) $item->id;
         }
 
         return $keys;
     }
 
-    protected function setUpClients()
+    protected function setUpClients(): void
     {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
@@ -73,13 +77,16 @@ abstract class Benchmark
         $this->relayNoCache = $this->createRelayNoCache();
     }
 
+    /**
+     * @return Relay
+     */
     protected function createRelay()
     {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
 
-        $relay->connect($this->host, $this->port, 0.5, 0.5);
+        $relay->connect($this->host, $this->port, 0.5, '', 0, 0.5);
 
         if ($this->auth) {
             $relay->auth($this->auth);
@@ -90,6 +97,9 @@ abstract class Benchmark
         return $relay;
     }
 
+    /**
+     * @return Relay
+     */
     protected function createRelayNoCache()
     {
         $relay = new Relay;
@@ -97,7 +107,7 @@ abstract class Benchmark
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
 
-        $relay->connect($this->host, $this->port, 0.5, 0.5);
+        $relay->connect($this->host, $this->port, 0.5, '', 0, 0.5);
 
         if ($this->auth) {
             $relay->auth($this->auth);
@@ -108,6 +118,9 @@ abstract class Benchmark
         return $relay;
     }
 
+    /**
+     * @return PhpRedis
+     */
     protected function createPhpRedis()
     {
         $phpredis = new PhpRedis;
@@ -121,6 +134,9 @@ abstract class Benchmark
         return $phpredis;
     }
 
+    /**
+     * @return Predis
+     */
     protected function createPredis()
     {
         $parameters = [

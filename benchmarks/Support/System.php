@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 class System
 {
-    public static function cpu()
+    public static function cpu(): object
     {
         switch (PHP_OS) {
             case 'Darwin':
@@ -12,18 +12,26 @@ class System
             case 'Linux':
                 return self::linuxCPU();
             default:
-                return 'Unknown (' . PHP_OS . ')';
+                return (object) [
+                    'type' => 'Unknown (' . PHP_OS . ')',
+                    'cores' => 0,
+                    'arch' => trim((string) shell_exec('uname -m')),
+                ];
         };
     }
 
-    public static function macCPU()
+    public static function macCPU(): object
     {
         $result = [];
 
         $info = shell_exec('sysctl -a | grep machdep.cpu');
 
         if (empty($info)) {
-            return 'macOS';
+            return (object) [
+                'type' => 'macOS',
+                'cores' => 0,
+                'arch' => trim((string) shell_exec('uname -m')),
+            ];
         }
 
         foreach (explode("\n", trim($info)) as $line) {
@@ -39,14 +47,18 @@ class System
         ];
     }
 
-    public static function linuxCPU()
+    public static function linuxCPU(): object
     {
         $result = [];
 
         $info = shell_exec('cat /proc/cpuinfo');
 
         if (empty($info)) {
-            return 'Linux';
+            return (object) [
+                'type' => 'Linux',
+                'cores' => 0,
+                'arch' => trim((string) shell_exec('uname -m')),
+            ];
         }
 
         foreach (explode("\n", trim($info)) as $line) {
