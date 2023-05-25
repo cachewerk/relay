@@ -21,9 +21,8 @@ $benchmarks = array_map(function ($file) {
 try {
     $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
         $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
-        $opt['p'] ?? (isset($opt['s']) ? -1 : 6379),
+        $opt['p'] ?? (isset($opt['s']) ? 0 : 6379),
         $opt['a'] ?? null,
-        isset($opt['s']),
         isset($opt['v']) || isset($opt['verbose'])
     );
 
@@ -32,9 +31,6 @@ try {
     printf("\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }
 
-// TODO: support PHP 7.4
-// TODO: test `-a` password parameter
-// TODO: test `-c` socket parameter
 
 // TODO: Mention this is SINGLE core SINGLE worker...
 // TODO: Can we track Redis CPU usage?
