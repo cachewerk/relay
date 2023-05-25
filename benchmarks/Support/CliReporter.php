@@ -7,22 +7,26 @@ use ReflectionClass;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\StreamOutput;
 
 class CliReporter extends Reporter
 {
     public function startingBenchmark(Benchmark $benchmark)
     {
+        $output = new ConsoleOutput();
+
         $reflect = new ReflectionClass($benchmark);
 
-        printf(
-            "\nExecuting `%s` benchmark with %d iterations (%d warmup) of %s %s operations...\n\n",
+        $output->write(sprintf(
+            "\n<fg=black;bg=green> %s </> Executing %d iterations (%d warmup), %d revolutions of %s %s operations...\n\n",
             substr(basename($reflect->getShortName()), 9),
             $benchmark->its(),
             $benchmark::Warmup ?? 'no',
+            $benchmark->revs(),
             number_format($benchmark->opsTotal()),
             $benchmark::Name
-        );
+        ));
     }
 
     public function finishedIteration(Iteration $iteration)
