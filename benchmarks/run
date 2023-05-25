@@ -22,7 +22,7 @@ $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
     $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
     $opt['p'] ?? (isset($opt['s']) ? -1 : 6379),
     $opt['a'] ?? null,
-    isset($opt['s']) || isset($opt['socket']),
+    isset($opt['s']),
     isset($opt['v']) || isset($opt['verbose'])
 );
 
