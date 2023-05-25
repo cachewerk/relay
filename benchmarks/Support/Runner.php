@@ -36,9 +36,9 @@ class Runner
         printf(
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
-            $this->opcache() ? '\033[31mOn\033[0m' : "Off",
-            $this->xdebug() ? '\033[31mOn\033[0m' : "Off",
-            $this->newrelic() ? '\033[31mOn\033[0m' : 'Off'
+            $this->opcache() ? "\033[31mOn\033[0m" : "Off",
+            $this->xdebug() ? "\033[31mOn\033[0m" : "Off",
+            $this->newrelic() ? "\033[31mOn\033[0m" : 'Off'
         );
 
         $this->setUpRedis();
