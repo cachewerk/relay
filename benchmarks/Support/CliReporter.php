@@ -82,7 +82,7 @@ class CliReporter extends Reporter
 
     public function finishedSubjects(Subjects $subjects): void
     {
-        $output = new StreamOutput(fopen('php://stdout', 'w'));
+        $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
 
         $table = new Table($output);
 

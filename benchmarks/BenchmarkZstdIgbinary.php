@@ -20,7 +20,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     protected int $chunkSize = 10;
 
     /**
-     * @var array<int, object>
+     * @var array<int, object{id: string}>
      */
     protected array $data;
 
@@ -36,8 +36,8 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
         $json = file_get_contents(__DIR__ . '/Support/data/meteorites.json');
 
-        $this->data = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
-        $this->keys = array_map(fn ($item) => $item->id, $this->data);
+        $this->data = json_decode($json, false, 512, JSON_THROW_ON_ERROR); // @phpstan-ignore-line
+        $this->keys = array_map(fn ($item) => $item->id, $this->data); // @phpstan-ignore-line
 
         $this->seedRelay();
         $this->seedPredis();
@@ -110,7 +110,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         return array_values(
             array_intersect_key(
                 $this->data,
-                array_flip(array_rand($this->data, $this->chunkSize))
+                array_flip(array_rand($this->data, $this->chunkSize)) // @phpstan-ignore-line
             )
         );
     }

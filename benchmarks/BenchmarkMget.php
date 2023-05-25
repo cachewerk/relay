@@ -27,7 +27,7 @@ class BenchmarkMget extends Support\Benchmark
         $keys = $this->loadJson('meteorites.json');
         $length = count($keys) / self::Operations;
 
-        $this->keyChunks = array_chunk($keys, $length);
+        $this->keyChunks = array_chunk($keys, $length); // @phpstan-ignore-line
     }
 
     public function benchmarkPredis(): void

@@ -29,6 +29,11 @@ abstract class Benchmark
         $this->auth = $auth;
     }
 
+    public function setUp(): void
+    {
+        //
+    }
+
     public function its(): int
     {
         return static::Iterations;
@@ -57,7 +62,9 @@ abstract class Benchmark
     {
         $keys = [];
         $json = file_get_contents(__DIR__ . "/data/{$file}");
-        $data = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
+
+        /** @var array<int, object{id: string}> $data */
+        $data = json_decode((string) $json, false, 512, JSON_THROW_ON_ERROR);
 
         $redis = $this->createPredis();
 
