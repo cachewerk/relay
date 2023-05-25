@@ -2,9 +2,6 @@ parameters:
 
   level: max
 
-  scanDirectories:
-    - stubs/
-
   paths:
     - benchmarks/
     - resources/
@@ -19,3 +16,4 @@ parameters:
     - '#^PHPDoc type Relay\\Relay of property \S+ is not covariant with PHPDoc type Redis#'
     - '#^Method \S+\\RelayNewRelic::(scan|hscan|sscan|zscan)\(\) should return \S+ but returns mixed#'
     - '#^Method \S+\\RelaySessionHandler::\S+ should return bool but returns bool|Relay\Relay#'
+    - '#^Access to undefined constant .*CacheWerk\\Relay\\Benchmarks\\.+#'

@@ -20,16 +20,9 @@ composer require cachewerk/relay
 
 ## Benchmarks
 
-First set the `REDIS_HOST` and `REDIS_PORT` in the `phpbench.json`, then run the benchmarks:
+Running the benchmarks is straightforward. For more in-depth information read the [benchmarking guide](benchmarks/README.md).
 
 ```bash
-git clone git@github.com:cachewerk/relay.git
-cd relay
 composer install
-
 composer run bench
-composer run bench:verbose
 ```
-
-> Caveat 1: The results on Silicon are misleading, run the benchmark on your actual x86 infrastructure.   
-> Caveat 2: New Relic and similar profilers will significantly slow down Relay and skew the benchmarks.
