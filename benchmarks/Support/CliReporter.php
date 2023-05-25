@@ -86,9 +86,8 @@ class CliReporter extends Reporter
         $table = new Table($output);
 
         $table->setHeaders([
-            'Client', 'Operation', 'Its', 'Revs',
-            'Memory', 'Network', 'IOPS',
-            'rstdev', 'Time',
+            'Client', 'Memory', 'Network',
+            'IOPS', 'rstdev', 'Time',
             'Speed', 'Decrease',
         ]);
 
@@ -113,9 +112,6 @@ class CliReporter extends Reporter
 
             $table->addRow([
                 $subject->client(),
-                number_format($benchmark->opsTotal()) . ' ' . $benchmark::Name,
-                new TableCell($benchmark->its(), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell($benchmark->revs(), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell($this->humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
