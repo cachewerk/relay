@@ -4,20 +4,16 @@ namespace CacheWerk\Relay\Benchmarks;
 
 class BenchmarkMget extends Support\Benchmark
 {
-    const Name = 'MGET';
-
-    const Operations = 100;
-
-    const Iterations = 5;
-
-    const Revolutions = 500;
-
-    const Warmup = 1;
+    const KeysPerCall = 8;
 
     /**
      * @var array<int, array<int, string>>
      */
     protected array $keyChunks;
+
+    public function getName(): string {
+        return 'MGET';
+    }
 
     public function setUp(): void
     {
@@ -25,36 +21,29 @@ class BenchmarkMget extends Support\Benchmark
         $this->setUpClients();
 
         $keys = $this->loadJson('meteorites.json');
-        $length = count($keys) / self::Operations;
-
-        $this->keyChunks = array_chunk($keys, $length); // @phpstan-ignore-line
+        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
     }
 
-    public function benchmarkPredis(): void
-    {
-        foreach ($this->keyChunks as $keys) {
-            $this->predis->mget($keys);
+    protected function runBenchmark($client): int {
+        foreach ($this->keyChunks as $chunk) {
+            $client->mget($chunk);
         }
+        return count($this->keyChunks);
     }
 
-    public function benchmarkPhpRedis(): void
-    {
-        foreach ($this->keyChunks as $keys) {
-            $this->phpredis->mget($keys);
-        }
+    public function benchmarkPredis() {
+        return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkRelayNoCache(): void
-    {
-        foreach ($this->keyChunks as $keys) {
-            $this->relayNoCache->mget($keys);
-        }
+    public function benchmarkPhpRedis() {
+        return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelay(): void
-    {
-        foreach ($this->keyChunks as $keys) {
-            $this->relay->mget($keys);
-        }
+    public function benchmarkRelayNoCache() {
+        return $this->runBenchmark($this->relayNoCache);
+    }
+
+    public function benchmarkRelay() {
+        return $this->runBenchmark($this->relay);
     }
 }

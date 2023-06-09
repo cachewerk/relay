@@ -11,38 +11,31 @@ use Symfony\Component\Console\Output\StreamOutput;
 
 class CliReporter extends Reporter
 {
-    public function startingBenchmark(Benchmark $benchmark): void
+    public function startingBenchmark(Benchmark $benchmark, int $iterations, float $duration, int $warmup): void
     {
-        $reflect = new ReflectionClass($benchmark);
-
         printf(
-            "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup, %d revs) of %s %s operations...\n\n",
-            substr(basename($reflect->getShortName()), 9),
-            $benchmark->its(),
-            $benchmark::Warmup ?? 'no',
-            $benchmark->revs(),
-            number_format($benchmark->opsTotal()),
-            $benchmark::Name
+            "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup) for %2.2fs seconds\n\n",
+            $benchmark->getName(),
+            $iterations,
+            $warmup,
+            $duration
         );
     }
 
-    public function finishedIteration(Iteration $iteration): void
+    public function finishedIteration(Benchmark $benchmark, Iteration $iteration, string $client): void
     {
         if (! $this->verbose) {
             return;
         }
 
-        $benchmark = $iteration->subject->benchmark;
-
-        printf(
-            "Executed %s %s using %s in %sms (%s ops/s) [memory:%s, network:%s]\n",
-            number_format($benchmark->opsTotal()),
-            $benchmark::Name,
-            $iteration->subject->client(),
+        printf("Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
+            number_format($iteration->ops),
+            $benchmark->getName(),
+            $client,
             number_format($iteration->ms, 2),
-            $this->humanNumber($iteration->opsPerSec()),
-            $this->humanMemory($iteration->memory),
-            $this->humanMemory($iteration->bytesIn + $iteration->bytesOut)
+            CliReporter::humanNumber($iteration->opsPerSec()),
+            CliReporter::humanMemory($iteration->memory),
+            CliReporter::humanMemory($iteration->bytesIn + $iteration->bytesOut)
         );
     }
 
@@ -52,32 +45,60 @@ class CliReporter extends Reporter
             return;
         }
 
-        $benchmark = $subject->benchmark;
-
-        $ops = $benchmark::Operations;
-        $its = $benchmark::Iterations;
-        $revs = $benchmark::Revolutions;
-        $name = $benchmark::Name;
-
         $ms_median = $subject->msMedian();
         $memory_median = $subject->memoryMedian();
         $bytes_median = $subject->bytesMedian();
         $rstdev = $subject->msRstDev();
-
-        $ops_sec = ($ops * $revs) / ($ms_median / 1000);
+        $ops_sec = $subject->opsPerSecMedian();
 
         printf(
-            "Executed %d iterations of %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n\n",
-            count($subject->iterations),
-            number_format($benchmark->opsTotal()),
-            $name,
-            $subject->client(),
+            "Executed %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n\n",
+            number_format($subject->opsTotal()),
+            $subject->benchmark->getName(),
+            $subject->getClient(),
             number_format($ms_median, 2),
             $rstdev,
-            $this->humanNumber($ops_sec),
-            $this->humanMemory($memory_median),
-            $this->humanMemory($bytes_median * $its)
+            self::humanNumber($ops_sec),
+            self::humanMemory($memory_median),
+            self::humanMemory($bytes_median)
         );
+    }
+
+    public function finishedSubjectsConcurrent(Subjects $subjects, int $workers) {
+        $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
+
+        $table = new Table($output);
+
+        $table->setHeaders([
+            'Workers', 'Client', 'Memory', 'Network', 'IOPS', 'IOPS/Worker', 'Change', 'Factor',
+        ]);
+
+
+        $subjects = $subjects->sortByOpsPerSec();
+        $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
+
+        $style_right = ['style' => new TableCellStyle(['align' => 'right'])];
+
+        foreach ($subjects as $i => $subject) {
+            $opsPerWorker = $subject->opsPerSecMedian() / $workers;
+            $diff = -(1 - ($subject->opsPerSecMedian() / $baseOpsPerSec)) * 100;
+
+            $factor = $i === 0 ? 1 : number_format($subject->opsPerSecMedian() / $baseOpsPerSec, 2);
+            $change = $i === 0 ? 0 : number_format($diff, 2);
+
+            $table->addRow([
+                new TableCell($workers, ['style' => new TableCellStyle(['align' => 'right'])]),
+                $subject->getClient(),
+                new TableCell(self::humanMemory($subject->memoryMedian()), $style_right),
+                new TableCell(self::humanMemory($subject->bytesMedian()), $style_right),
+                new TableCell(self::humanNumber($subject->opsPerSecMedian()), $style_right),
+                new TableCell(self::humanNumber($opsPerWorker), $style_right),
+                new TableCell("{$change}%", $style_right),
+                new TableCell("{$factor}", $style_right),
+            ]);
+        }
+
+        $table->render();
     }
 
     public function finishedSubjects(Subjects $subjects): void
@@ -92,29 +113,30 @@ class CliReporter extends Reporter
             'Change', 'Factor',
         ]);
 
-        $subjects = $subjects->sortByTime();
-        $baseMsMedian = $subjects[0]->msMedian();
+        $subjects = $subjects->sortByOpsPerSec();
+        $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
 
         $i = 0;
 
         foreach ($subjects as $subject) {
+            $opsPerSec = $subject->opsPerSecMedian();
             $msMedian = $subject->msMedian();
             $memoryMedian = $subject->memoryMedian();
             $bytesMedian = $subject->bytesMedian();
-            $diff = -(1 - ($msMedian / $baseMsMedian)) * 100;
-            $multiple = 1 / ($msMedian / $baseMsMedian);
+            $diff = -(1 - ($opsPerSec / $baseOpsPerSec)) * 100;
+            $multiple = $opsPerSec / $baseOpsPerSec;
             $rstdev = number_format($subject->msRstDev(), 2);
-            $opsMedian = $subject->opsMedian();
+            $opsMedian = $subject->opsPerSecMedian();
 
             $time = number_format($msMedian, 0);
             $factor = $i === 0 ? 1 : number_format($multiple, 2);
             $change = $i === 0 ? 0 : number_format($diff, 1);
 
             $table->addRow([
-                $subject->client(),
-                new TableCell($this->humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell($this->humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell($this->humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                $subject->getClient(),
+                new TableCell(self::humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell(self::humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell(self::humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell("±{$rstdev}%", ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell("{$time}ms", ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell("{$change}%", ['style' => new TableCellStyle(['align' => 'right'])]),

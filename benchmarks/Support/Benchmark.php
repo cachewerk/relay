@@ -29,24 +29,9 @@ abstract class Benchmark
         $this->auth = $auth;
     }
 
-    public function setUp(): void
-    {
-        //
-    }
+    abstract public function getName(): string;
 
-    public function its(): int
-    {
-        return static::Iterations;
-    }
-
-    public function revs(): int
-    {
-        return static::Revolutions;
-    }
-
-    public function opsTotal(): int
-    {
-        return static::Operations * static::Revolutions;
+    public function setUp(): void {
     }
 
     protected function flush(): void
@@ -76,8 +61,7 @@ abstract class Benchmark
         return $keys;
     }
 
-    protected function setUpClients(): void
-    {
+    public function setUpClients(): void {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
@@ -162,5 +146,17 @@ abstract class Benchmark
         return new Predis($parameters, [
             'exceptions' => true,
         ]);
+    }
+
+    public function getBenchmarkMethods(string $filter) {
+        return array_filter(
+            get_class_methods($this),
+            function ($method) use ($filter) {
+                if (!str_starts_with($method, 'benchmark'))
+                    return false;
+                $method = substr($method, strlen('benchmark'));
+                return !$filter || preg_match("/$filter/i", strtolower($method));
+            }
+        );
     }
 }

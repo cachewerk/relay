@@ -19,16 +19,18 @@ class Subject
         $this->benchmark = $benchmark;
     }
 
-    public function addIteration(float $ms, int $memory, int $bytesIn, int $bytesOut): Iteration
-    {
-        $iterations = new Iteration($ms, $memory, $bytesIn, $bytesOut, $this);
-
-        $this->iterations[] = $iterations;
-
-        return $iterations;
+    public function addIterationObject(Iteration $iteration) {
+        $this->iterations[] = $iteration;
     }
 
-    public function client(): string
+    public function addIteration(int $ops, float $ms, int $redisCmds, int $memory, int $bytesIn, int $bytesOut): Iteration
+    {
+        $iteration = new Iteration($ops, $ms, $redisCmds, $memory, $bytesIn, $bytesOut);
+        $this->addIterationObject($iteration);
+        return $iteration;
+    }
+
+    public function getClient(): string
     {
         return substr($this->method, 9);
     }
@@ -84,7 +86,7 @@ class Subject
     /**
      * @return int|float
      */
-    public function opsMedian()
+    public function opsPerSecMedian()
     {
         $ops = array_map(function (Iteration $iteration) {
             return $iteration->opsPerSec();
@@ -92,4 +94,24 @@ class Subject
 
         return Statistics::median($ops);
     }
+
+    /**
+     * @return int|float
+     */
+    public function opsBase() {
+        $ops = array_map(function (Iteration $iteration) {
+            return $iteration->opsPerSec();
+        }, $this->iterations);
+
+        return min($ops);
+    }
+
+    public function opsTotal(): int {
+        $ops = array_map(function (Iteration $iteration) {
+            return $iteration->ops;
+        }, $this->iterations);
+
+        return array_sum($ops);
+    }
+
 }

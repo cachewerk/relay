@@ -6,9 +6,19 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$opt = getopt('h:p:s:a:v', ['verbose']);
+$opt = getopt('h:p:s:a:v', ['host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:'], $optind);
 
-array_splice($argv, 0, 1 + (count($opt) * 2));
+$host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
+$port = $opt['p'] ?? $opt['port'] ?? 6379;
+$auth = $opt['a'] ?? $opt['auth'] ?? NULL;
+$workers = (int)($opt['workers'] ?? 1);
+$duration = $opt['duration'] ?? 1.0;
+$runs = $opt['runs'] ?? 5;
+$filter = strtolower(trim($opt['filter'] ?? ''));
+$verbose = isset($opt['v']) || isset($opt['verbose']);
+$warmup = $opt['warmup'] ?? 1;
+
+array_splice($argv, 0, $optind);
 
 $benchmarks = array_map(function ($file) {
     if (is_readable(__DIR__ . '/' . basename($file))) {
@@ -19,18 +29,20 @@ $benchmarks = array_map(function ($file) {
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
 try {
-    $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
-        $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
-        $opt['p'] ?? (isset($opt['s']) ? 0 : 6379),
-        $opt['a'] ?? null,
-        isset($opt['v']) || isset($opt['verbose'])
-    );
+    if ($workers > 1) {
+        $runner = new CacheWerk\Relay\Benchmarks\Support\ConcurrentRunner(
+            $host, $port, $auth, $filter, $verbose, $workers, $duration, $warmup
+        );
+    } else {
+        $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose
+        );
+    }
 
     $runner->run($benchmarks);
 } catch (\Exception $exception) {
     printf("\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }
-
 
 // TODO: Mention this is SINGLE core SINGLE worker...
 // TODO: Can we track Redis CPU usage?

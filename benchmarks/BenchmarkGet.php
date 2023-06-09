@@ -2,22 +2,15 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkGet extends Support\Benchmark
-{
-    const Name = 'GET';
-
-    const Operations = 1000;
-
-    const Iterations = 5;
-
-    const Revolutions = 50;
-
-    const Warmup = 1;
-
+class BenchmarkGet extends Support\Benchmark {
     /**
      * @var array<int, string>
      */
     protected array $keys;
+
+    public function getName(): string {
+        return 'GET';
+    }
 
     public function setUp(): void
     {
@@ -27,31 +20,27 @@ class BenchmarkGet extends Support\Benchmark
         $this->keys = $this->loadJson('meteorites.json');
     }
 
-    public function benchmarkPredis(): void
-    {
+    protected function runBenchmark($client): int {
         foreach ($this->keys as $key) {
-            $this->predis->get((string) $key);
+            $client->get($key);
         }
+
+        return count($this->keys);
     }
 
-    public function benchmarkPhpRedis(): void
-    {
-        foreach ($this->keys as $key) {
-            $this->phpredis->get((string) $key);
-        }
+    public function benchmarkPredis() {
+        return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkRelayNoCache(): void
-    {
-        foreach ($this->keys as $key) {
-            $this->relayNoCache->get((string) $key);
-        }
+    public function benchmarkPhpRedis() {
+        return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelay(): void
-    {
-        foreach ($this->keys as $key) {
-            $this->relay->get((string) $key);
-        }
+    public function benchmarkRelayNoCache() {
+        return $this->runBenchmark($this->relayNoCache);
+    }
+
+    public function benchmarkRelay() {
+        return $this->runBenchmark($this->relay);
     }
 }
