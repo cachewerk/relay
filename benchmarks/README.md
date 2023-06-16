@@ -4,6 +4,8 @@
 
 First, follow the [installation instructions](https://relay.so/docs/installation) to set up the Relay extension for PHP.
 
+Make sure you have [installed PhpRedis](https://github.com/phpredis/phpredis/blob/develop/INSTALL.md) and, of course, [Redis itself](https://redis.io/docs/getting-started/installation/).
+
 Next, clone the Relay repository and install the Composer dependencies:
 
 ```bash
