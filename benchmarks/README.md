@@ -1,5 +1,10 @@
 # Relay Benchmarks
 
+## Requirements
+
+- PHP 7.4+
+- Redis 6.0+
+
 ## Installation
 
 First, follow the [installation instructions](https://relay.so/docs/installation) to set up the Relay extension for PHP.
