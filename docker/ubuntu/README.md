@@ -7,7 +7,7 @@ These Docker environments are concrete examples of Relay's [installation instruc
 Relay has an APT package compatible with Ondřej’s wonderful `ppa:ondrej/php` repository:
 
 ```bash
-docker build --pull --tag relay-ubuntu-apt --file ubuntu18-apt.Dockerfile .
+docker build --pull --tag relay-ubuntu-apt --file ubuntu22-apt.Dockerfile .
 docker run -it relay-ubuntu-apt bash
 $ php --ri relay
 ```
