@@ -2,16 +2,12 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-// use Predis\Client as Predis;
-use CacheWerk\Relay\Benchmarks\Support\RawIteration;
-
 class ConcurrentRunner extends Runner {
     protected int $workers;
 
-    public function __construct($host, $port, $auth, string $filter, bool $verbose, int $workers, float $duration,
-                                int $warmup)
+    public function __construct($host, $port, $auth, int $runs, float $duration, int $warmup, string $filter, bool $verbose, int $workers)
     {
-        parent::__construct($host, $port, $auth, 1, $duration, $warmup, $filter, $verbose);
+        parent::__construct($host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose);
 
         if ($workers < 2) {
             throw new \Exception("Invalid number of workers ($workers <= 1)\n");
@@ -20,9 +16,9 @@ class ConcurrentRunner extends Runner {
         $this->workers = $workers;
     }
 
-    protected function saveOperations(string $method, int $operations): void {
+    protected function saveOperations(string $method, int $operations, string $nonce): void {
         $this->redis->sadd(
-            "benchmark_run:{$this->run_id}:$method",
+            "benchmark_run:{$this->run_id}:$method:$nonce",
             [serialize([getmypid(), hrtime(true), $operations, \memory_get_peak_usage()])]
         );
     }
@@ -30,18 +26,18 @@ class ConcurrentRunner extends Runner {
     /**
      * @return Array<int, mixed>
      */
-    protected function loadOperations(string $method): array {
+    protected function loadOperations(string $method, string $nonce): array {
         $result = [];
 
-        foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:$method") as $iteration) {
+        foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:$method:$nonce") as $iteration) {
             $result[] = unserialize($iteration);
         }
 
         return $result;
     }
 
-    protected function blockForWorkers(float $timeout = 1.0): void {
-        $waiting_key = "benchmark:spooling:{$this->run_id}";
+    protected function blockForWorkers(string $nonce, float $timeout = 1.0): void {
+        $waiting_key = "benchmark:spooling:{$this->run_id}:{$nonce}";
 
         /* Short circuit, if we're the last worker to spawn */
         if ($this->redis->incr($waiting_key) == $this->workers)
@@ -60,29 +56,23 @@ class ConcurrentRunner extends Runner {
         }
     }
 
-    protected function setConcurrentStart(): void {
-        $this->redis->setnx("benchmark:start:{$this->run_id}", hrtime(true));
+    protected function setConcurrentStart(string $nonce): void {
+        $this->redis->setnx("benchmark:start:{$this->run_id}:{$nonce}", hrtime(true));
     }
 
-    protected function getConcurrentStart(): int {
-        return (int) $this->redis->get("benchmark:start:{$this->run_id}");
+    protected function getConcurrentStart(string $nonce): int {
+        return (int) $this->redis->get("benchmark:start:{$this->run_id}:{$nonce}");
     }
 
-    protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void
+    protected function runConcurrentOnce(Benchmark $benchmark, Reporter $reporter, Subject $subject, string $class, string $method): Iteration
     {
-        /** @var Benchmark $benchmark */
-        $benchmark = new $class($this->host, $this->port, $this->auth);
-        $benchmark->setUp();
-
-        for ($i = 0; $i < $this->warmup; $i++) {
-            $benchmark->{$method}();
-        }
-
         $start = hrtime(true);
         list($rx1, $tx1) = $this->getNetworkStats();
         $cmd1 = $this->getRedisCommandCount();
 
         $pids = [];
+
+        $nonce = uniqid();
 
         for ($i = 0; $i < $this->workers; $i++) {
             $pid = pcntl_fork();
@@ -98,15 +88,15 @@ class ConcurrentRunner extends Runner {
                 $benchmark->setUpClients();
 
                 /* Wait for workers to be ready */
-                $this->blockForWorkers();
-                $this->setConcurrentStart();
+                $this->blockForWorkers($nonce);
+                $this->setConcurrentStart($nonce);
 
                 /* Run operations */
                 $operations = 0;
                 do {
                     $operations += $benchmark->{$method}();
                 } while ((hrtime(true) - $start) / 1e+9 < $this->duration);
-                $this->saveOperations($method, $operations);
+                $this->saveOperations($method, $operations, $nonce);
 
                 exit(0);
             }
@@ -121,17 +111,33 @@ class ConcurrentRunner extends Runner {
         $cmd2 = $this->getRedisCommandCount();
 
         $end = $max_mem = $tot_ops = 0;
-        foreach ($this->loadOperations($method) as [$pid, $now, $ops, $mem]) {
+        foreach ($this->loadOperations($method, $nonce) as [$pid, $now, $ops, $mem]) {
             $tot_ops += $ops;
             $max_mem = max($max_mem, $mem);
             $end = max($end, $now);
         }
 
-        $start = $this->getConcurrentStart();
+        $start = $this->getConcurrentStart($nonce);
 
-        $iteration = $subject->addIteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1,
-                                            $max_mem, $rx2 - $rx1, $tx2 - $tx1); /** @phpstan-ignore-line */
-        $reporter->finishedIteration($benchmark, $iteration, $subject->getClient());
+        /** @phpstan-ignore-next-line */
+        return new Iteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1, $max_mem, $rx2 - $rx1, $tx2 - $tx1);
+    }
+
+    protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void {
+        /** @var Benchmark $benchmark */
+        $benchmark = new $class($this->host, $this->port, $this->auth);
+        $benchmark->setUp();
+
+        for ($i = 0; $i < $this->warmup; $i++) {
+            $benchmark->{$method}();
+        }
+
+        for ($i = 0; $i < $this->runs; $i++) {
+            $iteration = $this->runConcurrentOnce($benchmark, $reporter, $subject, $class, $method);
+            $subject->addIterationObject($iteration);
+            $reporter->finishedIteration($benchmark, $iteration, $subject->getClient());
+        }
+
         $reporter->finishedSubject($subject);
     }
 

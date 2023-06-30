@@ -31,7 +31,7 @@ $benchmarks = array_map(function ($file) {
 try {
     if ($workers > 1) {
         $runner = new CacheWerk\Relay\Benchmarks\Support\ConcurrentRunner(
-            $host, $port, $auth, $filter, $verbose, $workers, $duration, $warmup
+            $host, $port, $auth, 1, $duration, $warmup, $filter, $verbose, $workers
         );
     } else {
         $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
