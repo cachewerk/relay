@@ -64,7 +64,7 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedSubjectsConcurrent(Subjects $subjects, int $workers) {
+    public function finishedSubjectsConcurrent(Subjects $subjects, int $workers): void {
         $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
 
         $table = new Table($output);
@@ -87,7 +87,7 @@ class CliReporter extends Reporter
             $change = $i === 0 ? 0 : number_format($diff, 2);
 
             $table->addRow([
-                new TableCell($workers, ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell((string)$workers, ['style' => new TableCellStyle(['align' => 'right'])]),
                 $subject->getClient(),
                 new TableCell(self::humanMemory($subject->memoryMedian()), $style_right),
                 new TableCell(self::humanMemory($subject->bytesMedian()), $style_right),

@@ -20,6 +20,7 @@ class BenchmarkGet extends Support\Benchmark {
         $this->keys = $this->loadJson('meteorites.json');
     }
 
+    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int {
         foreach ($this->keys as $key) {
             $client->get($key);
@@ -28,19 +29,19 @@ class BenchmarkGet extends Support\Benchmark {
         return count($this->keys);
     }
 
-    public function benchmarkPredis() {
+    public function benchmarkPredis(): int {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis() {
+    public function benchmarkPhpRedis(): int {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache() {
+    public function benchmarkRelayNoCache(): int {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay() {
+    public function benchmarkRelay(): int {
         return $this->runBenchmark($this->relay);
     }
 }

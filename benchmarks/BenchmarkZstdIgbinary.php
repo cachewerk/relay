@@ -38,6 +38,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $this->seedPhpRedis();
     }
 
+    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int {
         $name = get_class($client);
 
@@ -48,22 +49,23 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         return count($this->keys);
     }
 
-    public function benchmarkPredis() {
+    public function benchmarkPredis(): int {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis()  {
+    public function benchmarkPhpRedis(): int {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache() {
+    public function benchmarkRelayNoCache(): int {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay() {
+    public function benchmarkRelay(): int {
         return $this->runBenchmark($this->relay);
     }
 
+    /** @phpstan-ignore-next-line */
     protected function seedClient($client, $items) {
         $name = get_class($client);
 

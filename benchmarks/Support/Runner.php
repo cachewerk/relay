@@ -31,11 +31,15 @@ class Runner
      * @param string|int $port
      * @param ?string $auth
      * @param int $runs
-     * @param int $ops
+     * @param float $duration
+     * @param int $warmup
+     * @param string $filter
+     * @param bool $verbose
      * @param bool $verbose
      * @return void
      */
-    public function __construct($host, $port, $auth, $runs, float $duration, $warmup, string $filter, bool $verbose)
+    public function __construct($host, $port, $auth, $runs, float $duration, $warmup,
+                                string $filter, bool $verbose)
     {
         $this->run_id = uniqid();
 
@@ -92,7 +96,7 @@ class Runner
         ]);
     }
 
-    protected function resetStats() {
+    protected function resetStats(): void {
         $this->redis->config('RESETSTAT');
 
         if (function_exists('memory_reset_peak_usage')) {
@@ -100,7 +104,10 @@ class Runner
         }
     }
 
-    protected function getNetworkStats() {
+    /**
+     * @return Array<int, int>
+     */
+    protected function getNetworkStats(): array {
         $info = $this->redis->info('STATS')['Stats'];
         return [
             $info['total_net_input_bytes'],
@@ -120,10 +127,11 @@ class Runner
             $result[$cmd] = $matches[1];
         }
 
-        return array_sum($result);
+        return (int) array_sum($result);
     }
 
-    protected function runMethod($reporter, $subject, $benchmark, $method) {
+    protected function runMethod(Reporter $reporter, Subject $subject, Benchmark $benchmark, string $method): void
+    {
         for ($i = 0; $i < $this->warmup; $i++) {
             $benchmark->{$method}();
         }

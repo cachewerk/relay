@@ -20,14 +20,17 @@ class ConcurrentRunner extends Runner {
         $this->workers = $workers;
     }
 
-    protected function saveOperations($method, $operations) {
+    protected function saveOperations(string $method, int $operations): void {
         $this->redis->sadd(
             "benchmark_run:{$this->run_id}:$method",
-            serialize([getmypid(), hrtime(true), $operations, \memory_get_peak_usage()])
+            [serialize([getmypid(), hrtime(true), $operations, \memory_get_peak_usage()])]
         );
     }
 
-    protected function loadOperations($method) {
+    /**
+     * @return Array<int, mixed>
+     */
+    protected function loadOperations(string $method): array {
         $result = [];
 
         foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:$method") as $iteration) {
@@ -37,7 +40,7 @@ class ConcurrentRunner extends Runner {
         return $result;
     }
 
-    protected function blockForWorkers($timeout = 1.0) {
+    protected function blockForWorkers(float $timeout = 1.0): void {
         $waiting_key = "benchmark:spooling:{$this->run_id}";
 
         /* Short circuit, if we're the last worker to spawn */
@@ -45,8 +48,8 @@ class ConcurrentRunner extends Runner {
             return;
 
         /* Wait for all of the workers to be ready up to a predefined maximum time.
-           Because this is benchmarking code, we don't invoke the time() syscall each
-           iteration. */
+         * Because this is benchmarking code, we don't invoke the time() syscall each
+         * iteration. */
         $st = microtime(true);
         for ($i = 1; $this->redis->get($waiting_key) < $this->workers; $i++) {
             if ($i % 10000 == 0 && ($et = microtime(true)) - $st >= $timeout) {
@@ -57,16 +60,17 @@ class ConcurrentRunner extends Runner {
         }
     }
 
-    protected function setConcurrentStart() {
+    protected function setConcurrentStart(): void {
         $this->redis->setnx("benchmark:start:{$this->run_id}", hrtime(true));
     }
 
-    protected function getConcurrentStart() {
-        return $this->redis->get("benchmark:start:{$this->run_id}");
+    protected function getConcurrentStart(): int {
+        return (int) $this->redis->get("benchmark:start:{$this->run_id}");
     }
 
-    protected function runConcurrent($reporter, $subject, $class, $method) {
-        /* Warm up once, outside of the forked workers */
+    protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void
+    {
+        /** @var Benchmark $benchmark */
         $benchmark = new $class($this->host, $this->port, $this->auth);
         $benchmark->setUp();
 
@@ -89,7 +93,7 @@ class ConcurrentRunner extends Runner {
                 $pids[] = $pid;
             } else {
                 /* Refresh clients since we're in a forked child process.
-                   NOTE:  Not required for Relay but for the others it is. */
+                 * NOTE:  Not required for Relay but for the others it is. */
                 $this->setUpRedis();
                 $benchmark->setUpClients();
 
@@ -125,7 +129,8 @@ class ConcurrentRunner extends Runner {
 
         $start = $this->getConcurrentStart();
 
-        $iteration = $subject->addIteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1, $max_mem, $rx2 - $rx1, $tx2 - $tx1);
+        $iteration = $subject->addIteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1,
+                                            $max_mem, $rx2 - $rx1, $tx2 - $tx1); /** @phpstan-ignore-line */
         $reporter->finishedIteration($benchmark, $iteration, $subject->getClient());
         $reporter->finishedSubject($subject);
     }
@@ -133,6 +138,7 @@ class ConcurrentRunner extends Runner {
     public function run(array $benchmarks): void
     {
         foreach ($benchmarks as $class) {
+            /** @var Benchmark $benchmark */
             $benchmark = new $class($this->host, $this->port, $this->auth);
             $benchmark->setUp();
 

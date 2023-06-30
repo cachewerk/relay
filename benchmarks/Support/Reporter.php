@@ -6,6 +6,9 @@ abstract class Reporter
 {
     protected bool $verbose;
 
+    /**
+     * @return void
+     */
     public function __construct(bool $verbose)
     {
         $this->verbose = $verbose;

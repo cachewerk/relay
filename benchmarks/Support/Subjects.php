@@ -28,7 +28,7 @@ class Subjects
     /**
      * @return array<int, Subject>
      */
-    public function sortByTime()
+    public function sortByTime(): array
     {
         $subjects = $this->subjects;
 
@@ -37,7 +37,10 @@ class Subjects
         return $subjects;
     }
 
-    public function sortByOpsPerSec() {
+    /**
+     * @return array<int, Subject>
+     */
+    public function sortByOpsPerSec(): array {
         $subjects = $this->subjects;
 
         usort($subjects, fn($a, $b) => $a->opsPerSecMedian() >= $b->opsPerSecMedian() ? 1 : -1);

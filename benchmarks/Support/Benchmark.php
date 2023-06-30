@@ -148,7 +148,10 @@ abstract class Benchmark
         ]);
     }
 
-    public function getBenchmarkMethods(string $filter) {
+    /**
+     * @return Array<string>
+     */
+    public function getBenchmarkMethods(string $filter): array {
         return array_filter(
             get_class_methods($this),
             function ($method) use ($filter) {

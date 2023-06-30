@@ -19,14 +19,10 @@ class Subject
         $this->benchmark = $benchmark;
     }
 
-    public function addIterationObject(Iteration $iteration) {
-        $this->iterations[] = $iteration;
-    }
-
     public function addIteration(int $ops, float $ms, int $redisCmds, int $memory, int $bytesIn, int $bytesOut): Iteration
     {
         $iteration = new Iteration($ops, $ms, $redisCmds, $memory, $bytesIn, $bytesOut);
-        $this->addIterationObject($iteration);
+        $this->iterations[] = $iteration;
         return $iteration;
     }
 
