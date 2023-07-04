@@ -2,21 +2,21 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkHgetall extends Support\Benchmark {
+class BenchmarkSmembers extends Support\Benchmark {
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
     public function getName(): string {
-        return 'HGETALL';
+        return 'SMEMBERS';
     }
 
     public function seedKeys(): void {
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
-            $redis->hmset((string)$item['id'], $this->flattenArray($item));
+            $redis->sadd((string)$item['id'], array_keys($this->flattenArray($item)));
             $this->keys[] = $item['id'];
         }
     }
@@ -31,7 +31,7 @@ class BenchmarkHgetall extends Support\Benchmark {
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int {
         foreach ($this->keys as $key) {
-            $client->hgetall($key);
+            $client->smembers($key);
         }
 
         return count($this->keys);

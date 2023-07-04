@@ -45,7 +45,13 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $name = get_class($client);
 
         foreach ($this->keys as $key) {
-            $client->get("$name:$key");
+            $v = $client->get("$name:$key");
+
+            /* Predis does not have built-in serialization, so if we don't
+             * unserialize there, it's not really a fair comparison, since
+             * both PhpRedis and Relay will pay a price for deserialization. */
+            if ($unserialize)
+                $v = unserialize($v);
         }
 
         return count($this->keys);

@@ -40,6 +40,27 @@ abstract class Benchmark
         $this->createPredis()->flushall();
     }
 
+    /**
+     * @param array<mixed> $input
+     * @return array<mixed>
+     *
+     * Helper function to flatten a multidimensional array.  No type hinting here
+     * as it can operate on any arbitrary array data.
+     */
+    protected function flattenArray(array $input, string $prefix = ''): array {
+        $result = [];
+
+        foreach ($input as $key => $val) {
+            if (is_array($val)) {
+                $result = $result + $this->flattenArray($val, $prefix . $key . '.');
+            } else {
+                $result[$prefix . $key] = $val;
+            }
+        }
+
+        return $result;
+    }
+
     /** @phpstan-ignore-next-line */
     protected function loadJsonFile(string $file, bool $assoc) {
         $file = __DIR__ . "/data/{$file}";
