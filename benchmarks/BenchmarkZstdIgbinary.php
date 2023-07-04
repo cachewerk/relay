@@ -24,9 +24,20 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     }
 
     public function seedKeys(): void {
-        $this->seedRelay();
-        $this->seedPredis();
-        $this->seedPhpRedis();
+        $items = $this->randomItems();
+
+        $this->seedClient($this->predis, serialize($items));
+        $this->seedClient($this->phpredis, $items);
+        $this->seedClient($this->relayNoCache, $items);
+    }
+
+    public function setUpClients(): void {
+        parent::setUpClients();
+
+        foreach ([$this->phpredis, $this->relayNoCache, $this->relay] as $client) {
+            $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
+            $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+        }
     }
 
     public function setUp(): void
@@ -43,13 +54,18 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client, bool $unserialize): int {
         $name = get_class($client);
+        $pid = getmypid();
 
         foreach ($this->keys as $key) {
             $v = $client->get("$name:$key");
 
             /* Predis does not have built-in serialization, so if we don't
              * unserialize there, it's not really a fair comparison, since
-             * both PhpRedis and Relay will pay a price for deserialization. */
+             * both PhpRedis and Relay will pay a price for deserialization.
+             *
+             * Note that this is still not really a fair comparison because
+             * Relay and PhpRedis are decompressing and using a different
+             * serializer. */
             if ($unserialize)
                 $v = unserialize($v);
         }
@@ -80,26 +96,6 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         foreach ($this->data as $item) {
             $client->set("$name:{$item->id}", $items);
         }
-    }
-
-    protected function seedPredis(): void {
-        $this->seedClient($this->predis, serialize($this->randomItems()));
-    }
-
-    protected function seedPhpRedis(): void {
-        $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-        $this->phpredis->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
-        $this->seedClient($this->phpredis, $this->randomItems());
-    }
-
-    protected function seedRelay(): void
-    {
-        $this->relayNoCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
-        $this->relayNoCache->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
-        $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
-        $this->relay->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
-
-        $this->seedClient($this->relayNoCache, $this->randomItems());
     }
 
     /**
