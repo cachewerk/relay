@@ -23,23 +23,25 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         return 'GET (Serialized)';
     }
 
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-
-        $json = file_get_contents(__DIR__ . '/Support/data/meteorites.json');
-
-        $this->data = json_decode($json, false, 512, JSON_THROW_ON_ERROR); // @phpstan-ignore-line
-        $this->keys = array_map(fn ($item) => $item->id, $this->data); // @phpstan-ignore-line
-
+    public function seedKeys(): void {
         $this->seedRelay();
         $this->seedPredis();
         $this->seedPhpRedis();
     }
 
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+
+        $this->data = $this->loadJsonFile('meteorites.json', false);
+        $this->keys = array_map(fn ($item) => $item->id, $this->data);
+
+        $this->seedKeys();
+    }
+
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client, bool $unserialize): int {
         $name = get_class($client);
 
         foreach ($this->keys as $key) {
@@ -50,19 +52,19 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     }
 
     public function benchmarkPredis(): int {
-        return $this->runBenchmark($this->predis);
+        return $this->runBenchmark($this->predis, true);
     }
 
     public function benchmarkPhpRedis(): int {
-        return $this->runBenchmark($this->phpredis);
+        return $this->runBenchmark($this->phpredis, false);
     }
 
     public function benchmarkRelayNoCache(): int {
-        return $this->runBenchmark($this->relayNoCache);
+        return $this->runBenchmark($this->relayNoCache, false);
     }
 
     public function benchmarkRelay(): int {
-        return $this->runBenchmark($this->relay);
+        return $this->runBenchmark($this->relay, false);
     }
 
     /** @phpstan-ignore-next-line */

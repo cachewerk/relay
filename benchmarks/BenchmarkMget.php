@@ -15,13 +15,24 @@ class BenchmarkMget extends Support\Benchmark
         return 'MGET';
     }
 
+    public function seedKeys(): void {
+        $keys = [];
+
+        $redis = $this->createPredis();
+
+        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+            $redis->set((string)$item['id'], serialize($item));
+            $keys[] = $item['id'];
+        }
+
+        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
+    }
+
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-
-        $keys = $this->loadJson('meteorites.json');
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
+        $this->seedKeys();
     }
 
     /** @phpstan-ignore-next-line */

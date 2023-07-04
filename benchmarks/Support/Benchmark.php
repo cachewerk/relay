@@ -30,6 +30,7 @@ abstract class Benchmark
     }
 
     abstract public function getName(): string;
+    abstract public function seedKeys(): void;
 
     public function setUp(): void {
     }
@@ -39,26 +40,15 @@ abstract class Benchmark
         $this->createPredis()->flushall();
     }
 
-    /**
-     * @param string $file
-     * @return array<int, string>
-     */
-    protected function loadJson(string $file)
-    {
-        $keys = [];
-        $json = file_get_contents(__DIR__ . "/data/{$file}");
+    /** @phpstan-ignore-next-line */
+    protected function loadJsonFile(string $file, bool $assoc) {
+        $file = __DIR__ . "/data/{$file}";
 
-        /** @var array<int, object{id: string}> $data */
-        $data = json_decode((string) $json, false, 512, JSON_THROW_ON_ERROR);
+        $data = file_get_contents($file);
+        if ( ! is_string($data))
+            throw new \Exception("Failed to load data file '$file'");
 
-        $redis = $this->createPredis();
-
-        foreach ($data as $item) {
-            $redis->set($item->id, serialize($item));
-            $keys[] = (string) $item->id;
-        }
-
-        return $keys;
+        return json_decode((string)$data, $assoc, 512, JSON_THROW_ON_ERROR);
     }
 
     public function setUpClients(): void {

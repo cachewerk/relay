@@ -12,12 +12,20 @@ class BenchmarkGet extends Support\Benchmark {
         return 'GET';
     }
 
+    public function seedKeys(): void {
+        $redis = $this->createPredis();
+
+        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+            $redis->set((string)$item['id'], serialize($item));
+            $this->keys[] = $item['id'];
+        }
+    }
+
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-
-        $this->keys = $this->loadJson('meteorites.json');
+        $this->seedKeys();
     }
 
     /** @phpstan-ignore-next-line */
