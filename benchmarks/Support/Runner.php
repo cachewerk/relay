@@ -132,16 +132,14 @@ class Runner
 
     protected function runMethod(Reporter $reporter, Subject $subject, Benchmark $benchmark, string $method): void
     {
-        for ($i = 0; $i < $this->warmup; $i++) {
-            $benchmark->{$method}();
-        }
+        $benchmark->warmup($this->warmup, $method);
 
         for ($i = 0; $i < $this->runs; $i++) {
             $this->resetStats();
 
-            $t1 = microtime(true);
             $ops = 0;
             $cmds1 = $this->getRedisCommandCount();
+            $t1 = microtime(true);
 
             do {
                 $ops += $benchmark->{$method}();

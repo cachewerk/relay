@@ -6,19 +6,19 @@ function printUsage(string $script): void {
 Usage: php $script [options] [--] [<file>...]
 
 Options:
-  -h, --host        Specifies the host to connect to. Defaults to '127.0.0.1'.
-  -p, --port        Specifies the port to connect to. Defaults to 6379.
-  -a, --auth        Specifies the authentication credentials.
-      --workers     Specifies the number of worker threads. Defaults to 1.
-      --duration    Specifies the duration of the test in seconds. Defaults to 1.0.
-      --runs        Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
-      --filter      Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
-  -v, --verbose     Enables verbose output.
-      --warmup      Specifies the warmup duration in seconds. Defaults to 1.
-  -h, --help        Prints this help message.
+    -h, --host        Specifies the host to connect to. Defaults to '127.0.0.1'.
+    -p, --port        Specifies the port to connect to. Defaults to 6379.
+    -a, --auth        Specifies the authentication credentials.
+        --workers     Specifies the number of worker threads. Defaults to 1.
+        --duration    Specifies the duration of the test in seconds. Defaults to 1.0.
+        --runs        Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
+        --filter      Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
+    -v, --verbose     Enables verbose output.
+        --warmup      Specifies the warmup duration in seconds. Defaults to 1.
+    -h, --help        Prints this help message.
 
 Arguments:
-  <file>            One or more filenames to process.
+    <file>            One or more filenames to process.
 
 EOT;
     echo $usage;

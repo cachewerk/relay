@@ -82,10 +82,8 @@ class ConcurrentRunner extends Runner {
             } else if ($pid) {
                 $pids[] = $pid;
             } else {
-                /* Refresh clients since we're in a forked child process.
-                 * NOTE:  Not required for Relay but for the others it is. */
                 $this->setUpRedis();
-                $benchmark->setUpClients();
+                $benchmark->refreshClients();
 
                 /* Wait for workers to be ready */
                 $this->blockForWorkers($nonce);
@@ -128,9 +126,7 @@ class ConcurrentRunner extends Runner {
         $benchmark = new $class($this->host, $this->port, $this->auth);
         $benchmark->setUp();
 
-        for ($i = 0; $i < $this->warmup; $i++) {
-            $benchmark->{$method}();
-        }
+        $benchmark->warmup($this->warmup, $method);
 
         for ($i = 0; $i < $this->runs; $i++) {
             $iteration = $this->runConcurrentOnce($benchmark, $reporter, $subject, $class, $method);

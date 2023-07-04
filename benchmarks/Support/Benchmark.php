@@ -32,11 +32,20 @@ abstract class Benchmark
     abstract public function getName(): string;
     abstract public function seedKeys(): void;
 
-    public function setUp(): void {
+    public function warmup(int $times, string $method): void {
+        if ($times == 0)
+            return;
+
+        for ($i = 0; $i < $times; $i++) {
+            $this->{$method}();
+        }
     }
 
-    protected function flush(): void
-    {
+    public function setUp(): void {
+
+    }
+
+    protected function flush(): void {
         $this->createPredis()->flushall();
     }
 
@@ -77,6 +86,18 @@ abstract class Benchmark
         $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+    }
+
+    /**
+     * Refresh clients after they have already been instanced.  The point
+     * of this method is to refresh PhpRedis and Predis as they will fail
+     * horribly if you try to use them from a forked child process.
+     *
+     * Relay handles this automagically.
+     */
+    public function refreshClients(): void {
+        $this->predis = $this->createPredis();
+        $this->phpredis = $this->createPhpRedis();
     }
 
     /**
