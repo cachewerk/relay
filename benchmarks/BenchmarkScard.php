@@ -2,31 +2,30 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkHgetall extends Support\BenchmarkKeyCommand {
+class BenchmarkScard extends Support\BenchmarkKeyCommand {
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
     public function getName(): string {
-        return 'HGETALL';
+        return 'SCARD';
     }
 
-    public function cmd(): string {
-        return 'HGETALL';
+    protected function cmd(): string {
+        return 'SCARD';
     }
 
     public function seedKeys(): void {
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
-            $redis->hmset((string)$item['id'], $this->flattenArray($item));
+            $redis->sadd((string)$item['id'], array_keys($this->flattenArray($item)));
             $this->keys[] = $item['id'];
         }
     }
 
-    public function setUp(): void
-    {
+    public function setUp(): void {
         $this->flush();
         $this->setUpClients();
         $this->seedKeys();
