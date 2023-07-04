@@ -13,7 +13,7 @@ $port = $opt['p'] ?? $opt['port'] ?? 6379;
 $auth = $opt['a'] ?? $opt['auth'] ?? NULL;
 $workers = (int)($opt['workers'] ?? 1);
 $duration = $opt['duration'] ?? 1.0;
-$runs = $opt['runs'] ?? 5;
+$runs = $opt['runs'] ?? ($workers < 2 ? 5 : 1);
 $filter = strtolower(trim($opt['filter'] ?? ''));
 $verbose = isset($opt['v']) || isset($opt['verbose']);
 $warmup = $opt['warmup'] ?? 1;
@@ -31,7 +31,7 @@ $benchmarks = array_map(function ($file) {
 try {
     if ($workers > 1) {
         $runner = new CacheWerk\Relay\Benchmarks\Support\ConcurrentRunner(
-            $host, $port, $auth, 1, $duration, $warmup, $filter, $verbose, $workers
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $workers
         );
     } else {
         $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
