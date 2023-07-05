@@ -154,7 +154,7 @@ class ConcurrentRunner extends Runner {
                 $this->runConcurrent($reporter, $subject, $class, $method);
             }
 
-            $reporter->finishedSubjectsConcurrent($subjects, $this->workers);
+            $reporter->finishedSubjects($subjects, $this->workers);
         }
     }
 }

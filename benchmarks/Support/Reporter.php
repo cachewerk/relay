@@ -20,7 +20,7 @@ abstract class Reporter
 
     abstract function finishedSubject(Subject $subject): void;
 
-    abstract function finishedSubjects(Subjects $subjects): void;
+    abstract function finishedSubjects(Subjects $subjects, int $workers): void;
 
     /**
      * @param int|float $bytes

@@ -180,7 +180,7 @@ class Runner
                 $this->runMethod($reporter, $subject, $benchmark, $method);
             }
 
-            $reporter->finishedSubjects($subjects);
+            $reporter->finishedSubjects($subjects, 1);
         }
     }
 

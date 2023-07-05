@@ -64,7 +64,7 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedSubjectsConcurrent(Subjects $subjects, int $workers): void {
+    public function finishedSubjects(Subjects $subjects, int $workers): void {
         $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
 
         $table = new Table($output);
@@ -97,54 +97,6 @@ class CliReporter extends Reporter
                 new TableCell("{$change}%", $style_right),
                 new TableCell("{$factor}", $style_right),
             ]);
-        }
-
-        $table->render();
-    }
-
-    public function finishedSubjects(Subjects $subjects): void
-    {
-        $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
-
-        $table = new Table($output);
-
-        $table->setHeaders([
-            'Client', 'Memory', 'Network',
-            'IOPS', 'rstdev', 'Time',
-            'Change', 'Factor',
-        ]);
-
-        $subjects = $subjects->sortByOpsPerSec();
-        $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
-
-        $i = 0;
-
-        foreach ($subjects as $subject) {
-            $opsPerSec = $subject->opsPerSecMedian();
-            $msMedian = $subject->msMedian();
-            $memoryMedian = $subject->memoryMedian();
-            $bytesMedian = $subject->bytesMedian();
-            $diff = -(1 - ($opsPerSec / $baseOpsPerSec)) * 100;
-            $multiple = $opsPerSec / $baseOpsPerSec;
-            $rstdev = number_format($subject->msRstDev(), 2);
-            $opsMedian = $subject->opsPerSecMedian();
-
-            $time = number_format($msMedian, 0);
-            $factor = $i === 0 ? 1 : number_format($multiple, 2);
-            $change = $i === 0 ? 0 : number_format($diff, 1);
-
-            $table->addRow([
-                $subject->getClient(),
-                new TableCell(self::humanMemory($memoryMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell(self::humanMemory($bytesMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell(self::humanNumber($opsMedian), ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("±{$rstdev}%", ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("{$time}ms", ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("{$change}%", ['style' => new TableCellStyle(['align' => 'right'])]),
-                new TableCell("{$factor}x", ['style' => new TableCellStyle(['align' => 'right'])]),
-            ]);
-
-            $i++;
         }
 
         $table->render();
