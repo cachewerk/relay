@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+namespace CacheWerk\Relay\Benchmarks;
+
 function printBenchmarkFiles(): void {
     foreach (glob(__DIR__ . '/Benchmark*.php') as $file) {
         fprintf(STDERR, "  %s\n", basename($file));
@@ -33,7 +35,6 @@ EOT;
 
     fprintf(STDERR, "\nAvailable files:\n\n");
     printBenchmarkFiles();
-
 }
 
 
@@ -71,21 +72,27 @@ $benchmarks = array_map(function ($file) {
         return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__ . '/', '', $file), 0, -4);
     }
 
-    throw new InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
+    throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
 try {
     if ($workers > 1) {
-        $runner = new CacheWerk\Relay\Benchmarks\Support\ConcurrentRunner(
-            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $json, $workers
+        $runner = new Support\ConcurrentRunner(
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $workers
         );
     } else {
-        $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
-            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $json
+        $runner = new Support\Runner(
+            $host, $port, $auth, $runs, $duration, $warmup, $filter
         );
     }
 
-    $runner->run($benchmarks);
+    if ($json) {
+        $reporter = new Support\JsonReporter($verbose);
+    } else {
+        $reporter = new Support\CliReporter($verbose);
+    }
+
+    $runner->run($benchmarks, $reporter);
 } catch (\Exception $exception) {
     fprintf(STDERR, "\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }

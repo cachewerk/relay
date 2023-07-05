@@ -12,8 +12,6 @@ class Runner
 
     protected ?string $auth;
 
-    protected bool $verbose = false;
-
     protected Predis $redis;
 
     protected string $run_id;
@@ -26,8 +24,6 @@ class Runner
 
     protected int $warmup;
 
-    protected bool $json;
-
     /**
      * @param string $host
      * @param string|int $port
@@ -36,17 +32,12 @@ class Runner
      * @param float $duration
      * @param int $warmup
      * @param string $filter
-     * @param bool $verbose
-     * @param bool $verbose
-     * @param bool $json
      * @return void
      */
-    public function __construct($host, $port, $auth, $runs, float $duration, $warmup,
-                                string $filter, bool $verbose, bool $json)
+    public function __construct($host, $port, $auth, $runs, float $duration, $warmup, string $filter)
     {
         $this->run_id = uniqid();
 
-        $this->verbose = $verbose;
         $this->filter = $filter;
 
         $this->host = (string) $host;
@@ -56,7 +47,6 @@ class Runner
         $this->runs = $runs;
         $this->duration = $duration;
         $this->warmup = $warmup;
-        $this->json = $json;
 
         /** @var object{type: string, cores: int, arch: string} $cpu */
         $cpu = System::cpu();
@@ -169,7 +159,7 @@ class Runner
      * @param class-string[] $benchmarks
      * @return void
      */
-    public function run(array $benchmarks): void
+    public function run(array $benchmarks, Reporter $reporter): void
     {
         foreach ($benchmarks as $class) {
             /** @var Benchmark $benchmark */
@@ -177,11 +167,6 @@ class Runner
             $benchmark->setUp();
 
             $subjects = new Subjects($benchmark);
-            if ($this->json) {
-                $reporter = new JsonReporter($this->verbose);
-            } else {
-                $reporter = new CliReporter($this->verbose);
-            }
 
             $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup);
 
