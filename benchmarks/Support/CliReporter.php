@@ -13,7 +13,8 @@ class CliReporter extends Reporter
 {
     public function startingBenchmark(Benchmark $benchmark, int $iterations, float $duration, int $warmup): void
     {
-        printf(
+        fprintf(
+            STDERR,
             "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup) for %2.2fs seconds\n\n",
             $benchmark->getName(),
             $iterations,
@@ -28,7 +29,8 @@ class CliReporter extends Reporter
             return;
         }
 
-        printf("Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
+        fprintf("Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
+            STDERR,
             number_format($iteration->ops),
             $benchmark->getName(),
             $client,
@@ -51,7 +53,8 @@ class CliReporter extends Reporter
         $rstdev = $subject->msRstDev();
         $ops_sec = $subject->opsPerSecMedian();
 
-        printf(
+        fprintf(
+            STDERR,
             "Executed %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n\n",
             number_format($subject->opsTotal()),
             $subject->benchmark->getName(),

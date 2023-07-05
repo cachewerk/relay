@@ -57,9 +57,10 @@ class Runner
         /** @var object{type: string, cores: int, arch: string} $cpu */
         $cpu = System::cpu();
 
-        printf("Setting up on %s (%s cores, %s)\n", $cpu->type, $cpu->cores, $cpu->arch);
+        fprintf(STDERR, "Setting up on %s (%s cores, %s)\n", $cpu->type, $cpu->cores, $cpu->arch);
 
-        printf(
+        fprintf(
+            STDERR,
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
             $this->opcache() ? "\033[31mOn\033[0m" : "Off",
@@ -69,7 +70,8 @@ class Runner
 
         $this->setUpRedis();
 
-        printf(
+        fprintf(
+            STDERR,
             "Connected to Redis (%s) at %s\n\n",
             $this->redis->info()['Server']['redis_version'],
             $this->port ? "tcp://{$host}:{$port}" : "unix:{$host}",
