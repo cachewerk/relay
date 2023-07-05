@@ -70,9 +70,8 @@ class CliReporter extends Reporter
         $table = new Table($output);
 
         $table->setHeaders([
-            'Workers', 'Client', 'Memory', 'Network', 'IOPS', 'IOPS/Worker', 'Change', 'Factor',
+            'Workers', 'Client', 'Memory', 'Network', 'IOPS', 'IOPS/Worker', 'rstdev', 'Change', 'Factor',
         ]);
-
 
         $subjects = $subjects->sortByOpsPerSec();
         $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
@@ -81,6 +80,7 @@ class CliReporter extends Reporter
 
         foreach ($subjects as $i => $subject) {
             $opsPerWorker = $subject->opsPerSecMedian() / $workers;
+            $rstdev = number_format($subject->opsPerSecRstDev(), 2);
             $diff = -(1 - ($subject->opsPerSecMedian() / $baseOpsPerSec)) * 100;
 
             $factor = $i === 0 ? 1 : number_format($subject->opsPerSecMedian() / $baseOpsPerSec, 2);
@@ -93,6 +93,7 @@ class CliReporter extends Reporter
                 new TableCell(self::humanMemory($subject->bytesMedian()), $style_right),
                 new TableCell(self::humanNumber($subject->opsPerSecMedian()), $style_right),
                 new TableCell(self::humanNumber($opsPerWorker), $style_right),
+                new TableCell("±{$rstdev}%", $style_right),
                 new TableCell("{$change}%", $style_right),
                 new TableCell("{$factor}", $style_right),
             ]);

@@ -62,6 +62,17 @@ class Subject
     /**
      * @return int|float
      */
+    public function opsPerSecRstDev() {
+        $ops = array_map(function (Iteration $iteration) {
+            return $iteration->opsPerSec();
+        }, $this->iterations);
+
+        return Statistics::rstdev($ops);
+    }
+
+    /**
+     * @return int|float
+     */
     public function memoryMedian()
     {
         $times = array_map(function (Iteration $iteration) {
