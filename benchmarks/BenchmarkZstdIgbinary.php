@@ -54,7 +54,6 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client, bool $unserialize): int {
         $name = get_class($client);
-        $pid = getmypid();
 
         foreach ($this->keys as $key) {
             $v = $client->get("$name:$key");
