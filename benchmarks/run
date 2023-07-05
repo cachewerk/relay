@@ -1,6 +1,12 @@
 #!/usr/bin/env php
 <?php
 
+function printBenchmarkFiles(): void {
+    foreach (glob(__DIR__ . '/Benchmark*.php') as $file) {
+        printf("  %s\n", basename($file));
+    }
+}
+
 function printUsage(string $script): void {
     $usage = <<<EOT
 Usage: php $script [options] [--] [<file>...]
@@ -21,7 +27,12 @@ Arguments:
     <file>            One or more filenames to process.
 
 EOT;
+
     echo $usage;
+
+    echo "\nAvailable files:\n\n";
+    printBenchmarkFiles();
+
 }
 
 
