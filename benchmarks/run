@@ -3,7 +3,7 @@
 
 function printBenchmarkFiles(): void {
     foreach (glob(__DIR__ . '/Benchmark*.php') as $file) {
-        printf("  %s\n", basename($file));
+        fprintf(STDERR, "  %s\n", basename($file));
     }
 }
 
@@ -19,6 +19,7 @@ Options:
         --duration    Specifies the duration of the test in seconds. Defaults to 1.0.
         --runs        Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
         --filter      Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
+        --json        Output results in json instead of a table.
     -v, --verbose     Enables verbose output.
         --warmup      Specifies the warmup duration in seconds. Defaults to 1.
     -h, --help        Prints this help message.
@@ -28,9 +29,9 @@ Arguments:
 
 EOT;
 
-    echo $usage;
+    fprintf(STDERR, $usage);
 
-    echo "\nAvailable files:\n\n";
+    fprintf(STDERR, "\nAvailable files:\n\n");
     printBenchmarkFiles();
 
 }
@@ -41,7 +42,11 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$opt = getopt('h:p:s:a:v', ['host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:', 'help'], $optind);
+$opt = getopt(
+    'h:p:s:a:v',
+    ['host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:', 'json', 'help'],
+    $optind
+);
 
 $host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
 $port = $opt['p'] ?? $opt['port'] ?? 6379;
@@ -52,6 +57,7 @@ $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 1);
 $filter = strtolower(trim($opt['filter'] ?? ''));
 $verbose = isset($opt['v']) || isset($opt['verbose']);
 $warmup = $opt['warmup'] ?? 1;
+$json = isset($opt['json']);
 
 if (isset($opt['help'])) {
     printUsage($argv[0]);
@@ -71,17 +77,17 @@ $benchmarks = array_map(function ($file) {
 try {
     if ($workers > 1) {
         $runner = new CacheWerk\Relay\Benchmarks\Support\ConcurrentRunner(
-            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $workers
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $json, $workers
         );
     } else {
         $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
-            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $json
         );
     }
 
     $runner->run($benchmarks);
 } catch (\Exception $exception) {
-    printf("\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }
 
 // TODO: Mention this is SINGLE core SINGLE worker...

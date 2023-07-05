@@ -29,8 +29,9 @@ class CliReporter extends Reporter
             return;
         }
 
-        fprintf("Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
+        fprintf(
             STDERR,
+            "Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
             number_format($iteration->ops),
             $benchmark->getName(),
             $client,

@@ -99,11 +99,11 @@ class Subject
      */
     public function opsPerSecMedian()
     {
-        $ops = array_map(function (Iteration $iteration) {
+        $ops_per_sec = array_map(function (Iteration $iteration) {
             return $iteration->opsPerSec();
         }, $this->iterations);
 
-        return Statistics::median($ops);
+        return Statistics::median($ops_per_sec);
     }
 
     /**

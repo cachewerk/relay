@@ -5,9 +5,9 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 class ConcurrentRunner extends Runner {
     protected int $workers;
 
-    public function __construct($host, $port, $auth, int $runs, float $duration, int $warmup, string $filter, bool $verbose, int $workers)
+    public function __construct($host, $port, $auth, int $runs, float $duration, int $warmup, string $filter, bool $verbose, bool $json, int $workers)
     {
-        parent::__construct($host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose);
+        parent::__construct($host, $port, $auth, $runs, $duration, $warmup, $filter, $verbose, $json);
 
         if ($workers < 2) {
             throw new \Exception("Invalid number of workers ($workers <= 1)\n");
@@ -145,7 +145,11 @@ class ConcurrentRunner extends Runner {
             $benchmark->setUp();
 
             $subjects = new Subjects($benchmark);
-            $reporter = new CliReporter($this->verbose);
+            if ($this->json) {
+                $reporter = new JsonReporter($this->verbose);
+            } else {
+                $reporter = new CliReporter($this->verbose);
+            }
 
             $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup);
 
