@@ -89,7 +89,6 @@ jobs:
           - centos8/centos8-dnf
           - el9/el9-dnf
           - debian/debian11-apt
-          - ubuntu/ubuntu18-apt
           - ubuntu/ubuntu22-apt
 
     services:
