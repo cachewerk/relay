@@ -5,6 +5,9 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 class ConcurrentRunner extends Runner {
     protected int $workers;
 
+    /**
+     * @param string|array<int, array<string>>|null $auth
+     */
     public function __construct($host, $port, $auth, int $runs, float $duration, int $warmup, string $filter, int $workers)
     {
         parent::__construct($host, $port, $auth, $runs, $duration, $warmup, $filter);

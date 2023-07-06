@@ -10,7 +10,10 @@ class Runner
 
     protected int $port;
 
-    protected ?string $auth;
+    /*
+     * @var string|array<int, array<string>>|null
+     */
+    protected mixed $auth;
 
     protected Predis $redis;
 
@@ -27,7 +30,7 @@ class Runner
     /**
      * @param string $host
      * @param string|int $port
-     * @param ?string $auth
+     * @param string|array<int, array<string>>|null $auth
      * @param int $runs
      * @param float $duration
      * @param int $warmup
@@ -74,10 +77,18 @@ class Runner
 
     protected function setUpRedis(): void
     {
+        if (is_array($this->auth) && count($this->auth) == 2) {
+            list($user, $pass) = $this->auth;
+        } else {
+            $user = NULL;
+            $pass = $this->auth;
+        }
+
         $parameters = [
             'host' => $this->host,
             'port' => $this->port,
-            'password' => $this->auth,
+            'username' => $user,
+            'password' => $pass,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ];

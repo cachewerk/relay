@@ -14,9 +14,11 @@ function printUsage(string $script): void {
 Usage: php $script [options] [--] [<file>...]
 
 Options:
-    -h, --host        Specifies the host to connect to. Defaults to '127.0.0.1'.
-    -p, --port        Specifies the port to connect to. Defaults to 6379.
-    -a, --auth        Specifies the authentication credentials.
+    -h, --host        The Redis host to connect to. Defaults to '127.0.0.1'.
+    -p, --port        The Redis port to connect to. Defaults to 6379.
+    -a, --auth        The Redis password for legacy authentication.  Defaults to none.
+        --user        The Redis username for ACL authentication.  Defaults to none.
+        --pass        The redis password for ACL authentication.  Defaults to none.
         --workers     Specifies the number of worker threads. Defaults to 1.
         --duration    Specifies the duration of the test in seconds. Defaults to 1.0.
         --runs        Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
@@ -45,13 +47,15 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $opt = getopt(
     'h:p:s:a:v',
-    ['host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:', 'json', 'help'],
+    ['host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:', 'json', 'help', 'user:', 'pass:'],
     $optind
 );
 
 $host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
 $port = $opt['p'] ?? $opt['port'] ?? 6379;
 $auth = $opt['a'] ?? $opt['auth'] ?? NULL;
+$user = $opt['user'] ?? NULL;
+$pass = $opt['pass'] ?? NULL;
 $workers = (int)($opt['workers'] ?? 1);
 $duration = $opt['duration'] ?? 1.0;
 $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 1);
@@ -74,6 +78,10 @@ $benchmarks = array_map(function ($file) {
 
     throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
+
+if ($user && $pass) {
+    $auth = [$user, $pass];
+}
 
 try {
     if ($workers > 1) {

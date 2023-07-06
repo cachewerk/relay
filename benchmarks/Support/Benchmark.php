@@ -12,7 +12,7 @@ abstract class Benchmark
 
     protected int $port;
 
-    protected ?string $auth;
+    protected mixed $auth;
 
     protected Relay $relay;
 
@@ -22,7 +22,7 @@ abstract class Benchmark
 
     protected PhpRedis $phpredis;
 
-    public function __construct(string $host, int $port, ?string $auth)
+    public function __construct(string $host, int $port, mixed $auth)
     {
         $this->host = $host;
         $this->port = $port;
@@ -151,6 +151,7 @@ abstract class Benchmark
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
 
         if ($this->auth) {
+            /** @phpstan-ignore-next-line */
             $phpredis->auth($this->auth);
         }
 
@@ -160,12 +161,20 @@ abstract class Benchmark
     /**
      * @return Predis
      */
-    protected function createPredis()
-    {
+    protected function createPredis() {
+
+        if (is_array($this->auth) && count($this->auth) == 2) {
+            list($user, $pass) = $this->auth;
+        } else {
+            $user = NULL;
+            $pass = $this->auth;
+        }
+
         $parameters = [
             'host' => $this->host,
             'port' => $this->port,
-            'password' => $this->auth,
+            'username' => $user,
+            'password' => $pass,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ];
