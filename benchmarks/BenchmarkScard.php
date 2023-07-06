@@ -16,6 +16,10 @@ class BenchmarkScard extends Support\BenchmarkKeyCommand {
         return 'SCARD';
     }
 
+    public static function flags(): int {
+        return self::SET | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 

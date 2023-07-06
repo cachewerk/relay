@@ -16,6 +16,10 @@ class BenchmarkSmembers extends Support\BenchmarkKeyCommand {
         return 'SMEMBERS';
     }
 
+    public static function flags(): int {
+        return self::SET | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 

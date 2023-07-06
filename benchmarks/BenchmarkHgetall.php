@@ -16,6 +16,10 @@ class BenchmarkHgetall extends Support\BenchmarkKeyCommand {
         return 'HGETALL';
     }
 
+    public static function flags(): int {
+        return self::HASH | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 

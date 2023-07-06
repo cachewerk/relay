@@ -12,6 +12,10 @@ class BenchmarkLrange extends Support\Benchmark {
         return 'LRANGE';
     }
 
+    public static function flags(): int {
+        return self::LIST | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 

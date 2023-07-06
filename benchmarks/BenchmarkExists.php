@@ -16,6 +16,10 @@ class BenchmarkExists extends Support\BenchmarkKeyCommand {
         return 'EXISTS';
     }
 
+    public static function flags(): int {
+        return self::UTILITY | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 

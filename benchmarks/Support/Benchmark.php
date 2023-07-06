@@ -8,6 +8,21 @@ use Predis\Client as Predis;
 
 abstract class Benchmark
 {
+    const STRING      = 0x01;
+    const LIST        = 0x02;
+    const HASH        = 0x04;
+    const SET         = 0x08;
+    const ZSET        = 0x10;
+    const STREAM      = 0x20;
+    const HYPERLOGLOG = 0x40;
+    const UTILITY     = 0x80;
+
+    const ALL = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET |
+                self::STREAM | self::HYPERLOGLOG | self::UTILITY;
+
+    const READ  = 0x100;
+    const WRITE = 0x200;
+
     protected string $host;
 
     protected int $port;
@@ -31,6 +46,7 @@ abstract class Benchmark
 
     abstract public function getName(): string;
     abstract public function seedKeys(): void;
+    abstract public static function flags(): int;
 
     public function warmup(int $times, string $method): void {
         if ($times == 0)

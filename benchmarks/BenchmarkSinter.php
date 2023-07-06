@@ -14,6 +14,10 @@ class BenchmarkSinter extends Support\Benchmark {
         return 'SINTER';
     }
 
+    public static function flags(): int {
+        return self::SET | self::READ;
+    }
+
     public function warmup(int $times, string $method): void {
         if ($times == 0)
             return;

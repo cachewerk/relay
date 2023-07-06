@@ -15,6 +15,10 @@ class BenchmarkMget extends Support\Benchmark
         return 'MGET';
     }
 
+    public static function flags(): int {
+        return self::STRING | self::READ;
+    }
+
     public function seedKeys(): void {
         $keys = [];
 

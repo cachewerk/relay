@@ -7,6 +7,10 @@ class BenchmarkSmismember extends Support\BenchmarkSetCommand {
         return 'SMISMEMBER';
     }
 
+    public static function flags(): int {
+        return self::SET | self::READ;
+    }
+
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int {
         foreach ($this->keys as $key) {

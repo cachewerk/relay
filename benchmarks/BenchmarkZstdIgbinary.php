@@ -23,6 +23,10 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         return 'GET (Serialized)';
     }
 
+    public static function flags(): int {
+        return self::STRING | self::READ;
+    }
+
     public function seedKeys(): void {
         $items = $this->randomItems();
 

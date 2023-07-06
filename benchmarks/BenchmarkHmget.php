@@ -14,6 +14,10 @@ class BenchmarkHmget extends Support\BenchmarkHashCommand {
         return 'HMGET';
     }
 
+    public static function flags(): int {
+        return self::HASH | self::READ;
+    }
+
     public function setUp(): void {
         parent::setUp();
 

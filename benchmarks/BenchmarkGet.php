@@ -16,6 +16,10 @@ class BenchmarkGet extends Support\BenchmarkKeyCommand {
         return 'GET';
     }
 
+    public static function flags(): int {
+        return self::STRING | self::READ;
+    }
+
     public function seedKeys(): void {
         $redis = $this->createPredis();
 
