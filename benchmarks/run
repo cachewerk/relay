@@ -83,6 +83,10 @@ if ($user && $pass) {
     $auth = [$user, $pass];
 }
 
+if (strpos($host, '/') !== false) {
+    $port = 0;
+}
+
 try {
     if ($workers > 1) {
         $runner = new Support\ConcurrentRunner(
