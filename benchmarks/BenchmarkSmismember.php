@@ -2,24 +2,27 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkSismember extends Support\BenchmarkSetCommand {
+class BenchmarkSmismember extends Support\BenchmarkSetCommand {
     public function getName(): string {
-        return 'SISMEMBER';
+        return 'SMISMEMBER';
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int {
         foreach ($this->keys as $key) {
-            foreach ($this->mems as $mem) {
-                $client->sismember($key, $mem);
-            }
+            $client->smismember($key, $this->mems);
         }
 
-        return count($this->keys) * count($this->mems);
+        return count($this->keys);
     }
 
     public function benchmarkPredis(): int {
-        return $this->runBenchmark($this->predis);
+        foreach ($this->keys as $key) {
+            /** @phpstan-ignore-next-line */
+            $this->predis->smismember($key, ...$this->mems);
+        }
+
+        return count($this->keys);
     }
 
     public function benchmarkPhpRedis(): int {
