@@ -177,7 +177,6 @@ try {
     fprintf(STDERR, "\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }
 
-// TODO: Mention this is SINGLE core SINGLE worker...
 // TODO: Can we track Redis CPU usage?
 // TODO: OCP compression + batching...
 // https://github.com/sharkdp/hyperfine
