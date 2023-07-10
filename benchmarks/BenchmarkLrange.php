@@ -16,7 +16,7 @@ class BenchmarkLrange extends Support\Benchmark
 
     public static function flags(): int
     {
-        return self::LIST | self::READ;
+        return self::LIST | self::READ | self::DEFAULT;
     }
 
     public function seedKeys(): void

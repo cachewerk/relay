@@ -56,10 +56,12 @@ function getCommandTypes(array $opt, string $key, array $default): int
     foreach (getCsvOption($opt, $key, $default) as $type) {
         if (! strcasecmp($type, 'read')) {
             $result |= Support\Benchmark::READ;
-        } elseif (! strcmp($type, 'write')) {
+        } elseif (! strcasecmp($type, 'write')) {
             $result |= Support\Benchmark::WRITE;
+        } elseif (! strcasecmp($type, 'default')) {
+            $result |= Support\Benchmark::DEFAULT;
         } else {
-            fprintf(STDERR, "Error: Command type is only `read`, or `write`\n");
+            fprintf(STDERR, "Error: Command type is only `read`, `write`, or `default`\n");
             exit(1);
         }
     }

@@ -52,7 +52,7 @@ class Runner
         /** @var object{type: string, cores: int, arch: string} $cpu */
         $cpu = System::cpu();
 
-        fprintf(STDERR, "Setting up on %s (%s cores, %s)\n", $cpu->type, $cpu->cores, $cpu->arch);
+        fprintf(STDERR, "Setting up on %s (%s cores/%s threads %s)\n", $cpu->type, $cpu->cores, $cpu->logical_cores, $cpu->arch);
 
         fprintf(
             STDERR,

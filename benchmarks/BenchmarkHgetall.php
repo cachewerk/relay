@@ -21,7 +21,7 @@ class BenchmarkHgetall extends Support\BenchmarkKeyCommand
 
     public static function flags(): int
     {
-        return self::HASH | self::READ;
+        return self::HASH | self::READ | self::DEFAULT;
     }
 
     public function seedKeys(): void

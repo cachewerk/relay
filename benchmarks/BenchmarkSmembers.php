@@ -21,7 +21,7 @@ class BenchmarkSmembers extends Support\BenchmarkKeyCommand
 
     public static function flags(): int
     {
-        return self::SET | self::READ;
+        return self::SET | self::READ | self::DEFAULT;
     }
 
     public function seedKeys(): void

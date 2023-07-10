@@ -31,10 +31,10 @@ $user = $opt['user'] ?? null;
 $pass = $opt['pass'] ?? null;
 
 $key_types = getKeyTypes($opt, 'key-type', ['all']);
-$cmd_types = getCommandTypes($opt, 'command-type', ['read', 'write']);
+$cmd_types = getCommandTypes($opt, 'command-type', ['default']);
 
-$cores = Support\System::cpu()->cores;
-$workers = (int) ($opt['workers'] ?? max(1, $cores - 2));
+$cores = Support\System::cpu()->logical_cores;
+$workers = (int) ($opt['workers'] ?? max(1, $cores));
 
 $duration = $opt['duration'] ?? 1.0;
 $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
@@ -63,6 +63,9 @@ $benchmarks = array_map(function ($file) {
 $filter_flags = $cmd_types | $key_types;
 
 $benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
+    if (($filter_flags & Support\Benchmark::DEFAULT))
+        return $v::flags() & Support\Benchmark::DEFAULT;
+
     return ($v::flags() & $filter_flags) == $v::flags();
 });
 

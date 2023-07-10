@@ -26,7 +26,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
     public static function flags(): int
     {
-        return self::STRING | self::READ;
+        return self::STRING | self::READ | self::DEFAULT;
     }
 
     public function seedKeys(): void

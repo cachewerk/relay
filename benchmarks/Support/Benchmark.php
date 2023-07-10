@@ -30,6 +30,8 @@ abstract class Benchmark
 
     const WRITE = 0x200;
 
+    const DEFAULT = 0x400;
+
     protected string $host;
 
     protected int $port;
