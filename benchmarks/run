@@ -1,106 +1,13 @@
 #!/usr/bin/env php
 <?php
 
+
 namespace CacheWerk\Relay\Benchmarks;
-
-function getCsvOption(array $opt, string $key, array $default): array {
-    if ( ! isset($opt[$key]))
-        return $default;
-
-    return array_map(
-        function ($v) { return trim($v); },
-        explode(',', $opt[$key])
-    );
-}
-
-function getCommandTypes(array $opt, string $key, array $default): int {
-    $result = 0;
-
-    foreach (getCsvOption($opt, $key, $default) as $type) {
-        if (!strcasecmp($type, 'read')) {
-            $result |= Support\Benchmark::READ;
-        } else if (!strcmp($type, 'write')) {
-            $result |= Support\Benchmark::WRITE;
-        } else {
-            fprintf(STDERR, "Error:  Command type is only 'read', or 'write'\n");
-            exit(1);
-        }
-    }
-
-    return $result;
-}
-
-function getKeyTypes(array $opt, string $key, array $default): int {
-    $result = 0;
-
-    $lookup = [
-        'all'         => Support\Benchmark::ALL,
-        'utility'     => Support\Benchmark::UTILITY,
-        'string'      => Support\Benchmark::STRING,
-        'hash'        => Support\Benchmark::HASH,
-        'set'         => Support\Benchmark::SET,
-        'list'        => Support\Benchmark::LIST,
-        'zset'        => Support\Benchmark::ZSET,
-        'hyperloglog' => Support\Benchmark::HYPERLOGLOG,
-        'hll'         => Support\Benchmark::HYPERLOGLOG,
-        'stream'      => Support\Benchmark::STREAM,
-    ];
-
-    foreach (getCsvOption($opt, $key, $default) as $type) {
-        $type = strtolower($type);
-
-        if ( ! isset($lookup[$type])) {
-            fprintf(STDERR, "Don't understand key type '%s'\n", $type);
-            exit(1);
-        }
-
-        $result |= $lookup[$type];
-    }
-
-    return $result;
-}
-
-function printBenchmarkFiles(): void {
-    foreach (glob(__DIR__ . '/Benchmark*.php') as $file) {
-        fprintf(STDERR, "  %s\n", basename($file));
-    }
-}
-
-function printUsage(string $script): void {
-    $usage = <<<EOT
-Usage: php $script [options] [--] [<file>...]
-
-Options:
-    -h, --host         The Redis host to connect to. Defaults to '127.0.0.1'.
-    -p, --port         The Redis port to connect to. Defaults to 6379.
-    -a, --auth         The Redis password for legacy authentication.  Defaults to none.
-        --user         The Redis username for ACL authentication.  Defaults to none.
-        --pass         The redis password for ACL authentication.  Defaults to none.
-        --workers      Specifies the number of worker threads. Defaults to 1.
-        --duration     Specifies the duration of the test in seconds. Defaults to 1.0.
-        --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
-        --filter       Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
-        --json         Output results in JSON instead of a table.
-    -v, --verbose      Enables verbose output.
-        --warmup       Specifies how many warm up runs to execute.  Defaults to 1.
-        --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).  Defaults to all.
-        --command-type A comma separated list of command types (read, write).  Defaults to read and write.
-    -h, --help         Prints this help message.
-
-Arguments:
-    <file>            One or more filenames to process.
-
-EOT;
-
-    fprintf(STDERR, $usage);
-
-    fprintf(STDERR, "\nAvailable files:\n\n");
-    printBenchmarkFiles();
-}
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+require __DIR__ . '/helpers.php';
 require __DIR__ . '/../vendor/autoload.php';
 
 $opt = getopt(
@@ -143,6 +50,7 @@ $benchmarks = array_map(function ($file) {
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
 $filter_flags = $cmd_types | $key_types;
+
 $benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
     return ($v::flags() & $filter_flags) == $v::flags();
 });
@@ -176,7 +84,3 @@ try {
 } catch (\Exception $exception) {
     fprintf(STDERR, "\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
 }
-
-// TODO: Can we track Redis CPU usage?
-// TODO: OCP compression + batching...
-// https://github.com/sharkdp/hyperfine

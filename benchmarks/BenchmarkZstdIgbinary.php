@@ -19,15 +19,18 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
      */
     protected array $keys;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'GET (Serialized)';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::STRING | self::READ;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
         $items = $this->randomItems();
 
         $this->seedClient($this->predis, serialize($items));
@@ -35,7 +38,8 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $this->seedClient($this->relayNoCache, $items);
     }
 
-    public function setUpClients(): void {
+    public function setUpClients(): void
+    {
         parent::setUpClients();
 
         foreach ([$this->phpredis, $this->relayNoCache, $this->relay] as $client) {
@@ -56,7 +60,8 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client, bool $unserialize): int {
+    protected function runBenchmark($client, bool $unserialize): int
+    {
         $name = get_class($client);
 
         foreach ($this->keys as $key) {
@@ -69,31 +74,37 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
              * Note that this is still not really a fair comparison because
              * Relay and PhpRedis are decompressing and using a different
              * serializer. */
-            if ($unserialize)
+            if ($unserialize) {
                 $v = unserialize($v);
+            }
         }
 
         return count($this->keys);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis, true);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis, false);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache, false);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay, false);
     }
 
     /** @phpstan-ignore-next-line */
-    protected function seedClient($client, $items) {
+    protected function seedClient($client, $items)
+    {
         $name = get_class($client);
 
         foreach ($this->data as $item) {

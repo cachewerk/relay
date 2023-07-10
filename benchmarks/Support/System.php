@@ -17,7 +17,7 @@ class System
                     'cores' => 0,
                     'arch' => trim((string) shell_exec('uname -m')),
                 ];
-        };
+        }
     }
 
     public static function macCPU(): object

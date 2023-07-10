@@ -2,7 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkHmget extends Support\BenchmarkHashCommand {
+class BenchmarkHmget extends Support\BenchmarkHashCommand
+{
     const MemsPerCommand = 4;
 
     /**
@@ -10,22 +11,26 @@ class BenchmarkHmget extends Support\BenchmarkHashCommand {
      */
     protected array $queryMems;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'HMGET';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::HASH | self::READ;
     }
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->queryMems = array_slice($this->mems, 0, self::MemsPerCommand);
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->keys as $key) {
             $client->hmget($key, $this->queryMems);
         }
@@ -33,19 +38,23 @@ class BenchmarkHmget extends Support\BenchmarkHashCommand {
         return count($this->keys);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

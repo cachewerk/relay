@@ -2,29 +2,35 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkZadd extends Support\Benchmark {
+class BenchmarkZadd extends Support\Benchmark
+{
     /**
      * @var array<int|string, array<float|string>>
      */
     protected array $data;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'ZADD';
     }
 
-    protected function cmd(): string {
+    protected function cmd(): string
+    {
         return 'ZADD';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::ZSET | self::WRITE;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
 
     }
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         $this->flush();
         $this->setUpClients();
 
@@ -43,26 +49,32 @@ class BenchmarkZadd extends Support\Benchmark {
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->data as $key => $value) {
             $client->zadd($key, ...$value);
         }
+
         return count($this->data);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

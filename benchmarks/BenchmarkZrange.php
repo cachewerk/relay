@@ -2,21 +2,25 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkZrange extends Support\Benchmark {
+class BenchmarkZrange extends Support\Benchmark
+{
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'ZRANGE';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::ZSET | self::READ;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
         $redis = $this->createPredis();
 
         $rng = mt_rand() / mt_getrandmax();
@@ -42,7 +46,8 @@ class BenchmarkZrange extends Support\Benchmark {
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->keys as $key) {
             $client->zrange($key, 0, -1);
         }
@@ -50,19 +55,23 @@ class BenchmarkZrange extends Support\Benchmark {
         return count($this->keys);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

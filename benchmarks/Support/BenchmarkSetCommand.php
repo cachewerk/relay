@@ -2,7 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-abstract class BenchmarkSetCommand extends Benchmark {
+abstract class BenchmarkSetCommand extends Benchmark
+{
     /**
      * @var array<int, string>
      */
@@ -13,24 +14,34 @@ abstract class BenchmarkSetCommand extends Benchmark {
      */
     public array $mems = [];
 
-    public function warmup(int $times, string $method): void {
-        if ($times == 0)
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seedKeys();
+    }
+
+    public function warmup(int $times, string $method): void
+    {
+        if ($times == 0) {
             return;
+        }
 
         parent::warmup($times, $method);
 
         foreach ($this->keys as $key) {
-            $this->relay->smembers((string)$key);
+            $this->relay->smembers((string) $key);
         }
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
         $redis = $this->createPredis();
 
         $mems = [];
 
         foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
-            $redis->sadd((string)$item['id'], array_keys($this->flattenArray($item)));
+            $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
             $this->keys[] = $item['id'];
 
             foreach (array_keys($item) as $mem) {
@@ -39,11 +50,5 @@ abstract class BenchmarkSetCommand extends Benchmark {
         }
 
         $this->mems = array_keys($mems);
-    }
-
-    public function setUp(): void {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 }

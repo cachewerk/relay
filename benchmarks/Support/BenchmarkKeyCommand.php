@@ -2,13 +2,15 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-abstract class BenchmarkKeyCommand extends Benchmark {
+abstract class BenchmarkKeyCommand extends Benchmark
+{
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'GET';
     }
 
@@ -21,30 +23,34 @@ abstract class BenchmarkKeyCommand extends Benchmark {
         $this->seedKeys();
     }
 
-    /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         $cmd = $this->cmd();
 
         foreach ($this->keys as $key) {
-            $client->$cmd($key);
+            $client->{$cmd}($key);
         }
 
         return count($this->keys);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

@@ -28,13 +28,11 @@ class Runner
     protected int $warmup;
 
     /**
-     * @param string $host
-     * @param string|int $port
-     * @param string|array<int, array<string>>|null $auth
-     * @param int $runs
-     * @param float $duration
-     * @param int $warmup
-     * @param string $filter
+     * @param  string  $host
+     * @param  string|int  $port
+     * @param  string|array<int, array<string>>|null  $auth
+     * @param  int  $runs
+     * @param  int  $warmup
      * @return void
      */
     public function __construct($host, $port, $auth, $runs, float $duration, $warmup, string $filter)
@@ -60,8 +58,8 @@ class Runner
             STDERR,
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
-            $this->opcache() ? "\033[31mOn\033[0m" : "Off",
-            $this->xdebug() ? "\033[31mOn\033[0m" : "Off",
+            $this->opcache() ? "\033[31mOn\033[0m" : 'Off',
+            $this->xdebug() ? "\033[31mOn\033[0m" : 'Off',
             $this->newrelic() ? "\033[31mOn\033[0m" : 'Off'
         );
 
@@ -78,9 +76,9 @@ class Runner
     protected function setUpRedis(): void
     {
         if (is_array($this->auth) && count($this->auth) == 2) {
-            list($user, $pass) = $this->auth;
+            [$user, $pass] = $this->auth;
         } else {
-            $user = NULL;
+            $user = null;
             $pass = $this->auth;
         }
 
@@ -103,7 +101,8 @@ class Runner
         ]);
     }
 
-    protected function resetStats(): void {
+    protected function resetStats(): void
+    {
         $this->redis->config('RESETSTAT');
 
         if (function_exists('memory_reset_peak_usage')) {
@@ -112,25 +111,29 @@ class Runner
     }
 
     /**
-     * @return Array<int, int>
+     * @return array<int, int>
      */
-    protected function getNetworkStats(): array {
+    protected function getNetworkStats(): array
+    {
         $info = $this->redis->info('STATS')['Stats'];
+
         return [
             $info['total_net_input_bytes'],
             $info['total_net_output_bytes'],
         ];
     }
 
-    protected function getRedisCommandCount() : int {
+    protected function getRedisCommandCount(): int
+    {
         $result = [];
 
         $stats = $this->redis->info('commandstats')['Commandstats'];
 
         foreach ($stats as $key => $val) {
             $cmd = strtoupper(str_replace('cmdstat_', '', $key));
-            if ( ! preg_match('/calls=([0-9]+).*/', $val, $matches))
+            if (! preg_match('/calls=([0-9]+).*/', $val, $matches)) {
                 continue;
+            }
             $result[$cmd] = $matches[1];
         }
 
@@ -153,7 +156,7 @@ class Runner
                 $t2 = microtime(true);
             } while ($t2 - $t1 < $this->duration);
 
-            list($rx, $tx) = $this->getNetworkStats();
+            [$rx, $tx] = $this->getNetworkStats();
             $millis = ($t2 - $t1) * 1000;
             $memory = memory_get_peak_usage();
             $cmds = $this->getRedisCommandCount() - $cmds1;
@@ -167,8 +170,7 @@ class Runner
     }
 
     /**
-     * @param class-string[] $benchmarks
-     * @return void
+     * @param  class-string[]  $benchmarks
      */
     public function run(array $benchmarks, Reporter $reporter): void
     {

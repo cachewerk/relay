@@ -40,10 +40,11 @@ class Subjects
     /**
      * @return array<int, Subject>
      */
-    public function sortByOpsPerSec(): array {
+    public function sortByOpsPerSec(): array
+    {
         $subjects = $this->subjects;
 
-        usort($subjects, fn($a, $b) => $a->opsPerSecMedian() >= $b->opsPerSecMedian() ? 1 : -1);
+        usort($subjects, fn ($a, $b) => $a->opsPerSecMedian() >= $b->opsPerSecMedian() ? 1 : -1);
 
         return $subjects;
     }

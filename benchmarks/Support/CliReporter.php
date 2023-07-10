@@ -2,8 +2,6 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use ReflectionClass;
-
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
@@ -68,7 +66,8 @@ class CliReporter extends Reporter
         );
     }
 
-    public function finishedSubjects(Subjects $subjects, int $workers): void {
+    public function finishedSubjects(Subjects $subjects, int $workers): void
+    {
         $output = new StreamOutput(fopen('php://stdout', 'w')); // @phpstan-ignore-line
 
         $table = new Table($output);
@@ -91,7 +90,7 @@ class CliReporter extends Reporter
             $change = $i === 0 ? 0 : number_format($diff, 2);
 
             $table->addRow([
-                new TableCell((string)$workers, ['style' => new TableCellStyle(['align' => 'right'])]),
+                new TableCell((string) $workers, ['style' => new TableCellStyle(['align' => 'right'])]),
                 $subject->getClient(),
                 new TableCell(self::humanMemory($subject->memoryMedian()), $style_right),
                 new TableCell(self::humanMemory($subject->bytesMedian()), $style_right),

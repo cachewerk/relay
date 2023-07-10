@@ -2,21 +2,25 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkRpush extends Support\Benchmark {
+class BenchmarkRpush extends Support\Benchmark
+{
     /**
      * @var array<int|string, array<int, mixed>>
      */
     protected array $data;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'RPUSH';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::LIST | self::WRITE;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
@@ -32,7 +36,8 @@ class BenchmarkRpush extends Support\Benchmark {
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->data as $key => $elements) {
             $client->rpush($key, ...$elements);
         }
@@ -40,7 +45,8 @@ class BenchmarkRpush extends Support\Benchmark {
         return count($this->data);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         foreach ($this->data as $key => $elements) {
             $this->predis->rpush((string) $key, $elements);
         }
@@ -48,15 +54,18 @@ class BenchmarkRpush extends Support\Benchmark {
         return count($this->data);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

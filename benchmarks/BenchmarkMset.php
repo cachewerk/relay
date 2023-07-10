@@ -2,7 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMset extends Support\Benchmark {
+class BenchmarkMset extends Support\Benchmark
+{
     const KeysPerCall = 8;
 
     /**
@@ -10,23 +11,28 @@ class BenchmarkMset extends Support\Benchmark {
      */
     protected array $keyChunks;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'MSET';
     }
 
-    protected function cmd(): string {
+    protected function cmd(): string
+    {
         return 'MSET';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::STRING | self::WRITE;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
 
     }
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         $this->flush();
         $this->setUpClients();
 
@@ -40,7 +46,8 @@ class BenchmarkMset extends Support\Benchmark {
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->keyChunks as $chunk) {
             $client->mset($chunk);
         }
@@ -48,19 +55,23 @@ class BenchmarkMset extends Support\Benchmark {
         return count($this->keyChunks);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }

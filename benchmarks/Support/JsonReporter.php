@@ -2,10 +2,10 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use ReflectionClass;
-
-class JsonReporter extends CliReporter {
-    public function finishedSubjects(Subjects $subjects, int $workers): void {
+class JsonReporter extends CliReporter
+{
+    public function finishedSubjects(Subjects $subjects, int $workers): void
+    {
         $report = [];
 
         $name = $subjects->benchmark->getName();
@@ -27,6 +27,6 @@ class JsonReporter extends CliReporter {
             ];
         }
 
-        printf("%s", json_encode(['benchmark' => $name, 'data' => $report], JSON_PRETTY_PRINT));
+        printf('%s', json_encode(['benchmark' => $name, 'data' => $report], JSON_PRETTY_PRINT));
     }
 }

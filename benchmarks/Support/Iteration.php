@@ -2,8 +2,6 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use CacheWerk\Relay\Benchmarks\Support\CliReporter;
-
 class Iteration
 {
     public int $ops;
@@ -31,7 +29,8 @@ class Iteration
     /**
      * @return int|float
      */
-    public function opsPerSec() {
+    public function opsPerSec()
+    {
         return $this->ops / ($this->ms / 1000);
     }
 }

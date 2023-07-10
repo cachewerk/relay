@@ -19,7 +19,8 @@ class Subject
         $this->benchmark = $benchmark;
     }
 
-    public function addIterationObject(Iteration $iteration): void {
+    public function addIterationObject(Iteration $iteration): void
+    {
         $this->iterations[] = $iteration;
     }
 
@@ -27,6 +28,7 @@ class Subject
     {
         $iteration = new Iteration($ops, $ms, $redisCmds, $memory, $bytesIn, $bytesOut);
         $this->addIterationObject($iteration);
+
         return $iteration;
     }
 
@@ -62,7 +64,8 @@ class Subject
     /**
      * @return int|float
      */
-    public function opsPerSecRstDev() {
+    public function opsPerSecRstDev()
+    {
         $ops = array_map(function (Iteration $iteration) {
             return $iteration->opsPerSec();
         }, $this->iterations);
@@ -109,7 +112,8 @@ class Subject
     /**
      * @return int|float
      */
-    public function opsBase() {
+    public function opsBase()
+    {
         $ops = array_map(function (Iteration $iteration) {
             return $iteration->opsPerSec();
         }, $this->iterations);
@@ -117,12 +121,12 @@ class Subject
         return min($ops);
     }
 
-    public function opsTotal(): int {
+    public function opsTotal(): int
+    {
         $ops = array_map(function (Iteration $iteration) {
             return $iteration->ops;
         }, $this->iterations);
 
         return array_sum($ops);
     }
-
 }

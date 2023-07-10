@@ -14,16 +14,16 @@ abstract class Reporter
         $this->verbose = $verbose;
     }
 
-    abstract function startingBenchmark(Benchmark $benchmark, int $runs, float $duration, int $warmup): void;
+    abstract public function startingBenchmark(Benchmark $benchmark, int $runs, float $duration, int $warmup): void;
 
-    abstract function finishedIteration(Benchmark $benchmark, Iteration $iteration, string $client): void;
+    abstract public function finishedIteration(Benchmark $benchmark, Iteration $iteration, string $client): void;
 
-    abstract function finishedSubject(Subject $subject): void;
+    abstract public function finishedSubject(Subject $subject): void;
 
-    abstract function finishedSubjects(Subjects $subjects, int $workers): void;
+    abstract public function finishedSubjects(Subjects $subjects, int $workers): void;
 
     /**
-     * @param int|float $bytes
+     * @param  int|float  $bytes
      * @return string
      */
     public static function humanMemory($bytes)
@@ -37,7 +37,7 @@ abstract class Reporter
     }
 
     /**
-     * @param int|float $number
+     * @param  int|float  $number
      * @return string
      */
     public static function humanNumber($number)

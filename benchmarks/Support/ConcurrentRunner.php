@@ -2,11 +2,12 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-class ConcurrentRunner extends Runner {
+class ConcurrentRunner extends Runner
+{
     protected int $workers;
 
     /**
-     * @param string|array<int, array<string>>|null $auth
+     * @param  string|array<int, array<string>>|null  $auth
      */
     public function __construct($host, $port, $auth, int $runs, float $duration, int $warmup, string $filter, int $workers)
     {
@@ -19,7 +20,8 @@ class ConcurrentRunner extends Runner {
         $this->workers = $workers;
     }
 
-    protected function saveOperations(string $method, int $operations, string $nonce): void {
+    protected function saveOperations(string $method, int $operations, string $nonce): void
+    {
         $this->redis->sadd(
             "benchmark_run:{$this->run_id}:$method:$nonce",
             [serialize([getmypid(), hrtime(true), $operations, \memory_get_peak_usage()])]
@@ -27,9 +29,10 @@ class ConcurrentRunner extends Runner {
     }
 
     /**
-     * @return Array<int, mixed>
+     * @return array<int, mixed>
      */
-    protected function loadOperations(string $method, string $nonce): array {
+    protected function loadOperations(string $method, string $nonce): array
+    {
         $result = [];
 
         foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:$method:$nonce") as $iteration) {
@@ -39,12 +42,14 @@ class ConcurrentRunner extends Runner {
         return $result;
     }
 
-    protected function blockForWorkers(string $nonce, float $timeout = 1.0): void {
+    protected function blockForWorkers(string $nonce, float $timeout = 1.0): void
+    {
         $waiting_key = "benchmark:spooling:{$this->run_id}:{$nonce}";
 
         /* Short circuit, if we're the last worker to spawn */
-        if ($this->redis->incr($waiting_key) == $this->workers)
+        if ($this->redis->incr($waiting_key) == $this->workers) {
             return;
+        }
 
         /* Wait for all of the workers to be ready up to a predefined maximum time.
          * Because this is benchmarking code, we don't invoke the time() syscall each
@@ -53,24 +58,26 @@ class ConcurrentRunner extends Runner {
         for ($i = 1; $this->redis->get($waiting_key) < $this->workers; $i++) {
             if ($i % 10000 == 0 && ($et = microtime(true)) - $st >= $timeout) {
                 fprintf(STDERR, "Error:  Timed out waiting for %d workers to span (%2.2fs)\n",
-                        $this->workers, $et - $st);
+                    $this->workers, $et - $st);
                 exit(1);
             }
         }
     }
 
-    protected function setConcurrentStart(string $nonce): void {
+    protected function setConcurrentStart(string $nonce): void
+    {
         $this->redis->setnx("benchmark:start:{$this->run_id}:{$nonce}", hrtime(true));
     }
 
-    protected function getConcurrentStart(string $nonce): int {
+    protected function getConcurrentStart(string $nonce): int
+    {
         return (int) $this->redis->get("benchmark:start:{$this->run_id}:{$nonce}");
     }
 
     protected function runConcurrentOnce(Benchmark $benchmark, Reporter $reporter, Subject $subject, string $class, string $method): Iteration
     {
         $start = hrtime(true);
-        list($rx1, $tx1) = $this->getNetworkStats();
+        [$rx1, $tx1] = $this->getNetworkStats();
         $cmd1 = $this->getRedisCommandCount();
 
         $pids = [];
@@ -82,7 +89,7 @@ class ConcurrentRunner extends Runner {
             if ($pid < 0) {
                 fprintf(STDERR, "Error:  Cannot execute pcntl_fork()!\n");
                 exit(1);
-            } else if ($pid) {
+            } elseif ($pid) {
                 $pids[] = $pid;
             } else {
                 $this->setUpRedis();
@@ -108,7 +115,7 @@ class ConcurrentRunner extends Runner {
             pcntl_waitpid($pid, $status, WUNTRACED);
         }
 
-        list($rx2, $tx2) = $this->getNetworkStats();
+        [$rx2, $tx2] = $this->getNetworkStats();
         $cmd2 = $this->getRedisCommandCount();
 
         $end = $max_mem = $tot_ops = 0;
@@ -124,7 +131,8 @@ class ConcurrentRunner extends Runner {
         return new Iteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1, $max_mem, $rx2 - $rx1, $tx2 - $tx1);
     }
 
-    protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void {
+    protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void
+    {
         /** @var Benchmark $benchmark */
         $benchmark = new $class($this->host, $this->port, $this->auth);
         $benchmark->setUp();
@@ -140,7 +148,8 @@ class ConcurrentRunner extends Runner {
         $reporter->finishedSubject($subject);
     }
 
-    public function run(array $benchmarks, Reporter $reporter): void {
+    public function run(array $benchmarks, Reporter $reporter): void
+    {
         foreach ($benchmarks as $class) {
             /** @var Benchmark $benchmark */
             $benchmark = new $class($this->host, $this->port, $this->auth);

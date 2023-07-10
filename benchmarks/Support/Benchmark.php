@@ -8,19 +8,26 @@ use Predis\Client as Predis;
 
 abstract class Benchmark
 {
-    const STRING      = 0x01;
-    const LIST        = 0x02;
-    const HASH        = 0x04;
-    const SET         = 0x08;
-    const ZSET        = 0x10;
-    const STREAM      = 0x20;
+    const STRING = 0x01;
+
+    const LIST = 0x02;
+
+    const HASH = 0x04;
+
+    const SET = 0x08;
+
+    const ZSET = 0x10;
+
+    const STREAM = 0x20;
+
     const HYPERLOGLOG = 0x40;
-    const UTILITY     = 0x80;
 
-    const ALL = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET |
-                self::STREAM | self::HYPERLOGLOG | self::UTILITY;
+    const UTILITY = 0x80;
 
-    const READ  = 0x100;
+    const ALL = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET | self::STREAM | self::HYPERLOGLOG | self::UTILITY;
+
+    const READ = 0x100;
+
     const WRITE = 0x200;
 
     protected string $host;
@@ -45,34 +52,38 @@ abstract class Benchmark
     }
 
     abstract public function getName(): string;
+
     abstract public function seedKeys(): void;
+
     abstract public static function flags(): int;
 
-    public function warmup(int $times, string $method): void {
-        if ($times == 0)
+    public function warmup(int $times, string $method): void
+    {
+        if ($times == 0) {
             return;
+        }
 
         for ($i = 0; $i < $times; $i++) {
             $this->{$method}();
         }
     }
 
-    public function setUp(): void {
-
+    public function setUp(): void
+    {
+        //
     }
 
-    protected function flush(): void {
+    protected function flush(): void
+    {
         $this->createPredis()->flushall();
     }
 
     /**
-     * @param array<mixed> $input
-     * @return array<mixed>
-     *
      * Helper function to flatten a multidimensional array.  No type hinting here
      * as it can operate on any arbitrary array data.
      */
-    protected function flattenArray(array $input, string $prefix = ''): array {
+    protected function flattenArray(array $input, string $prefix = ''): array
+    {
         $result = [];
 
         foreach ($input as $key => $val) {
@@ -86,18 +97,20 @@ abstract class Benchmark
         return $result;
     }
 
-    /** @phpstan-ignore-next-line */
-    protected function loadJsonFile(string $file, bool $assoc) {
+    protected function loadJsonFile(string $file, bool $assoc)
+    {
         $file = __DIR__ . "/data/{$file}";
 
         $data = file_get_contents($file);
-        if ( ! is_string($data))
+        if (! is_string($data)) {
             throw new \Exception("Failed to load data file '$file'");
+        }
 
-        return json_decode((string)$data, $assoc, 512, JSON_THROW_ON_ERROR);
+        return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);
     }
 
-    public function setUpClients(): void {
+    public function setUpClients(): void
+    {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
@@ -111,7 +124,8 @@ abstract class Benchmark
      *
      * Relay handles this automagically.
      */
-    public function refreshClients(): void {
+    public function refreshClients(): void
+    {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
     }
@@ -136,10 +150,7 @@ abstract class Benchmark
         return $relay;
     }
 
-    /**
-     * @return Relay
-     */
-    protected function createRelayNoCache()
+    protected function createRelayNoCache(): Relay
     {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_USE_CACHE, false);
@@ -157,10 +168,7 @@ abstract class Benchmark
         return $relay;
     }
 
-    /**
-     * @return PhpRedis
-     */
-    protected function createPhpRedis()
+    protected function createPhpRedis(): PhpRedis
     {
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
@@ -174,15 +182,12 @@ abstract class Benchmark
         return $phpredis;
     }
 
-    /**
-     * @return Predis
-     */
-    protected function createPredis() {
-
+    protected function createPredis(): Predis
+    {
         if (is_array($this->auth) && count($this->auth) == 2) {
-            list($user, $pass) = $this->auth;
+            [$user, $pass] = $this->auth;
         } else {
-            $user = NULL;
+            $user = null;
             $pass = $this->auth;
         }
 
@@ -206,16 +211,20 @@ abstract class Benchmark
     }
 
     /**
-     * @return Array<string>
+     * @return array<string>
      */
-    public function getBenchmarkMethods(string $filter): array {
+    public function getBenchmarkMethods(string $filter): array
+    {
         return array_filter(
             get_class_methods($this),
             function ($method) use ($filter) {
-                if (!str_starts_with($method, 'benchmark'))
+                if (! str_starts_with($method, 'benchmark')) {
                     return false;
+                }
+
                 $method = substr($method, strlen('benchmark'));
-                return !$filter || preg_match("/$filter/i", strtolower($method));
+
+                return ! $filter || preg_match("/$filter/i", strtolower($method));
             }
         );
     }

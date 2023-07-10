@@ -11,21 +11,24 @@ class BenchmarkMget extends Support\Benchmark
      */
     protected array $keyChunks;
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return 'MGET';
     }
 
-    public static function flags(): int {
+    public static function flags(): int
+    {
         return self::STRING | self::READ;
     }
 
-    public function seedKeys(): void {
+    public function seedKeys(): void
+    {
         $keys = [];
 
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
-            $redis->set((string)$item['id'], serialize($item));
+            $redis->set((string) $item['id'], serialize($item));
             $keys[] = $item['id'];
         }
 
@@ -40,26 +43,32 @@ class BenchmarkMget extends Support\Benchmark
     }
 
     /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client): int {
+    protected function runBenchmark($client): int
+    {
         foreach ($this->keyChunks as $chunk) {
             $client->mget($chunk);
         }
+
         return count($this->keyChunks);
     }
 
-    public function benchmarkPredis(): int {
+    public function benchmarkPredis(): int
+    {
         return $this->runBenchmark($this->predis);
     }
 
-    public function benchmarkPhpRedis(): int {
+    public function benchmarkPhpRedis(): int
+    {
         return $this->runBenchmark($this->phpredis);
     }
 
-    public function benchmarkRelayNoCache(): int {
+    public function benchmarkRelayNoCache(): int
+    {
         return $this->runBenchmark($this->relayNoCache);
     }
 
-    public function benchmarkRelay(): int {
+    public function benchmarkRelay(): int
+    {
         return $this->runBenchmark($this->relay);
     }
 }
