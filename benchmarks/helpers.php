@@ -32,11 +32,22 @@ function printUsage(string $script): void
 
     fprintf(STDERR, "\n\nAvailable files:\n\n");
 
-    foreach (glob(__DIR__ . '/Benchmark*.php') as $file) {
+    $files = glob(__DIR__ . '/Benchmark*.php');
+    if ( ! is_array($files)) {
+        throw new \Exception("Could not read benchmark unit files!");
+    }
+
+    foreach ($files as $file) {
         fprintf(STDERR, "  %s\n", basename($file));
     }
 }
 
+/**
+ * @param array<int|string, string> $opt
+ * @param array<int, string> $default
+ *
+ * @return array<int|string, string>
+ */
 function getCsvOption(array $opt, string $key, array $default): array
 {
     if (! isset($opt[$key])) {
@@ -49,6 +60,10 @@ function getCsvOption(array $opt, string $key, array $default): array
     );
 }
 
+/**
+ * @param array<int|string, string> $opt
+ * @param array<int, string> $default
+ */
 function getCommandTypes(array $opt, string $key, array $default): int
 {
     $result = 0;
@@ -69,6 +84,10 @@ function getCommandTypes(array $opt, string $key, array $default): int
     return $result;
 }
 
+/**
+ * @param array<int|string, string> $opt
+ * @param array<int, string> $default
+ */
 function getKeyTypes(array $opt, string $key, array $default): int
 {
     $result = 0;

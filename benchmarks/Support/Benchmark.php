@@ -83,6 +83,10 @@ abstract class Benchmark
     /**
      * Helper function to flatten a multidimensional array.  No type hinting here
      * as it can operate on any arbitrary array data.
+     *
+     * @param array<int|string, mixed> $input
+     *
+     * @return array<int|string, string>
      */
     protected function flattenArray(array $input, string $prefix = ''): array
     {
@@ -92,7 +96,7 @@ abstract class Benchmark
             if (is_array($val)) {
                 $result = $result + $this->flattenArray($val, $prefix . $key . '.');
             } else {
-                $result[$prefix . $key] = $val;
+                $result[$prefix . $key] = is_scalar($val) ? (string) $val : serialize($val);
             }
         }
 

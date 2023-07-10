@@ -5,7 +5,7 @@ namespace CacheWerk\Relay\Benchmarks;
 class BenchmarkHmset extends Support\Benchmark
 {
     /**
-     * @var array<int|string, array<int, mixed>>
+     * @var array<int|string, array<int|string, string>>
      */
     protected array $data;
 

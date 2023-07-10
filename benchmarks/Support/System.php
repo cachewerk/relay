@@ -15,6 +15,7 @@ class System
                 return (object) [
                     'type' => 'Unknown (' . PHP_OS . ')',
                     'cores' => 0,
+                    'logical_cores' => 0,
                     'arch' => trim((string) shell_exec('uname -m')),
                 ];
         }

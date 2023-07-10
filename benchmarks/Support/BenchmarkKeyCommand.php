@@ -23,6 +23,9 @@ abstract class BenchmarkKeyCommand extends Benchmark
         $this->seedKeys();
     }
 
+    /**
+     * @param \Relay\Relay|\Redis|\Predis\Client $client
+     */
     protected function runBenchmark($client): int
     {
         $cmd = $this->cmd();
