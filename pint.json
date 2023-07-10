@@ -1,0 +1,9 @@
+{
+  "preset": "laravel",
+  "rules": {
+    "concat_space": {
+        "spacing": "one"
+    },
+    "ordered_imports": false
+  }
+}
