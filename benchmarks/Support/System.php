@@ -30,7 +30,7 @@ class System
             return (object) [
                 'type' => 'macOS',
                 'cores' => 0,
-                'logical_cores' => 0,
+                'threads' => 0,
                 'arch' => trim((string) shell_exec('uname -m')),
             ];
         }
@@ -44,14 +44,14 @@ class System
         return (object) [
             'type' => $result['machdep.cpu.brand_string'],
             'cores' => $result['machdep.cpu.core_count'],
-            'logical_cores' => $result['machdep.cpu.thread_count'],
+            'threads' => $result['machdep.cpu.thread_count'],
             'arch' => trim((string) shell_exec('uname -m')),
         ];
     }
 
     public static function linuxCPU(): object
     {
-        $result = ['logical cores' => 0];
+        $result = ['threads' => 0];
 
         $info = shell_exec('cat /proc/cpuinfo');
 
@@ -59,7 +59,7 @@ class System
             return (object) [
                 'type' => 'Linux',
                 'cores' => 0,
-                'logical_cores' => 0,
+                'threads' => 0,
                 'arch' => trim((string) shell_exec('uname -m')),
             ];
         }
@@ -71,8 +71,9 @@ class System
 
             [$key, $value] = explode(':', $line);
 
-            if (trim($key) == 'processor')
-                $result['logical cores']++;
+            if (trim($key) == 'processor') {
+                $result['threads']++;
+            }
 
             $result[strtolower(trim($key))] = trim($value);
         }
@@ -80,7 +81,7 @@ class System
         return (object) [
             'type' => $result['model name'],
             'cores' => $result['cpu cores'],
-            'logical_cores' => $result['logical cores'],
+            'threads' => $result['threads'],
             'arch' => trim((string) shell_exec('uname -m')),
         ];
     }

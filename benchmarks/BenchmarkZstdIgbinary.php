@@ -3,7 +3,6 @@
 namespace CacheWerk\Relay\Benchmarks;
 
 use Redis;
-use Relay\Relay;
 
 class BenchmarkZstdIgbinary extends Support\Benchmark
 {
@@ -21,7 +20,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
 
     public function getName(): string
     {
-        return 'GET (Serialized)';
+        return 'GET (Compressed)';
     }
 
     public static function flags(): int
