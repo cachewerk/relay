@@ -248,6 +248,6 @@ class RelayNewRelic
             'Relay\Attributes\RedisCommand',
         ], $attributes);
 
-        self::$traced[$name] = count($matches) <> 2;
+        self::$traced[$name] = count($matches) != 2;
     }
 }

@@ -26,7 +26,7 @@ class RelayCache implements CacheInterface
     /**
      * Creates a new `RelayCache` instance.
      *
-     * @param  \Relay\Relay $relay
+     * @param  \Relay\Relay  $relay
      * @return void
      */
     public function __construct(Relay $relay)

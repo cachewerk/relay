@@ -11,14 +11,18 @@ $stats = $info['stats'];
 $ids = $info['hashes'];
 $usage = $info['usage'];
 
-function pct(float $a, float $b): string {
+function pct(float $a, float $b): string
+{
     return $b != 0
         ? round(100.00 * $a / $b) . '%'
         : '0%';
 }
 
-function humansize(int $size, int $precision = 2): string {
-    for ($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) { }
+function humansize(int $size, int $precision = 2): string
+{
+    for ($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) {
+    }
+
     return round($size, $precision) . ' ' . ['B', 'KB', 'MB', 'GB', 'TB'][$i];
 }
 

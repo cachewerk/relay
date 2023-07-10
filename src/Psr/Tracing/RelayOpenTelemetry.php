@@ -148,7 +148,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::scan')
             ->setAttribute('db.operation', 'SCAN')
-            ->setAttribute('db.statement', 'SCAN ' . implode(" ", array_map('json_encode', func_get_args())))
+            ->setAttribute('db.statement', 'SCAN ' . implode(' ', array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -177,7 +177,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::hscan')
             ->setAttribute('db.operation', 'HSCAN')
-            ->setAttribute('db.statement', 'HSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
+            ->setAttribute('db.statement', 'HSCAN ' . implode(' ', array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -206,7 +206,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::sscan')
             ->setAttribute('db.operation', 'SSCAN')
-            ->setAttribute('db.statement', 'SSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
+            ->setAttribute('db.statement', 'SSCAN ' . implode(' ', array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
@@ -235,7 +235,7 @@ class RelayOpenTelemetry
     {
         $span = $this->tracer->spanBuilder('Relay::zscan')
             ->setAttribute('db.operation', 'ZSCAN')
-            ->setAttribute('db.statement', 'ZSCAN ' . implode(" ", array_map('json_encode', func_get_args())))
+            ->setAttribute('db.statement', 'ZSCAN ' . implode(' ', array_map('json_encode', func_get_args())))
             ->setAttribute('db.system', 'redis')
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
