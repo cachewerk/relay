@@ -26,7 +26,7 @@ wget https://getcomposer.org/download/latest-stable/composer.phar
 
 ## Benchmarks
 
-To run all benchmarks, execute:
+To run the default benchmarks, execute:
 
 ```bash
 composer run bench
@@ -35,17 +35,24 @@ composer run bench
 > Caveat 1: The results on Silicon are misleading, run the benchmarks on actual production infrastructure.   
 > Caveat 2: New Relic, Blacfire, Xdebug and similar profilers will significantly slow down Relay and skew the benchmarks.
 
-To run specific benchmarks, use:
+To run specific benchmarks pass the filename:
 
 ```bash
 # Run specific benchmarks
-./run BenchmarkMGET.php BenchmarkGET.php
+./run BenchmarkMget.php BenchmarkGet.php
+```
+
+To see all available options, use `--help`.
+
+```bash
+# List all options
+./run --help
 
 # Pass Redis host and port
 ./run -h 127.0.0.1 -p 7000
 
 # Use unix socket
-./run -s /tmp/redis.sock
+./run -h /tmp/redis.sock
 
 # Pass Redis password
 ./run -a p4ssw0rd

@@ -22,10 +22,10 @@ function printUsage(string $script): void
                 --warmup       Specifies how many warm up runs to execute.  Defaults to 1.
                 --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).  Defaults to all.
                 --command-type A comma separated list of command types (read, write).  Defaults to read and write.
-            -h, --help         Prints this help message.
+                --help         Prints this help message.
 
         Arguments:
-            <file>            One or more filenames to process.
+            <file>             One or more filenames to process.
     EOT;
 
     fprintf(STDERR, $usage);
