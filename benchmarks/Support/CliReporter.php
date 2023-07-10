@@ -73,32 +73,45 @@ class CliReporter extends Reporter
         $table = new Table($output);
 
         $table->setHeaders([
-            'Workers', 'Client', 'Memory', 'Network', 'IOPS', 'IOPS/Worker', 'rstdev', 'Change', 'Factor',
+            'Client',
+            'Memory',
+            'Network',
+            'Workers',
+            'IOPS',
+            'IOPS/Worker',
+            'rstdev',
+            'Change',
+            'Factor',
         ]);
 
         $subjects = $subjects->sortByOpsPerSec();
         $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
 
-        $style_right = ['style' => new TableCellStyle(['align' => 'right'])];
+        $style_right = [
+            'style' => new TableCellStyle(['align' => 'right']),
+        ];
 
         foreach ($subjects as $i => $subject) {
             $opsPerWorker = $subject->opsPerSecMedian() / $workers;
             $rstdev = number_format($subject->opsPerSecRstDev(), 2);
             $diff = -(1 - ($subject->opsPerSecMedian() / $baseOpsPerSec)) * 100;
 
-            $factor = $i === 0 ? 1 : number_format($subject->opsPerSecMedian() / $baseOpsPerSec, 2);
-            $change = $i === 0 ? 0 : number_format($diff, 2);
+            $factor = $i === 0 ? 1 : $subject->opsPerSecMedian() / $baseOpsPerSec;
+            $change = $i === 0 ? 0 : $diff;
+
+            $factor = number_format($factor, $factor > 20 ? 0 : 2);
+            $change = number_format($change, $change >= 100 ? 0 : 2);
 
             $table->addRow([
-                new TableCell((string) $workers, ['style' => new TableCellStyle(['align' => 'right'])]),
                 $subject->getClient(),
                 new TableCell(self::humanMemory($subject->memoryMedian()), $style_right),
                 new TableCell(self::humanMemory($subject->bytesMedian()), $style_right),
+                new TableCell((string) $workers, ['style' => new TableCellStyle(['align' => 'right'])]),
                 new TableCell(self::humanNumber($subject->opsPerSecMedian()), $style_right),
                 new TableCell(self::humanNumber($opsPerWorker), $style_right),
                 new TableCell("±{$rstdev}%", $style_right),
                 new TableCell("{$change}%", $style_right),
-                new TableCell("{$factor}", $style_right),
+                new TableCell("{$factor}x", $style_right),
             ]);
         }
 
