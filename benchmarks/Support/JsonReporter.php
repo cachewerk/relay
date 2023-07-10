@@ -27,6 +27,9 @@ class JsonReporter extends CliReporter
             ];
         }
 
-        printf('%s', json_encode(['benchmark' => $name, 'data' => $report], JSON_PRETTY_PRINT));
+        printf('%s', json_encode([
+            'benchmark' => $name,
+            'data' => $report,
+        ], JSON_PRETTY_PRINT));
     }
 }

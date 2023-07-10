@@ -59,7 +59,7 @@ function getCommandTypes(array $opt, string $key, array $default): int
         } elseif (! strcmp($type, 'write')) {
             $result |= Support\Benchmark::WRITE;
         } else {
-            fprintf(STDERR, "Error:  Command type is only 'read', or 'write'\n");
+            fprintf(STDERR, "Error: Command type is only `read`, or `write`\n");
             exit(1);
         }
     }
@@ -79,16 +79,16 @@ function getKeyTypes(array $opt, string $key, array $default): int
         'set' => Support\Benchmark::SET,
         'list' => Support\Benchmark::LIST,
         'zset' => Support\Benchmark::ZSET,
+        'stream' => Support\Benchmark::STREAM,
         'hyperloglog' => Support\Benchmark::HYPERLOGLOG,
         'hll' => Support\Benchmark::HYPERLOGLOG,
-        'stream' => Support\Benchmark::STREAM,
     ];
 
     foreach (getCsvOption($opt, $key, $default) as $type) {
         $type = strtolower($type);
 
         if (! isset($lookup[$type])) {
-            fprintf(STDERR, "Unknown key type '%s'\n", $type);
+            fprintf(STDERR, "Unknown key type `%s`\n", $type);
             exit(1);
         }
 

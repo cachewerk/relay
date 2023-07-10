@@ -7,8 +7,13 @@ namespace CacheWerk\Relay\Benchmarks;
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require __DIR__ . '/helpers.php';
+if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m Unable to locate autoloader, please run `composer install`\n");
+    exit(1);
+}
+
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/helpers.php';
 
 $opt = getopt(
     'h:p:s:a:v',
@@ -21,21 +26,27 @@ $opt = getopt(
 
 $host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
 $port = $opt['p'] ?? $opt['port'] ?? 6379;
-$auth = $opt['a'] ?? $opt['auth'] ?? NULL;
-$user = $opt['user'] ?? NULL;
-$pass = $opt['pass'] ?? NULL;
-$cmd_types = getCommandTypes($opt, 'command-type', ['read', 'write']);
+$auth = $opt['a'] ?? $opt['auth'] ?? null;
+$user = $opt['user'] ?? null;
+$pass = $opt['pass'] ?? null;
+
 $key_types = getKeyTypes($opt, 'key-type', ['all']);
-$workers = (int)($opt['workers'] ?? 1);
+$cmd_types = getCommandTypes($opt, 'command-type', ['read', 'write']);
+
+$cores = Support\System::cpu()->cores;
+$workers = (int) ($opt['workers'] ?? max(1, $cores - 2));
+
 $duration = $opt['duration'] ?? 1.0;
-$runs = $opt['runs'] ?? ($workers < 2 ? 5 : 1);
+$runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
+$warmup = $opt['warmup'] ?? 1;
+
 $filter = strtolower(trim($opt['filter'] ?? ''));
 $verbose = isset($opt['v']) || isset($opt['verbose']);
-$warmup = $opt['warmup'] ?? 1;
 $json = isset($opt['json']);
 
 if (isset($opt['help'])) {
     printUsage($argv[0]);
+
     exit(0);
 }
 

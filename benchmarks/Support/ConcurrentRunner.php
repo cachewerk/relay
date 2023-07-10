@@ -14,7 +14,7 @@ class ConcurrentRunner extends Runner
         parent::__construct($host, $port, $auth, $runs, $duration, $warmup, $filter);
 
         if ($workers < 2) {
-            throw new \Exception("Invalid number of workers ($workers <= 1)\n");
+            throw new \Exception("Invalid number of workers ({$workers} <= 1)\n");
         }
 
         $this->workers = $workers;
@@ -23,7 +23,7 @@ class ConcurrentRunner extends Runner
     protected function saveOperations(string $method, int $operations, string $nonce): void
     {
         $this->redis->sadd(
-            "benchmark_run:{$this->run_id}:$method:$nonce",
+            "benchmark_run:{$this->run_id}:{$method}:{$nonce}",
             [serialize([getmypid(), hrtime(true), $operations, \memory_get_peak_usage()])]
         );
     }
@@ -35,7 +35,7 @@ class ConcurrentRunner extends Runner
     {
         $result = [];
 
-        foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:$method:$nonce") as $iteration) {
+        foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:{$method}:{$nonce}") as $iteration) {
             $result[] = unserialize($iteration);
         }
 
@@ -57,7 +57,7 @@ class ConcurrentRunner extends Runner
         $st = microtime(true);
         for ($i = 1; $this->redis->get($waiting_key) < $this->workers; $i++) {
             if ($i % 10000 == 0 && ($et = microtime(true)) - $st >= $timeout) {
-                fprintf(STDERR, "Error:  Timed out waiting for %d workers to span (%2.2fs)\n",
+                fprintf(STDERR, "Error: Timed out waiting for %d workers to span (%2.2fs)\n",
                     $this->workers, $et - $st);
                 exit(1);
             }
@@ -87,7 +87,7 @@ class ConcurrentRunner extends Runner
         for ($i = 0; $i < $this->workers; $i++) {
             $pid = pcntl_fork();
             if ($pid < 0) {
-                fprintf(STDERR, "Error:  Cannot execute pcntl_fork()!\n");
+                fprintf(STDERR, "Error: Cannot execute pcntl_fork()\n");
                 exit(1);
             } elseif ($pid) {
                 $pids[] = $pid;

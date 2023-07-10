@@ -131,9 +131,11 @@ class Runner
 
         foreach ($stats as $key => $val) {
             $cmd = strtoupper(str_replace('cmdstat_', '', $key));
+
             if (! preg_match('/calls=([0-9]+).*/', $val, $matches)) {
                 continue;
             }
+
             $result[$cmd] = $matches[1];
         }
 
