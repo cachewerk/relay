@@ -64,7 +64,11 @@ $benchmarks = array_map(function ($file) {
     throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
-$filter_flags = $cmd_types | $key_types;
+if (count($argv)) {
+    $filter_flags = Support\Benchmark::READ | Support\Benchmark::WRITE | Support\Benchmark::ALL;
+} else {
+    $filter_flags = $cmd_types | $key_types;
+}
 
 $benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
     if (($filter_flags & Support\Benchmark::DEFAULT)) {
