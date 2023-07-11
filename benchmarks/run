@@ -7,6 +7,11 @@ namespace CacheWerk\Relay\Benchmarks;
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+if (! extension_loaded('relay')) {
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m Unable to find relay extension, follow the \e]8;;https://relay.so/docs/installation\e\\installation instructions\e]8;;\e\\ to set up it.\n");
+    exit(1);
+}
+
 if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
     fprintf(STDERR, "\n\033[41m ERROR \033[0m Unable to locate autoloader, please run `composer install`\n");
     exit(1);
