@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 class System
 {
-    public static function cpu(): object
+    public static function cpu(): CpuInfo
     {
         switch (PHP_OS) {
             case 'Darwin':
@@ -12,28 +12,20 @@ class System
             case 'Linux':
                 return self::linuxCPU();
             default:
-                return (object) [
-                    'type' => 'Unknown (' . PHP_OS . ')',
-                    'cores' => 0,
-                    'logical_cores' => 0,
-                    'arch' => trim((string) shell_exec('uname -m')),
-                ];
+                return new CpuInfo(
+                    'Unknown (' . PHP_OS . ')', 0, 0, trim((string) shell_exec('uname -m')),
+                );
         }
     }
 
-    public static function macCPU(): object
+    public static function macCPU(): CpuInfo
     {
         $result = [];
 
         $info = shell_exec('sysctl -a | grep machdep.cpu');
 
         if (empty($info)) {
-            return (object) [
-                'type' => 'macOS',
-                'cores' => 0,
-                'threads' => 0,
-                'arch' => trim((string) shell_exec('uname -m')),
-            ];
+            return new CpuInfo('macOS', 0, 0, trim((string) shell_exec('uname -m')));
         }
 
         foreach (explode("\n", trim($info)) as $line) {
@@ -42,27 +34,22 @@ class System
             $result[$key] = trim($value);
         }
 
-        return (object) [
-            'type' => $result['machdep.cpu.brand_string'],
-            'cores' => $result['machdep.cpu.core_count'],
-            'threads' => $result['machdep.cpu.thread_count'],
-            'arch' => trim((string) shell_exec('uname -m')),
-        ];
+        return new CpuInfo(
+            $result['machdep.cpu.brand_string'],
+            (int) $result['machdep.cpu.core_count'],
+            (int) $result['machdep.cpu.thread_count'],
+            trim((string) shell_exec('uname -m')),
+        );
     }
 
-    public static function linuxCPU(): object
+    public static function linuxCPU(): CpuInfo
     {
         $result = ['threads' => 0];
 
         $info = shell_exec('cat /proc/cpuinfo');
 
         if (empty($info)) {
-            return (object) [
-                'type' => 'Linux',
-                'cores' => 0,
-                'threads' => 0,
-                'arch' => trim((string) shell_exec('uname -m')),
-            ];
+            return new CpuInfo('Linux', 0, 0, trim((string) shell_exec('uname -m')));
         }
 
         foreach (explode("\n", trim($info)) as $line) {
@@ -72,18 +59,16 @@ class System
 
             [$key, $value] = explode(':', $line);
 
-            if (trim($key) == 'processor') {
-                $result['threads']++;
-            }
+            $result['threads'] += trim($key) == 'processor';
 
             $result[strtolower(trim($key))] = trim($value);
         }
 
-        return (object) [
-            'type' => $result['model name'],
-            'cores' => $result['cpu cores'],
-            'threads' => $result['threads'],
-            'arch' => trim((string) shell_exec('uname -m')),
-        ];
+        return new CpuInfo(
+            $result['model name'],
+            $result['cpu cores'],
+            $result['threads'],
+            trim((string) shell_exec('uname -m')),
+        );
     }
 }

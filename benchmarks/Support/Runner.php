@@ -49,7 +49,6 @@ class Runner
         $this->duration = $duration;
         $this->warmup = $warmup;
 
-        /** @var object{type: string, cores: int, arch: string} $cpu */
         $cpu = System::cpu();
 
         fprintf(STDERR, "Setting up on %s (%s cores/%s threads %s)\n", $cpu->type, $cpu->cores, $cpu->threads, $cpu->arch);
