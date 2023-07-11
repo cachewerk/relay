@@ -1,14 +1,13 @@
 #!/usr/bin/env php
 <?php
 
-
 namespace CacheWerk\Relay\Benchmarks;
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 if (! extension_loaded('relay')) {
-    fprintf(STDERR, "\n\033[41m ERROR \033[0m Unable to find relay extension, follow the \e]8;;https://relay.so/docs/installation\e\\installation instructions\e]8;;\e\\ to set up it.\n");
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m The `relay` extension is not loaded in this PHP environment.\n");
     exit(1);
 }
 
