@@ -34,7 +34,7 @@ class BenchmarkSadd extends Support\Benchmark
         $this->flush();
         $this->setUpClients();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $this->data[$item['id']] = array_values($this->flattenArray($item));
         }
     }

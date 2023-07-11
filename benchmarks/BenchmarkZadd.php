@@ -36,7 +36,7 @@ class BenchmarkZadd extends Support\Benchmark
 
         $rng = mt_rand() / mt_getrandmax();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $args = [];
 
             foreach ($item as $key => $val) {

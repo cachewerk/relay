@@ -34,7 +34,7 @@ class BenchmarkHmset extends Support\Benchmark
         $this->flush();
         $this->setUpClients();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $this->data[$item['id']] = $this->flattenArray($item);
         }
     }

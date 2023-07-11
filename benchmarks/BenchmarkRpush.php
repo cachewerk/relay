@@ -23,7 +23,7 @@ class BenchmarkRpush extends Support\Benchmark
     {
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $this->data[$item['id']] = array_values($this->flattenArray($item));
         }
     }

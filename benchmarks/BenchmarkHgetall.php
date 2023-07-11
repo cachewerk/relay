@@ -28,7 +28,7 @@ class BenchmarkHgetall extends Support\BenchmarkKeyCommand
     {
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->hmset((string) $item['id'], $this->flattenArray($item));
             $this->keys[] = $item['id'];
         }

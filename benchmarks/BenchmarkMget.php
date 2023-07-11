@@ -27,7 +27,7 @@ class BenchmarkMget extends Support\Benchmark
 
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->set((string) $item['id'], serialize($item));
             $keys[] = $item['id'];
         }

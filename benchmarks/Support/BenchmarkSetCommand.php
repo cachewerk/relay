@@ -40,7 +40,7 @@ abstract class BenchmarkSetCommand extends Benchmark
 
         $mems = [];
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
             $this->keys[] = $item['id'];
 

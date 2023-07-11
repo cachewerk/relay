@@ -23,7 +23,7 @@ class BenchmarkLrange extends Support\Benchmark
     {
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->rpush((string) $item['id'], $this->flattenArray($item));
             $this->keys[] = $item['id'];
         }

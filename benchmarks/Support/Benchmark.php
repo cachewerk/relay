@@ -103,11 +103,12 @@ abstract class Benchmark
         return $result;
     }
 
-    protected function loadJsonFile(string $file, bool $assoc)
+    protected function loadJsonFile(string $file, bool $assoc = true) // @phpstan-ignore-line
     {
         $file = __DIR__ . "/data/{$file}";
 
         $data = file_get_contents($file);
+
         if (! is_string($data)) {
             throw new \Exception("Failed to load data file '$file'");
         }

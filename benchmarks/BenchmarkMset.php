@@ -38,7 +38,7 @@ class BenchmarkMset extends Support\Benchmark
 
         $keys = [];
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $keys[$item['id']] = serialize($item);
         }
 

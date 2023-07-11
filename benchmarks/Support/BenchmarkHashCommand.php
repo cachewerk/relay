@@ -38,7 +38,7 @@ abstract class BenchmarkHashCommand extends Benchmark
     {
         $mems = [];
         $redis = $this->createPredis();
-        $items = $this->loadJsonFile('meteorites.json', true);
+        $items = $this->loadJsonFile('meteorites.json');
 
         foreach ($items as $item) {
             $redis->hmset((string) $item['id'], $this->flattenArray($item));

@@ -28,7 +28,7 @@ class BenchmarkGet extends Support\BenchmarkKeyCommand
     {
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->set((string) $item['id'], serialize($item));
             $this->keys[] = $item['id'];
         }

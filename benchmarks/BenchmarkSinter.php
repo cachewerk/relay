@@ -42,7 +42,7 @@ class BenchmarkSinter extends Support\Benchmark
 
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json', true) as $item) {
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
             $keys[] = $item['id'];
         }
