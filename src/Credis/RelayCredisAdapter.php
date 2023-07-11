@@ -22,6 +22,7 @@ class RelayCredisAdapter
      * Whether we're in a transaction.
      *
      * @see Credis_Client::__call()
+     *
      * @var bool
      */
     protected $isMulti = false;
@@ -30,6 +31,7 @@ class RelayCredisAdapter
      * The transaction instance.
      *
      * @see Credis_Client::__call()
+     *
      * @var \Relay\Relay|null
      */
     protected $redisMulti = null;
@@ -82,7 +84,7 @@ class RelayCredisAdapter
 
                     return $this;
                 }
-            } else if ($name == 'exec' || $name == 'discard') {
+            } elseif ($name == 'exec' || $name == 'discard') {
                 $this->isMulti = false;
                 $response = $this->redisMulti->{$name}();
                 $this->redisMulti = null;
@@ -112,6 +114,7 @@ class RelayCredisAdapter
      * Transform arguments. Mimics what Credis does.
      *
      * @see Credis_Client::__call()
+     *
      * @param  string  $command
      * @param  array<int, array<string>>  $args
      * @return array<mixed>
@@ -211,6 +214,7 @@ class RelayCredisAdapter
      * Flatten arguments. Mimics what Credis does.
      *
      * @see Credis_Client::_flattenArguments()
+     *
      * @param  array<mixed>  $arguments
      * @param  array<mixed>  &$out
      * @return array<mixed>

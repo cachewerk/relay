@@ -1,0 +1,13 @@
+{
+  "preset": "laravel",
+  "rules": {
+    "concat_space": {
+        "spacing": "one"
+    },
+    "ordered_imports": false,
+    "no_superfluous_phpdoc_tags": false,
+    "no_extra_blank_lines": {
+      "tokens": ["extra", "throw"]
+    }
+  }
+}

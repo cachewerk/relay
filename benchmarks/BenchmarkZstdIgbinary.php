@@ -3,20 +3,9 @@
 namespace CacheWerk\Relay\Benchmarks;
 
 use Redis;
-use Relay\Relay;
 
 class BenchmarkZstdIgbinary extends Support\Benchmark
 {
-    const Name = 'GET';
-
-    const Operations = 1000;
-
-    const Iterations = 5;
-
-    const Revolutions = 25;
-
-    const Warmup = 1;
-
     protected int $chunkSize = 10;
 
     /**
@@ -29,76 +18,96 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
      */
     protected array $keys;
 
+    public function getName(): string
+    {
+        return 'GET (Compressed)';
+    }
+
+    public static function flags(): int
+    {
+        return self::STRING | self::READ | self::DEFAULT;
+    }
+
+    public function seedKeys(): void
+    {
+        $items = $this->randomItems();
+
+        $this->seedClient($this->predis, serialize($items));
+        $this->seedClient($this->phpredis, $items);
+        $this->seedClient($this->relayNoCache, $items);
+    }
+
+    public function setUpClients(): void
+    {
+        parent::setUpClients();
+
+        foreach ([$this->phpredis, $this->relayNoCache, $this->relay] as $client) {
+            $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
+            $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+        }
+    }
+
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
 
-        $json = file_get_contents(__DIR__ . '/Support/data/meteorites.json');
+        $this->data = $this->loadJsonFile('meteorites.json', false);
+        $this->keys = array_map(fn ($item) => $item->id, $this->data);
 
-        $this->data = json_decode($json, false, 512, JSON_THROW_ON_ERROR); // @phpstan-ignore-line
-        $this->keys = array_map(fn ($item) => $item->id, $this->data); // @phpstan-ignore-line
-
-        $this->seedRelay();
-        $this->seedPredis();
-        $this->seedPhpRedis();
+        $this->seedKeys();
     }
 
-    public function benchmarkPredis(): void
+    /** @phpstan-ignore-next-line */
+    protected function runBenchmark($client, bool $unserialize): int
     {
+        $name = get_class($client);
+
         foreach ($this->keys as $key) {
-            $value = $this->predis->get("predis:{$key}");
+            $v = $client->get("$name:$key");
+
+            /* Predis does not have built-in serialization, so if we don't
+             * unserialize there, it's not really a fair comparison, since
+             * both PhpRedis and Relay will pay a price for deserialization.
+             *
+             * Note that this is still not really a fair comparison because
+             * Relay and PhpRedis are decompressing and using a different
+             * serializer. */
+            if ($unserialize) {
+                $v = unserialize($v);
+            }
         }
+
+        return count($this->keys);
     }
 
-    public function benchmarkPhpRedis(): void
+    public function benchmarkPredis(): int
     {
-        foreach ($this->keys as $key) {
-            $value = $this->phpredis->get("phpredis:{$key}");
-        }
+        return $this->runBenchmark($this->predis, true);
     }
 
-    public function benchmarkRelayNoCache(): void
+    public function benchmarkPhpRedis(): int
     {
-        foreach ($this->keys as $key) {
-            $value = $this->relayNoCache->get("relay:{$key}");
-        }
+        return $this->runBenchmark($this->phpredis, false);
     }
 
-    public function benchmarkRelay(): void
+    public function benchmarkRelayNoCache(): int
     {
-        foreach ($this->keys as $key) {
-            $value = $this->relay->get("relay:{$key}");
-        }
+        return $this->runBenchmark($this->relayNoCache, false);
     }
 
-    protected function seedPredis(): void
+    public function benchmarkRelay(): int
     {
-        foreach ($this->data as $item) {
-            $this->predis->set("predis:{$item->id}", serialize($this->randomItems()));
-        }
+        return $this->runBenchmark($this->relay, false);
     }
 
-    protected function seedPhpRedis(): void
+    /** @phpstan-ignore-next-line */
+    protected function seedClient($client, $items)
     {
-        $this->phpredis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-        $this->phpredis->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
-
-        foreach ($this->data as $item) {
-            $this->phpredis->set("phpredis:{$item->id}", $this->randomItems());
-        }
-    }
-
-    protected function seedRelay(): void
-    {
-        $this->relayNoCache->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
-        $this->relayNoCache->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
-
-        $this->relay->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
-        $this->relay->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
+        $name = get_class($client);
 
         foreach ($this->data as $item) {
-            $this->relayNoCache->set("relay:{$item->id}", $this->randomItems());
+            $client->set("$name:{$item->id}", $items);
         }
     }
 

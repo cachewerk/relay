@@ -2,51 +2,54 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMget extends Support\Benchmark
+class BenchmarkMset extends Support\Benchmark
 {
     const KeysPerCall = 8;
 
     /**
-     * @var array<int, array<int, string>>
+     * @var array<int|string, array<int|string, string>>
      */
     protected array $keyChunks;
 
     public function getName(): string
     {
-        return 'MGET';
+        return 'MSET';
+    }
+
+    protected function cmd(): string
+    {
+        return 'MSET';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::STRING | self::WRITE;
     }
 
     public function seedKeys(): void
     {
-        $keys = [];
 
-        $redis = $this->createPredis();
-
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->set((string) $item['id'], serialize($item));
-            $keys[] = $item['id'];
-        }
-
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+
+        $keys = [];
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $keys[$item['id']] = serialize($item);
+        }
+
+        $this->keyChunks = array_chunk($keys, self::KeysPerCall, true);
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {
-            $client->mget($chunk);
+            $client->mset($chunk);
         }
 
         return count($this->keyChunks);

@@ -10,43 +10,62 @@ class Runner
 
     protected int $port;
 
-    protected ?string $auth;
-
-    protected bool $verbose = false;
+    /*
+     * @var string|array<int, array<string>>|null
+     */
+    protected mixed $auth;
 
     protected Predis $redis;
 
+    protected string $run_id;
+
+    protected string $filter;
+
+    protected int $runs;
+
+    protected float $duration;
+
+    protected int $warmup;
+
     /**
-     * @param string $host
-     * @param string|int $port
-     * @param ?string $auth
-     * @param bool $verbose
+     * @param  string  $host
+     * @param  string|int  $port
+     * @param  string|array<int, array<string>>|null  $auth
+     * @param  int  $runs
+     * @param  int  $warmup
      * @return void
      */
-    public function __construct($host, $port, $auth, bool $verbose)
+    public function __construct($host, $port, $auth, $runs, float $duration, $warmup, string $filter)
     {
-        $this->verbose = $verbose;
+        $this->run_id = uniqid();
+
+        $this->filter = $filter;
 
         $this->host = (string) $host;
         $this->port = (int) $port;
         $this->auth = empty($auth) ? null : $auth;
 
-        /** @var object{type: string, cores: int, arch: string} $cpu */
+        $this->runs = $runs;
+        $this->duration = $duration;
+        $this->warmup = $warmup;
+
         $cpu = System::cpu();
 
-        printf("Setting up on %s (%s cores, %s)\n", $cpu->type, $cpu->cores, $cpu->arch);
+        fprintf(STDERR, "Setting up on %s (%s cores/%s threads %s)\n", $cpu->type, $cpu->cores, $cpu->threads, $cpu->arch);
 
-        printf(
+        fprintf(
+            STDERR,
             "Using PHP %s (OPcache: %s, Xdebug: %s, New Relic: %s)\n",
             PHP_VERSION,
-            $this->opcache() ? "\033[31mOn\033[0m" : "Off",
-            $this->xdebug() ? "\033[31mOn\033[0m" : "Off",
+            $this->opcache() ? "\033[31mOn\033[0m" : 'Off',
+            $this->xdebug() ? "\033[31mOn\033[0m" : 'Off',
             $this->newrelic() ? "\033[31mOn\033[0m" : 'Off'
         );
 
         $this->setUpRedis();
 
-        printf(
+        fprintf(
+            STDERR,
             "Connected to Redis (%s) at %s\n\n",
             $this->redis->info()['Server']['redis_version'],
             $this->port ? "tcp://{$host}:{$port}" : "unix:{$host}",
@@ -55,10 +74,18 @@ class Runner
 
     protected function setUpRedis(): void
     {
+        if (is_array($this->auth) && count($this->auth) == 2) {
+            [$user, $pass] = $this->auth;
+        } else {
+            $user = null;
+            $pass = $this->auth;
+        }
+
         $parameters = [
             'host' => $this->host,
             'port' => $this->port,
-            'password' => $this->auth,
+            'username' => $user,
+            'password' => $pass,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ];
@@ -73,11 +100,80 @@ class Runner
         ]);
     }
 
+    protected function resetStats(): void
+    {
+        $this->redis->config('RESETSTAT');
+
+        if (function_exists('memory_reset_peak_usage')) {
+            \memory_reset_peak_usage();
+        }
+    }
+
     /**
-     * @param class-string[] $benchmarks
-     * @return void
+     * @return array<int, int>
      */
-    public function run(array $benchmarks): void
+    protected function getNetworkStats(): array
+    {
+        $info = $this->redis->info('STATS')['Stats'];
+
+        return [
+            $info['total_net_input_bytes'],
+            $info['total_net_output_bytes'],
+        ];
+    }
+
+    protected function getRedisCommandCount(): int
+    {
+        $result = [];
+
+        $stats = $this->redis->info('commandstats')['Commandstats'];
+
+        foreach ($stats as $key => $val) {
+            $cmd = strtoupper(str_replace('cmdstat_', '', $key));
+
+            if (! preg_match('/calls=([0-9]+).*/', $val, $matches)) {
+                continue;
+            }
+
+            $result[$cmd] = $matches[1];
+        }
+
+        return (int) array_sum($result);
+    }
+
+    protected function runMethod(Reporter $reporter, Subject $subject, Benchmark $benchmark, string $method): void
+    {
+        $benchmark->warmup($this->warmup, $method);
+
+        for ($i = 0; $i < $this->runs; $i++) {
+            $this->resetStats();
+
+            $ops = 0;
+            $cmds1 = $this->getRedisCommandCount();
+            $t1 = microtime(true);
+
+            do {
+                $ops += $benchmark->{$method}();
+                $t2 = microtime(true);
+            } while ($t2 - $t1 < $this->duration);
+
+            [$rx, $tx] = $this->getNetworkStats();
+            $millis = ($t2 - $t1) * 1000;
+            $memory = memory_get_peak_usage();
+            $cmds = $this->getRedisCommandCount() - $cmds1;
+
+            $iteration = $subject->addIteration($ops, $millis, $cmds, $memory, $rx, $tx);
+
+            $reporter->finishedIteration($benchmark, $iteration, $subject->getClient());
+        }
+
+        $reporter->finishedSubject($subject);
+    }
+
+    /**
+     * @param  class-string[]  $benchmarks
+     */
+    public function run(array $benchmarks, Reporter $reporter): void
     {
         foreach ($benchmarks as $class) {
             /** @var Benchmark $benchmark */
@@ -86,56 +182,14 @@ class Runner
 
             $subjects = new Subjects($benchmark);
 
-            $reporter = new CliReporter($this->verbose);
-            $reporter->startingBenchmark($benchmark);
+            $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup);
 
-            $methods = array_filter(
-                get_class_methods($benchmark),
-                fn ($method) => str_starts_with($method, 'benchmark')
-            );
-
-            foreach ($methods as $method) {
+            foreach ($benchmark->getBenchmarkMethods($this->filter) as $method) {
                 $subject = $subjects->add($method);
-
-                usleep(500000); // 500ms
-
-                for ($i = 0; $i < $benchmark::Warmup; $i++) {
-                    for ($i = 1; $i <= $benchmark::Revolutions; $i++) {
-                        $benchmark->{$method}();
-                    }
-                }
-
-                for ($i = 0; $i < $benchmark::Iterations; $i++) {
-                    $this->redis->config('RESETSTAT');
-                    if (function_exists('memory_reset_peak_usage')) {
-                        memory_reset_peak_usage();
-                    }
-
-                    usleep(100000); // 100ms
-
-                    $start = hrtime(true);
-
-                    for ($r = 1; $r <= $benchmark::Revolutions; $r++) {
-                        $benchmark->{$method}();
-                    }
-
-                    $end = hrtime(true);
-                    $memory = memory_get_peak_usage();
-                    $ms = ($end - $start) / 1e+6;
-
-                    $usage = $this->redis->info('STATS')['Stats'];
-                    $bytesIn = $usage['total_net_input_bytes'];
-                    $bytesOut = $usage['total_net_output_bytes'];
-
-                    $iteration = $subject->addIteration($ms, $memory, $bytesIn, $bytesOut);
-
-                    $reporter->finishedIteration($iteration);
-                }
-
-                $reporter->finishedSubject($subject);
+                $this->runMethod($reporter, $subject, $benchmark, $method);
             }
 
-            $reporter->finishedSubjects($subjects);
+            $reporter->finishedSubjects($subjects, 1);
         }
     }
 

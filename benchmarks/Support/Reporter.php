@@ -6,24 +6,27 @@ abstract class Reporter
 {
     protected bool $verbose;
 
+    /**
+     * @return void
+     */
     public function __construct(bool $verbose)
     {
         $this->verbose = $verbose;
     }
 
-    abstract function startingBenchmark(Benchmark $benchmark): void;
+    abstract public function startingBenchmark(Benchmark $benchmark, int $runs, float $duration, int $warmup): void;
 
-    abstract function finishedIteration(Iteration $iteration): void;
+    abstract public function finishedIteration(Benchmark $benchmark, Iteration $iteration, string $client): void;
 
-    abstract function finishedSubject(Subject $subject): void;
+    abstract public function finishedSubject(Subject $subject): void;
 
-    abstract function finishedSubjects(Subjects $subjects): void;
+    abstract public function finishedSubjects(Subjects $subjects, int $workers): void;
 
     /**
-     * @param int|float $bytes
+     * @param  int|float  $bytes
      * @return string
      */
-    protected function humanMemory($bytes)
+    public static function humanMemory($bytes)
     {
         $i = floor(log($bytes, 1024));
 
@@ -34,10 +37,10 @@ abstract class Reporter
     }
 
     /**
-     * @param int|float $number
+     * @param  int|float  $number
      * @return string
      */
-    protected function humanNumber($number)
+    public static function humanNumber($number)
     {
         $i = $number > 0 ? floor(log($number, 1000)) : 0;
 

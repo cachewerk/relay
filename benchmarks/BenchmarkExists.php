@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkGet extends Support\BenchmarkKeyCommand
+class BenchmarkExists extends Support\BenchmarkKeyCommand
 {
     /**
      * @var array<int, string>
@@ -11,17 +11,17 @@ class BenchmarkGet extends Support\BenchmarkKeyCommand
 
     public function getName(): string
     {
-        return 'GET';
+        return 'EXISTS';
     }
 
-    protected function cmd(): string
+    public function cmd(): string
     {
-        return 'GET';
+        return 'EXISTS';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::UTILITY | self::READ;
     }
 
     public function seedKeys(): void

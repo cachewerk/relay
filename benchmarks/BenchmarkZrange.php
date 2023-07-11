@@ -2,37 +2,40 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMget extends Support\Benchmark
+class BenchmarkZrange extends Support\Benchmark
 {
-    const KeysPerCall = 8;
-
     /**
-     * @var array<int, array<int, string>>
+     * @var array<int, string>
      */
-    protected array $keyChunks;
+    protected array $keys;
 
     public function getName(): string
     {
-        return 'MGET';
+        return 'ZRANGE';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::ZSET | self::READ;
     }
 
     public function seedKeys(): void
     {
-        $keys = [];
-
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->set((string) $item['id'], serialize($item));
-            $keys[] = $item['id'];
-        }
+        $rng = mt_rand() / mt_getrandmax();
 
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $args = [];
+
+            foreach ($item as $key => $val) {
+                $args[] = round($rng * strlen(serialize($val)), 4);
+                $args[] = $key;
+            }
+
+            $redis->zadd($item['id'], ...$args);
+            $this->keys[] = $item['id'];
+        }
     }
 
     public function setUp(): void
@@ -45,11 +48,11 @@ class BenchmarkMget extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->keyChunks as $chunk) {
-            $client->mget($chunk);
+        foreach ($this->keys as $key) {
+            $client->zrange($key, 0, -1);
         }
 
-        return count($this->keyChunks);
+        return count($this->keys);
     }
 
     public function benchmarkPredis(): int

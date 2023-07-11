@@ -2,37 +2,40 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMget extends Support\Benchmark
+class BenchmarkZincrby extends Support\Benchmark
 {
-    const KeysPerCall = 8;
-
     /**
-     * @var array<int, array<int, string>>
+     * @var array<int|string, array<int|string, float>>
      */
-    protected array $keyChunks;
+    protected array $keys;
 
     public function getName(): string
     {
-        return 'MGET';
+        return 'ZINCRBY';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::ZSET | self::READ;
     }
 
     public function seedKeys(): void
     {
-        $keys = [];
-
         $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->set((string) $item['id'], serialize($item));
-            $keys[] = $item['id'];
-        }
+        $rng = mt_rand() / mt_getrandmax();
 
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $rec = [];
+
+            $rng = round(mt_rand() / mt_getrandmax(), 4);
+
+            foreach ($this->flattenArray($item) as $key => $val) {
+                $rec[$key] = $rng * strlen(serialize($val));
+            }
+
+            $this->keys[$item['id']] = $rec;
+        }
     }
 
     public function setUp(): void
@@ -45,11 +48,16 @@ class BenchmarkMget extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->keyChunks as $chunk) {
-            $client->mget($chunk);
+        $operations = 0;
+
+        foreach ($this->keys as $key => $item) {
+            foreach ($item as $mem => $score) {
+                $client->zincrby($key, $score, $mem);
+                $operations++;
+            }
         }
 
-        return count($this->keyChunks);
+        return $operations;
     }
 
     public function benchmarkPredis(): int

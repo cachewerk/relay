@@ -8,11 +8,35 @@ use Predis\Client as Predis;
 
 abstract class Benchmark
 {
+    const STRING = 0x01;
+
+    const LIST = 0x02;
+
+    const HASH = 0x04;
+
+    const SET = 0x08;
+
+    const ZSET = 0x10;
+
+    const STREAM = 0x20;
+
+    const HYPERLOGLOG = 0x40;
+
+    const UTILITY = 0x80;
+
+    const ALL = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET | self::STREAM | self::HYPERLOGLOG | self::UTILITY;
+
+    const READ = 0x100;
+
+    const WRITE = 0x200;
+
+    const DEFAULT = 0x400;
+
     protected string $host;
 
     protected int $port;
 
-    protected ?string $auth;
+    protected mixed $auth;
 
     protected Relay $relay;
 
@@ -22,31 +46,33 @@ abstract class Benchmark
 
     protected PhpRedis $phpredis;
 
-    public function __construct(string $host, int $port, ?string $auth)
+    public function __construct(string $host, int $port, mixed $auth)
     {
         $this->host = $host;
         $this->port = $port;
         $this->auth = $auth;
     }
 
+    abstract public function getName(): string;
+
+    abstract public function seedKeys(): void;
+
+    abstract public static function flags(): int;
+
+    public function warmup(int $times, string $method): void
+    {
+        if ($times == 0) {
+            return;
+        }
+
+        for ($i = 0; $i < $times; $i++) {
+            $this->{$method}();
+        }
+    }
+
     public function setUp(): void
     {
         //
-    }
-
-    public function its(): int
-    {
-        return static::Iterations;
-    }
-
-    public function revs(): int
-    {
-        return static::Revolutions;
-    }
-
-    public function opsTotal(): int
-    {
-        return static::Operations * static::Revolutions;
     }
 
     protected function flush(): void
@@ -55,33 +81,60 @@ abstract class Benchmark
     }
 
     /**
-     * @param string $file
-     * @return array<int, string>
+     * Helper function to flatten a multidimensional array.  No type hinting here
+     * as it can operate on any arbitrary array data.
+     *
+     * @param array<int|string, mixed> $input
+     *
+     * @return array<int|string, string>
      */
-    protected function loadJson(string $file)
+    protected function flattenArray(array $input, string $prefix = ''): array
     {
-        $keys = [];
-        $json = file_get_contents(__DIR__ . "/data/{$file}");
+        $result = [];
 
-        /** @var array<int, object{id: string}> $data */
-        $data = json_decode((string) $json, false, 512, JSON_THROW_ON_ERROR);
-
-        $redis = $this->createPredis();
-
-        foreach ($data as $item) {
-            $redis->set($item->id, serialize($item));
-            $keys[] = (string) $item->id;
+        foreach ($input as $key => $val) {
+            if (is_array($val)) {
+                $result = $result + $this->flattenArray($val, $prefix . $key . '.');
+            } else {
+                $result[$prefix . $key] = is_scalar($val) ? (string) $val : serialize($val);
+            }
         }
 
-        return $keys;
+        return $result;
     }
 
-    protected function setUpClients(): void
+    protected function loadJsonFile(string $file, bool $assoc = true) // @phpstan-ignore-line
+    {
+        $file = __DIR__ . "/data/{$file}";
+
+        $data = file_get_contents($file);
+
+        if (! is_string($data)) {
+            throw new \Exception("Failed to load data file '$file'");
+        }
+
+        return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);
+    }
+
+    public function setUpClients(): void
     {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+    }
+
+    /**
+     * Refresh clients after they have already been instanced.  The point
+     * of this method is to refresh PhpRedis and Predis as they will fail
+     * horribly if you try to use them from a forked child process.
+     *
+     * Relay handles this automagically.
+     */
+    public function refreshClients(): void
+    {
+        $this->predis = $this->createPredis();
+        $this->phpredis = $this->createPhpRedis();
     }
 
     /**
@@ -104,10 +157,7 @@ abstract class Benchmark
         return $relay;
     }
 
-    /**
-     * @return Relay
-     */
-    protected function createRelayNoCache()
+    protected function createRelayNoCache(): Relay
     {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_USE_CACHE, false);
@@ -125,31 +175,34 @@ abstract class Benchmark
         return $relay;
     }
 
-    /**
-     * @return PhpRedis
-     */
-    protected function createPhpRedis()
+    protected function createPhpRedis(): PhpRedis
     {
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
 
         if ($this->auth) {
+            /** @phpstan-ignore-next-line */
             $phpredis->auth($this->auth);
         }
 
         return $phpredis;
     }
 
-    /**
-     * @return Predis
-     */
-    protected function createPredis()
+    protected function createPredis(): Predis
     {
+        if (is_array($this->auth) && count($this->auth) == 2) {
+            [$user, $pass] = $this->auth;
+        } else {
+            $user = null;
+            $pass = $this->auth;
+        }
+
         $parameters = [
             'host' => $this->host,
             'port' => $this->port,
-            'password' => $this->auth,
+            'username' => $user,
+            'password' => $pass,
             'timeout' => 0.5,
             'read_write_timeout' => 0.5,
         ];
@@ -162,5 +215,24 @@ abstract class Benchmark
         return new Predis($parameters, [
             'exceptions' => true,
         ]);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getBenchmarkMethods(string $filter): array
+    {
+        return array_filter(
+            get_class_methods($this),
+            function ($method) use ($filter) {
+                if (! str_starts_with($method, 'benchmark')) {
+                    return false;
+                }
+
+                $method = substr($method, strlen('benchmark'));
+
+                return ! $filter || preg_match("/$filter/i", strtolower($method));
+            }
+        );
     }
 }

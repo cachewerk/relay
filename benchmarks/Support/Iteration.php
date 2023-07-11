@@ -4,7 +4,11 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 class Iteration
 {
+    public int $ops;
+
     public float $ms;
+
+    public int $redisCmds;
 
     public int $memory;
 
@@ -12,16 +16,14 @@ class Iteration
 
     public int $bytesOut;
 
-    public Subject $subject;
-
-    public function __construct(float $ms, int $memory, int $bytesIn, int $bytesOut, Subject $subject)
+    public function __construct(int $ops, float $ms, int $redisCmds, int $memory, int $bytesIn, int $bytesOut)
     {
+        $this->ops = $ops;
         $this->ms = $ms;
+        $this->redisCmds = $redisCmds;
         $this->memory = $memory;
         $this->bytesIn = $bytesIn;
         $this->bytesOut = $bytesOut;
-
-        $this->subject = $subject;
     }
 
     /**
@@ -29,8 +31,6 @@ class Iteration
      */
     public function opsPerSec()
     {
-        $benchmark = $this->subject->benchmark;
-
-        return $benchmark->opsTotal() / ($this->ms / 1000);
+        return $this->ops / ($this->ms / 1000);
     }
 }

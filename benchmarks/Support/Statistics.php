@@ -5,9 +5,7 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 class Statistics
 {
     /**
-     * @param array<int, int|float> $values
-     * @param bool $sample
-     * @return float
+     * @param  array<int, int|float>  $values
      */
     public static function stdev(array $values, bool $sample = false): float
     {
@@ -17,8 +15,7 @@ class Statistics
     }
 
     /**
-     * @param array<int, int|float> $values
-     * @param bool $sample
+     * @param  array<int, int|float>  $values
      * @return int|float
      */
     public static function variance(array $values, bool $sample = false)
@@ -41,7 +38,7 @@ class Statistics
     }
 
     /**
-     * @param array<int, int|float> $values
+     * @param  array<int, int|float>  $values
      * @return int|float
      */
     public static function mean(array $values)
@@ -62,7 +59,7 @@ class Statistics
     }
 
     /**
-     * @param array<int, int|float> $values
+     * @param  array<int, int|float>  $values
      * @return int|float
      */
     public static function median(array $values)
@@ -76,8 +73,7 @@ class Statistics
     }
 
     /**
-     * @param array<int, int|float> $values
-     * @param bool $sample
+     * @param  array<int, int|float>  $values
      */
     public static function rstdev(array $values, bool $sample = false): float
     {

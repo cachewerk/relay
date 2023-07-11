@@ -1,38 +1,101 @@
 #!/usr/bin/env php
 <?php
 
+
+namespace CacheWerk\Relay\Benchmarks;
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m Unable to locate autoloader, please run `composer install`\n");
+    exit(1);
+}
+
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/helpers.php';
 
-$opt = getopt('h:p:s:a:v', ['verbose']);
+$opt = getopt(
+    'h:p:s:a:v',
+    [
+        'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
+        'json', 'help', 'user:', 'pass:', 'command-type:', 'key-type:'
+    ],
+    $optind
+);
 
-array_splice($argv, 0, 1 + (count($opt) * 2));
+$host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
+$port = $opt['p'] ?? $opt['port'] ?? 6379;
+$auth = $opt['a'] ?? $opt['auth'] ?? null;
+$user = $opt['user'] ?? null;
+$pass = $opt['pass'] ?? null;
+
+$key_types = getKeyTypes($opt, 'key-type', ['all']);
+$cmd_types = getCommandTypes($opt, 'command-type', ['default']);
+
+$threads = Support\System::cpu()->threads;
+$workers = (int) ($opt['workers'] ?? max(1, $threads - 2));
+
+$duration = $opt['duration'] ?? 1.0;
+$runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
+$warmup = $opt['warmup'] ?? 1;
+
+$filter = strtolower(trim($opt['filter'] ?? ''));
+$verbose = isset($opt['v']) || isset($opt['verbose']);
+$json = isset($opt['json']);
+
+if (isset($opt['help'])) {
+    printUsage($argv[0]);
+
+    exit(0);
+}
+
+array_splice($argv, 0, $optind);
 
 $benchmarks = array_map(function ($file) {
     if (is_readable(__DIR__ . '/' . basename($file))) {
         return 'CacheWerk\\Relay\\Benchmarks\\' . substr(str_replace(__DIR__ . '/', '', $file), 0, -4);
     }
 
-    throw new InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
+    throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Benchmark*.php') : $argv);
 
-try {
-    $runner = new CacheWerk\Relay\Benchmarks\Support\Runner(
-        $opt['s'] ?? $opt['h'] ?? '127.0.0.1',
-        $opt['p'] ?? (isset($opt['s']) ? 0 : 6379),
-        $opt['a'] ?? null,
-        isset($opt['v']) || isset($opt['verbose'])
-    );
+$filter_flags = $cmd_types | $key_types;
 
-    $runner->run($benchmarks);
-} catch (\Exception $exception) {
-    printf("\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
+$benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
+    if (($filter_flags & Support\Benchmark::DEFAULT)) {
+        return $v::flags() & Support\Benchmark::DEFAULT;
+    }
+
+    return ($v::flags() & $filter_flags) == $v::flags();
+});
+
+if ($user && $pass) {
+    $auth = [$user, $pass];
 }
 
+if (strpos($host, '/') !== false) {
+    $port = 0;
+}
 
-// TODO: Mention this is SINGLE core SINGLE worker...
-// TODO: Can we track Redis CPU usage?
-// TODO: OCP compression + batching...
-// https://github.com/sharkdp/hyperfine
+try {
+    if ($workers > 1) {
+        $runner = new Support\ConcurrentRunner(
+            $host, $port, $auth, $runs, $duration, $warmup, $filter, $workers
+        );
+    } else {
+        $runner = new Support\Runner(
+            $host, $port, $auth, $runs, $duration, $warmup, $filter
+        );
+    }
+
+    if ($json) {
+        $reporter = new Support\JsonReporter($verbose);
+    } else {
+        $reporter = new Support\CliReporter($verbose);
+    }
+
+    $runner->run($benchmarks, $reporter);
+} catch (\Exception $exception) {
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m {$exception->getMessage()}\n");
+}

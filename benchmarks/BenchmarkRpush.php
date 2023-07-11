@@ -2,37 +2,30 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMget extends Support\Benchmark
+class BenchmarkRpush extends Support\Benchmark
 {
-    const KeysPerCall = 8;
-
     /**
-     * @var array<int, array<int, string>>
+     * @var array<int|string, array<int, mixed>>
      */
-    protected array $keyChunks;
+    protected array $data;
 
     public function getName(): string
     {
-        return 'MGET';
+        return 'RPUSH';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::LIST | self::WRITE;
     }
 
     public function seedKeys(): void
     {
-        $keys = [];
-
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->set((string) $item['id'], serialize($item));
-            $keys[] = $item['id'];
+            $this->data[$item['id']] = array_values($this->flattenArray($item));
         }
-
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
     }
 
     public function setUp(): void
@@ -45,16 +38,20 @@ class BenchmarkMget extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->keyChunks as $chunk) {
-            $client->mget($chunk);
+        foreach ($this->data as $key => $elements) {
+            $client->rpush($key, ...$elements);
         }
 
-        return count($this->keyChunks);
+        return count($this->data);
     }
 
     public function benchmarkPredis(): int
     {
-        return $this->runBenchmark($this->predis);
+        foreach ($this->data as $key => $elements) {
+            $this->predis->rpush((string) $key, $elements);
+        }
+
+        return count($this->data);
     }
 
     public function benchmarkPhpRedis(): int

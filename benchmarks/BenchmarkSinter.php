@@ -2,7 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
-class BenchmarkMget extends Support\Benchmark
+class BenchmarkSinter extends Support\Benchmark
 {
     const KeysPerCall = 8;
 
@@ -13,12 +13,27 @@ class BenchmarkMget extends Support\Benchmark
 
     public function getName(): string
     {
-        return 'MGET';
+        return 'SINTER';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::SET | self::READ;
+    }
+
+    public function warmup(int $times, string $method): void
+    {
+        if ($times == 0) {
+            return;
+        }
+
+        parent::warmup($times, $method);
+
+        foreach ($this->keyChunks as $chunk) {
+            foreach ($chunk as $key) {
+                $this->relay->smembers((string) $key);
+            }
+        }
     }
 
     public function seedKeys(): void
@@ -28,7 +43,7 @@ class BenchmarkMget extends Support\Benchmark
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->set((string) $item['id'], serialize($item));
+            $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
             $keys[] = $item['id'];
         }
 
@@ -46,7 +61,7 @@ class BenchmarkMget extends Support\Benchmark
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {
-            $client->mget($chunk);
+            $client->sinter($chunk);
         }
 
         return count($this->keyChunks);

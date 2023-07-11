@@ -28,11 +28,23 @@ class Subjects
     /**
      * @return array<int, Subject>
      */
-    public function sortByTime()
+    public function sortByTime(): array
     {
         $subjects = $this->subjects;
 
         usort($subjects, fn ($a, $b) => $a->msMedian() < $b->msMedian() ? 1 : -1);
+
+        return $subjects;
+    }
+
+    /**
+     * @return array<int, Subject>
+     */
+    public function sortByOpsPerSec(): array
+    {
+        $subjects = $this->subjects;
+
+        usort($subjects, fn ($a, $b) => $a->opsPerSecMedian() >= $b->opsPerSecMedian() ? 1 : -1);
 
         return $subjects;
     }
