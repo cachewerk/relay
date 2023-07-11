@@ -85,6 +85,11 @@ class CliReporter extends Reporter
         ]);
 
         $subjects = $subjects->sortByOpsPerSec();
+        if (empty($subjects)) {
+            self::printError("No benchmarks were run!  Please rerun with different options.");
+            exit(1);
+        }
+
         $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
 
         $style_right = [
