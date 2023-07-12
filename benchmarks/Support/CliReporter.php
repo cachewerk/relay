@@ -85,8 +85,9 @@ class CliReporter extends Reporter
         ]);
 
         $subjects = $subjects->sortByOpsPerSec();
+
         if (empty($subjects)) {
-            self::printError("No benchmarks were run!  Please rerun with different options.");
+            self::printError('No benchmarks were run! Please rerun with different options.');
             exit(1);
         }
 
