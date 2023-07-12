@@ -38,7 +38,6 @@ class BenchmarkLrange extends Benchmark
         $this->seedKeys();
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {

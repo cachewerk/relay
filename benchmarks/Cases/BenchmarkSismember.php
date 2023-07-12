@@ -16,7 +16,6 @@ class BenchmarkSismember extends BenchmarkSetCommand
         return self::SET | self::READ;
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {

@@ -30,7 +30,10 @@ class BenchmarkHmget extends BenchmarkHashCommand
         $this->queryMems = array_slice($this->mems, 0, self::MemsPerCommand);
     }
 
-    /** @phpstan-ignore-next-line */
+    /**
+     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @return int
+     */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {

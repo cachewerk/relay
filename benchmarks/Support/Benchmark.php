@@ -39,7 +39,10 @@ abstract class Benchmark
 
     protected int $port;
 
-    protected mixed $auth;
+    /**
+     * @var string|string[]
+     */
+    protected $auth;
 
     protected Relay $relay;
 
@@ -49,7 +52,12 @@ abstract class Benchmark
 
     protected PhpRedis $phpredis;
 
-    public function __construct(string $host, int $port, mixed $auth)
+    /**
+     * @param  string  $host
+     * @param  int  $port
+     * @param  string|string[]  $auth
+     */
+    public function __construct(string $host, int $port, $auth)
     {
         $this->host = $host;
         $this->port = $port;
@@ -61,6 +69,12 @@ abstract class Benchmark
     abstract public function seedKeys(): void;
 
     abstract public static function flags(): int;
+
+    /**
+     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @return int
+     */
+    abstract protected function runBenchmark($client): int;
 
     public function warmup(int $times, string $method): void
     {
@@ -184,7 +198,6 @@ abstract class Benchmark
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
 
         if ($this->auth) {
-            /** @phpstan-ignore-next-line */
             $phpredis->auth($this->auth);
         }
 

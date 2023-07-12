@@ -50,7 +50,6 @@ class BenchmarkZadd extends Benchmark
         }
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->data as $key => $value) {

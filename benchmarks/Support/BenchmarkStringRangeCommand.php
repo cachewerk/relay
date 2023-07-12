@@ -65,7 +65,6 @@ abstract class BenchmarkStringRangeCommand extends Benchmark
         }
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         $cmd = $this->cmd();

@@ -16,7 +16,6 @@ class BenchmarkSmismember extends BenchmarkSetCommand
         return self::SET | self::READ;
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {
@@ -28,9 +27,10 @@ class BenchmarkSmismember extends BenchmarkSetCommand
 
     public function benchmarkPredis(): int
     {
+        $mems = array_map('strval', $this->mems);
+
         foreach ($this->keys as $key) {
-            /** @phpstan-ignore-next-line */
-            $this->predis->smismember($key, ...$this->mems);
+            $this->predis->smismember($key, ...$mems);
         }
 
         return count($this->keys);

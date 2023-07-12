@@ -47,7 +47,6 @@ class BenchmarkMset extends Benchmark
         $this->keyChunks = array_chunk($keys, self::KeysPerCall, true);
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {

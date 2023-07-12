@@ -59,7 +59,6 @@ class BenchmarkSinter extends Benchmark
         $this->seedKeys();
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {

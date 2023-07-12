@@ -119,6 +119,7 @@ class ConcurrentRunner extends Runner
         $cmd2 = $this->getRedisCommandCount();
 
         $end = $max_mem = $tot_ops = 0;
+
         foreach ($this->loadOperations($method, $nonce) as [$pid, $now, $ops, $mem]) {
             $tot_ops += $ops;
             $max_mem = max($max_mem, $mem);
@@ -127,8 +128,13 @@ class ConcurrentRunner extends Runner
 
         $start = $this->getConcurrentStart($nonce);
 
-        /** @phpstan-ignore-next-line */
-        return new Iteration($tot_ops, ($end - $start) / 1e+6, $cmd2 - $cmd1, $max_mem, $rx2 - $rx1, $tx2 - $tx1);
+        return new Iteration(
+            $tot_ops,
+            ($end - $start) / 1e+6,
+            $cmd2 - $cmd1,
+            $max_mem, // @phpstan-ignore-line
+            $rx2 - $rx1, $tx2 - $tx1
+        );
     }
 
     protected function runConcurrent(Reporter $reporter, Subject $subject, string $class, string $method): void

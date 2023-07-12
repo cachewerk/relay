@@ -37,7 +37,6 @@ class BenchmarkRpush extends Benchmark
         $this->seedKeys();
     }
 
-    /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->data as $key => $elements) {

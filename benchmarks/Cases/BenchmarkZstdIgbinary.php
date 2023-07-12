@@ -23,7 +23,7 @@ class BenchmarkZstdIgbinary extends Benchmark
 
     public function getName(): string
     {
-        return 'GET (Compressed)';
+        return 'GET Compressed';
     }
 
     public static function flags(): int
@@ -35,7 +35,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     {
         $items = $this->randomItems();
 
-        $this->seedClient($this->predis, serialize($items));
+        $this->seedClient($this->predis, $items, true);
         $this->seedClient($this->phpredis, $items);
         $this->seedClient($this->relayNoCache, $items);
     }
@@ -72,23 +72,18 @@ class BenchmarkZstdIgbinary extends Benchmark
         $this->setSerialization($this->phpredis);
     }
 
-    /** @phpstan-ignore-next-line */
-    protected function runBenchmark($client, bool $unserialize): int
+    protected function runBenchmark($client, bool $unserialize = false): int
     {
         $name = get_class($client);
 
         foreach ($this->keys as $key) {
-            $v = $client->get("$name:$key");
+            $item = $client->get("{$name}:{$key}");
 
-            /* Predis does not have built-in serialization, so if we don't
-             * unserialize there, it's not really a fair comparison, since
-             * both PhpRedis and Relay will pay a price for deserialization.
-             *
-             * Note that this is still not really a fair comparison because
-             * Relay and PhpRedis are decompressing and using a different
-             * serializer. */
+            // Predis does not have built-in serialization, so if we don't
+            // unserialize there, it's not really a fair comparison, since
+            // both PhpRedis and Relay will pay a price for deserialization.
             if ($unserialize) {
-                $v = unserialize($v);
+                $item = unserialize($item); // @phpstan-ignore-line
             }
         }
 
@@ -102,26 +97,31 @@ class BenchmarkZstdIgbinary extends Benchmark
 
     public function benchmarkPhpRedis(): int
     {
-        return $this->runBenchmark($this->phpredis, false);
+        return $this->runBenchmark($this->phpredis);
     }
 
     public function benchmarkRelayNoCache(): int
     {
-        return $this->runBenchmark($this->relayNoCache, false);
+        return $this->runBenchmark($this->relayNoCache);
     }
 
     public function benchmarkRelay(): int
     {
-        return $this->runBenchmark($this->relay, false);
+        return $this->runBenchmark($this->relay);
     }
 
-    /** @phpstan-ignore-next-line */
-    protected function seedClient($client, $items)
+    /**
+     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  array<int, object>  $items
+     * @param  bool  $serialize
+     * @return void
+     */
+    protected function seedClient($client, $items, bool $serialize = false): void
     {
         $name = get_class($client);
 
         foreach ($this->data as $item) {
-            $client->set("$name:{$item->id}", $items);
+            $client->set("{$name}:{$item->id}", $serialize ? serialize($items) : $items);
         }
     }
 
@@ -133,7 +133,9 @@ class BenchmarkZstdIgbinary extends Benchmark
         return array_values(
             array_intersect_key(
                 $this->data,
-                array_flip(array_rand($this->data, $this->chunkSize)) // @phpstan-ignore-line
+                array_flip(
+                    array_rand($this->data, $this->chunkSize) // @phpstan-ignore-line
+                )
             )
         );
     }
