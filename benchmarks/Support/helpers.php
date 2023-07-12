@@ -12,18 +12,18 @@ function printUsage(string $script): void
         Options:
             -h, --host         The Redis host to connect to. Defaults to '127.0.0.1'.
             -p, --port         The Redis port to connect to. Defaults to 6379.
-            -a, --auth         The Redis password for legacy authentication.  Defaults to none.
-                --user         The Redis username for ACL authentication.  Defaults to none.
-                --pass         The redis password for ACL authentication.  Defaults to none.
-                --workers      Specifies the number of worker threads. Defaults to 1.
-                --duration     Specifies the duration of the test in seconds. Defaults to 1.0.
+            -a, --auth         The Redis password for legacy authentication.
+                --user         The Redis username for ACL authentication.
+                --pass         The redis password for ACL authentication.
+                --workers      Specifies the number of worker threads.
+                --duration     Specifies the duration of the test in seconds. Defaults to 1s.
                 --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 2 for multiple workers.
-                --filter       Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
+                --warmup       Specifies how many warm up runs to execute. Defaults to 1.
+                --filter       Specifies a regex filter to apply to the benchmarked clients.
+                --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).
+                --command-type A comma separated list of command types (default, read, write).
                 --json         Output results in JSON instead of a table.
             -v, --verbose      Enables verbose output.
-                --warmup       Specifies how many warm up runs to execute.  Defaults to 1.
-                --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).  Defaults to all.
-                --command-type A comma separated list of command types (read, write).  Defaults to read and write.
                 --help         Prints this help message.
 
         Arguments:

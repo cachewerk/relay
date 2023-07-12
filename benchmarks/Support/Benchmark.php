@@ -84,7 +84,7 @@ abstract class Benchmark
     }
 
     /**
-     * Helper function to flatten a multidimensional array.  No type hinting here
+     * Helper function to flatten a multidimensional array. No type hinting here
      * as it can operate on any arbitrary array data.
      *
      * @param  array<int|string, mixed>  $input
@@ -127,7 +127,7 @@ abstract class Benchmark
     }
 
     /**
-     * Refresh clients after they have already been instanced.  The point
+     * Refresh clients after they have already been instanced. The point
      * of this method is to refresh PhpRedis and Predis as they will fail
      * horribly if you try to use them from a forked child process.
      *
