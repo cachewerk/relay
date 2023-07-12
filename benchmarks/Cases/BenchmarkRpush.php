@@ -55,19 +55,4 @@ class BenchmarkRpush extends Benchmark
 
         return count($this->data);
     }
-
-    public function benchmarkPhpRedis(): int
-    {
-        return $this->runBenchmark($this->phpredis);
-    }
-
-    public function benchmarkRelayNoCache(): int
-    {
-        return $this->runBenchmark($this->relayNoCache);
-    }
-
-    public function benchmarkRelay(): int
-    {
-        return $this->runBenchmark($this->relay);
-    }
 }
