@@ -1,38 +1,48 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkHmget extends Support\BenchmarkHashCommand
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkLrange extends Benchmark
 {
-    const MemsPerCommand = 4;
-
     /**
      * @var array<int, string>
      */
-    protected array $queryMems;
+    protected array $keys;
 
     public function getName(): string
     {
-        return 'HMGET';
+        return 'LRANGE';
     }
 
     public static function flags(): int
     {
-        return self::HASH | self::READ;
+        return self::LIST | self::READ;
+    }
+
+    public function seedKeys(): void
+    {
+        $redis = $this->createPredis();
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $redis->rpush((string) $item['id'], $this->flattenArray($item));
+            $this->keys[] = $item['id'];
+        }
     }
 
     public function setUp(): void
     {
-        parent::setUp();
-
-        $this->queryMems = array_slice($this->mems, 0, self::MemsPerCommand);
+        $this->flush();
+        $this->setUpClients();
+        $this->seedKeys();
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {
-            $client->hmget($key, $this->queryMems);
+            $client->lrange($key, 0, -1);
         }
 
         return count($this->keys);

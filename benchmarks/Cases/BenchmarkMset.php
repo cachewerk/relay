@@ -1,67 +1,57 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkSinter extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkMset extends Benchmark
 {
     const KeysPerCall = 8;
 
     /**
-     * @var array<int, array<int, string>>
+     * @var array<int|string, array<int|string, string>>
      */
     protected array $keyChunks;
 
     public function getName(): string
     {
-        return 'SINTER';
+        return 'MSET';
+    }
+
+    protected function cmd(): string
+    {
+        return 'MSET';
     }
 
     public static function flags(): int
     {
-        return self::SET | self::READ;
-    }
-
-    public function warmup(int $times, string $method): void
-    {
-        if ($times == 0) {
-            return;
-        }
-
-        parent::warmup($times, $method);
-
-        foreach ($this->keyChunks as $chunk) {
-            foreach ($chunk as $key) {
-                $this->relay->smembers((string) $key);
-            }
-        }
+        return self::STRING | self::WRITE;
     }
 
     public function seedKeys(): void
     {
-        $keys = [];
 
-        $redis = $this->createPredis();
-
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
-            $keys[] = $item['id'];
-        }
-
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+
+        $keys = [];
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $keys[$item['id']] = serialize($item);
+        }
+
+        $this->keyChunks = array_chunk($keys, self::KeysPerCall, true);
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {
-            $client->sinter($chunk);
+            $client->mset($chunk);
         }
 
         return count($this->keyChunks);

@@ -1,11 +1,13 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use Redis;
 use Relay\Relay;
 
-class BenchmarkZstdIgbinary extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkZstdIgbinary extends Benchmark
 {
     protected int $chunkSize = 10;
 

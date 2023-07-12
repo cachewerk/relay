@@ -1,49 +1,54 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkLrange extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkSadd extends Benchmark
 {
     /**
-     * @var array<int, string>
+     * @var array<int|string, array<int, mixed>>
      */
-    protected array $keys;
+    protected array $data;
 
     public function getName(): string
     {
-        return 'LRANGE';
+        return 'SADD';
+    }
+
+    protected function cmd(): string
+    {
+        return 'SADD';
     }
 
     public static function flags(): int
     {
-        return self::LIST | self::READ;
+        return self::SET | self::WRITE;
     }
 
     public function seedKeys(): void
     {
-        $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->rpush((string) $item['id'], $this->flattenArray($item));
-            $this->keys[] = $item['id'];
-        }
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $this->data[$item['id']] = array_values($this->flattenArray($item));
+        }
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->keys as $key) {
-            $client->lrange($key, 0, -1);
+        foreach ($this->data as $key => $value) {
+            $client->sadd($key, $value);
         }
 
-        return count($this->keys);
+        return count($this->data);
     }
 
     public function benchmarkPredis(): int

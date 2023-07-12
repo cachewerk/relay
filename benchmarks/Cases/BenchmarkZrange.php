@@ -1,17 +1,19 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkZincrby extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkZrange extends Benchmark
 {
     /**
-     * @var array<int|string, array<int|string, float>>
+     * @var array<int, string>
      */
     protected array $keys;
 
     public function getName(): string
     {
-        return 'ZINCRBY';
+        return 'ZRANGE';
     }
 
     public static function flags(): int
@@ -26,15 +28,15 @@ class BenchmarkZincrby extends Support\Benchmark
         $rng = mt_rand() / mt_getrandmax();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $rec = [];
+            $args = [];
 
-            $rng = round(mt_rand() / mt_getrandmax(), 4);
-
-            foreach ($this->flattenArray($item) as $key => $val) {
-                $rec[$key] = $rng * strlen(serialize($val));
+            foreach ($item as $key => $val) {
+                $args[] = round($rng * strlen(serialize($val)), 4);
+                $args[] = $key;
             }
 
-            $this->keys[$item['id']] = $rec;
+            $redis->zadd($item['id'], ...$args);
+            $this->keys[] = $item['id'];
         }
     }
 
@@ -48,16 +50,11 @@ class BenchmarkZincrby extends Support\Benchmark
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        $operations = 0;
-
-        foreach ($this->keys as $key => $item) {
-            foreach ($item as $mem => $score) {
-                $client->zincrby($key, $score, $mem);
-                $operations++;
-            }
+        foreach ($this->keys as $key) {
+            $client->zrange($key, 0, -1);
         }
 
-        return $operations;
+        return count($this->keys);
     }
 
     public function benchmarkPredis(): int

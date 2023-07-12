@@ -1,45 +1,60 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkRpush extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkZadd extends Benchmark
 {
     /**
-     * @var array<int|string, array<int, mixed>>
+     * @var array<int|string, array<float|string>>
      */
     protected array $data;
 
     public function getName(): string
     {
-        return 'RPUSH';
+        return 'ZADD';
+    }
+
+    protected function cmd(): string
+    {
+        return 'ZADD';
     }
 
     public static function flags(): int
     {
-        return self::LIST | self::WRITE;
+        return self::ZSET | self::WRITE;
     }
 
     public function seedKeys(): void
     {
-        $redis = $this->createPredis();
 
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $this->data[$item['id']] = array_values($this->flattenArray($item));
-        }
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+
+        $rng = mt_rand() / mt_getrandmax();
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $args = [];
+
+            foreach ($item as $key => $val) {
+                $args[] = round($rng * strlen(serialize($val)), 4);
+                $args[] = $key;
+            }
+
+            $this->data[$item['id']] = $args;
+        }
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->data as $key => $elements) {
-            $client->rpush($key, ...$elements);
+        foreach ($this->data as $key => $value) {
+            $client->zadd($key, ...$value);
         }
 
         return count($this->data);
@@ -47,11 +62,7 @@ class BenchmarkRpush extends Support\Benchmark
 
     public function benchmarkPredis(): int
     {
-        foreach ($this->data as $key => $elements) {
-            $this->predis->rpush((string) $key, $elements);
-        }
-
-        return count($this->data);
+        return $this->runBenchmark($this->predis);
     }
 
     public function benchmarkPhpRedis(): int

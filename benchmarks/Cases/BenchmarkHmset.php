@@ -1,27 +1,29 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkSadd extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkHmset extends Benchmark
 {
     /**
-     * @var array<int|string, array<int, mixed>>
+     * @var array<int|string, array<int|string, string>>
      */
     protected array $data;
 
     public function getName(): string
     {
-        return 'SADD';
+        return 'HMSET';
     }
 
     protected function cmd(): string
     {
-        return 'SADD';
+        return 'HMSET';
     }
 
     public static function flags(): int
     {
-        return self::SET | self::WRITE;
+        return self::HASH | self::WRITE;
     }
 
     public function seedKeys(): void
@@ -35,7 +37,7 @@ class BenchmarkSadd extends Support\Benchmark
         $this->setUpClients();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $this->data[$item['id']] = array_values($this->flattenArray($item));
+            $this->data[$item['id']] = $this->flattenArray($item);
         }
     }
 
@@ -43,7 +45,7 @@ class BenchmarkSadd extends Support\Benchmark
     protected function runBenchmark($client): int
     {
         foreach ($this->data as $key => $value) {
-            $client->sadd($key, $value);
+            $client->hmset($key, $value);
         }
 
         return count($this->data);

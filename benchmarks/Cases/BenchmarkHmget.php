@@ -1,55 +1,40 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkZrange extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\BenchmarkHashCommand;
+
+class BenchmarkHmget extends BenchmarkHashCommand
 {
+    const MemsPerCommand = 4;
+
     /**
      * @var array<int, string>
      */
-    protected array $keys;
+    protected array $queryMems;
 
     public function getName(): string
     {
-        return 'ZRANGE';
+        return 'HMGET';
     }
 
     public static function flags(): int
     {
-        return self::ZSET | self::READ;
-    }
-
-    public function seedKeys(): void
-    {
-        $redis = $this->createPredis();
-
-        $rng = mt_rand() / mt_getrandmax();
-
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $args = [];
-
-            foreach ($item as $key => $val) {
-                $args[] = round($rng * strlen(serialize($val)), 4);
-                $args[] = $key;
-            }
-
-            $redis->zadd($item['id'], ...$args);
-            $this->keys[] = $item['id'];
-        }
+        return self::HASH | self::READ;
     }
 
     public function setUp(): void
     {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
+        parent::setUp();
+
+        $this->queryMems = array_slice($this->mems, 0, self::MemsPerCommand);
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {
-            $client->zrange($key, 0, -1);
+            $client->hmget($key, $this->queryMems);
         }
 
         return count($this->keys);

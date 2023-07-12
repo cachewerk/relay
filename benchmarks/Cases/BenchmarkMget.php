@@ -1,55 +1,54 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkMset extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkMget extends Benchmark
 {
     const KeysPerCall = 8;
 
     /**
-     * @var array<int|string, array<int|string, string>>
+     * @var array<int, array<int, string>>
      */
     protected array $keyChunks;
 
     public function getName(): string
     {
-        return 'MSET';
-    }
-
-    protected function cmd(): string
-    {
-        return 'MSET';
+        return 'MGET';
     }
 
     public static function flags(): int
     {
-        return self::STRING | self::WRITE;
+        return self::STRING | self::READ | self::DEFAULT;
     }
 
     public function seedKeys(): void
     {
+        $keys = [];
 
+        $redis = $this->createPredis();
+
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $redis->set((string) $item['id'], serialize($item));
+            $keys[] = $item['id'];
+        }
+
+        $this->keyChunks = array_chunk($keys, self::KeysPerCall);
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-
-        $keys = [];
-
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $keys[$item['id']] = serialize($item);
-        }
-
-        $this->keyChunks = array_chunk($keys, self::KeysPerCall, true);
+        $this->seedKeys();
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
         foreach ($this->keyChunks as $chunk) {
-            $client->mset($chunk);
+            $client->mget($chunk);
         }
 
         return count($this->keyChunks);

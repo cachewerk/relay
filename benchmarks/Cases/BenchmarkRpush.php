@@ -1,49 +1,47 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkHmset extends Support\Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+
+class BenchmarkRpush extends Benchmark
 {
     /**
-     * @var array<int|string, array<int|string, string>>
+     * @var array<int|string, array<int, mixed>>
      */
     protected array $data;
 
     public function getName(): string
     {
-        return 'HMSET';
-    }
-
-    protected function cmd(): string
-    {
-        return 'HMSET';
+        return 'RPUSH';
     }
 
     public static function flags(): int
     {
-        return self::HASH | self::WRITE;
+        return self::LIST | self::WRITE;
     }
 
     public function seedKeys(): void
     {
+        $redis = $this->createPredis();
 
+        foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $this->data[$item['id']] = array_values($this->flattenArray($item));
+        }
     }
 
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-
-        foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $this->data[$item['id']] = $this->flattenArray($item);
-        }
+        $this->seedKeys();
     }
 
     /** @phpstan-ignore-next-line */
     protected function runBenchmark($client): int
     {
-        foreach ($this->data as $key => $value) {
-            $client->hmset($key, $value);
+        foreach ($this->data as $key => $elements) {
+            $client->rpush($key, ...$elements);
         }
 
         return count($this->data);
@@ -51,7 +49,11 @@ class BenchmarkHmset extends Support\Benchmark
 
     public function benchmarkPredis(): int
     {
-        return $this->runBenchmark($this->predis);
+        foreach ($this->data as $key => $elements) {
+            $this->predis->rpush((string) $key, $elements);
+        }
+
+        return count($this->data);
     }
 
     public function benchmarkPhpRedis(): int

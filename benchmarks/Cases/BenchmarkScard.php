@@ -1,8 +1,10 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkSmembers extends Support\BenchmarkKeyCommand
+use CacheWerk\Relay\Benchmarks\Support\BenchmarkKeyCommand;
+
+class BenchmarkScard extends BenchmarkKeyCommand
 {
     /**
      * @var array<int, string>
@@ -11,12 +13,12 @@ class BenchmarkSmembers extends Support\BenchmarkKeyCommand
 
     public function getName(): string
     {
-        return 'SMEMBERS';
+        return 'SCARD';
     }
 
     protected function cmd(): string
     {
-        return 'SMEMBERS';
+        return 'SCARD';
     }
 
     public static function flags(): int

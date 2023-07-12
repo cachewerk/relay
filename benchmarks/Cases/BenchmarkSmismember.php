@@ -1,8 +1,10 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkSmismember extends Support\BenchmarkSetCommand
+use CacheWerk\Relay\Benchmarks\Support\BenchmarkSetCommand;
+
+class BenchmarkSmismember extends BenchmarkSetCommand
 {
     public function getName(): string
     {

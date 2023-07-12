@@ -1,12 +1,14 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkSismember extends Support\BenchmarkSetCommand
+use CacheWerk\Relay\Benchmarks\Support\BenchmarkSetCommand;
+
+class BenchmarkSrandmember extends BenchmarkSetCommand
 {
     public function getName(): string
     {
-        return 'SISMEMBER';
+        return 'SRANDMEMBER';
     }
 
     public static function flags(): int
@@ -18,12 +20,10 @@ class BenchmarkSismember extends Support\BenchmarkSetCommand
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $key) {
-            foreach ($this->mems as $mem) {
-                $client->sismember($key, $mem);
-            }
+            $client->srandmember($key);
         }
 
-        return count($this->keys) * count($this->mems);
+        return count($this->keys);
     }
 
     public function benchmarkPredis(): int

@@ -1,8 +1,10 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks;
+namespace CacheWerk\Relay\Benchmarks\Cases;
 
-class BenchmarkScard extends Support\BenchmarkKeyCommand
+use CacheWerk\Relay\Benchmarks\Support\BenchmarkKeyCommand;
+
+class BenchmarkExists extends BenchmarkKeyCommand
 {
     /**
      * @var array<int, string>
@@ -11,17 +13,17 @@ class BenchmarkScard extends Support\BenchmarkKeyCommand
 
     public function getName(): string
     {
-        return 'SCARD';
+        return 'EXISTS';
     }
 
-    protected function cmd(): string
+    public function cmd(): string
     {
-        return 'SCARD';
+        return 'EXISTS';
     }
 
     public static function flags(): int
     {
-        return self::SET | self::READ;
+        return self::UTILITY | self::READ;
     }
 
     public function seedKeys(): void
@@ -29,7 +31,7 @@ class BenchmarkScard extends Support\BenchmarkKeyCommand
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
-            $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
+            $redis->set((string) $item['id'], serialize($item));
             $this->keys[] = $item['id'];
         }
     }
