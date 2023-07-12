@@ -24,7 +24,7 @@ abstract class BenchmarkKeyCommand extends Benchmark
     }
 
     /**
-     * @param \Relay\Relay|\Redis|\Predis\Client $client
+     * @param  \Relay\Relay|\Redis|\Predis\Client  $client
      */
     protected function runBenchmark($client): int
     {

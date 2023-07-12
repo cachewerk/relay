@@ -3,6 +3,7 @@
 namespace CacheWerk\Relay\Benchmarks;
 
 use Redis;
+use Relay\Relay;
 
 class BenchmarkZstdIgbinary extends Support\Benchmark
 {
@@ -37,7 +38,7 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $this->seedClient($this->relayNoCache, $items);
     }
 
-    protected function setSerialization(\Relay\Relay|\Redis $client): void
+    protected function setSerialization(Redis|Relay $client): void
     {
         $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
         $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);

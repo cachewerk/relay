@@ -2,7 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-class CpuInfo {
+class CpuInfo
+{
     public string $type;
 
     public int $cores;
@@ -11,7 +12,8 @@ class CpuInfo {
 
     public string $arch;
 
-    public function __construct(string $type, int $cores, int $threads, string $arch) {
+    public function __construct(string $type, int $cores, int $threads, string $arch)
+    {
         $this->type = $type;
         $this->cores = $cores;
         $this->threads = $threads;

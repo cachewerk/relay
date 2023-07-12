@@ -105,7 +105,7 @@ class CliReporter extends Reporter
             $factor = $i === 0 ? 1 : $subject->opsPerSecMedian() / $baseOpsPerSec;
             $change = $i === 0 ? 0 : $diff;
 
-            $factor = number_format($factor, $factor > 20 ? 0 : 2);
+            $factor = number_format($factor, $factor >= 10 ? 1 : 2);
             $change = number_format($change, $change >= 100 ? 0 : 2);
 
             $table->addRow([

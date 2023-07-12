@@ -2,6 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use Exception;
 use Redis as PhpRedis;
 use Relay\Relay as Relay;
 use Predis\Client as Predis;
@@ -84,8 +85,7 @@ abstract class Benchmark
      * Helper function to flatten a multidimensional array.  No type hinting here
      * as it can operate on any arbitrary array data.
      *
-     * @param array<int|string, mixed> $input
-     *
+     * @param  array<int|string, mixed>  $input
      * @return array<int|string, string>
      */
     protected function flattenArray(array $input, string $prefix = ''): array
@@ -110,7 +110,7 @@ abstract class Benchmark
         $data = file_get_contents($file);
 
         if (! is_string($data)) {
-            throw new \Exception("Failed to load data file '$file'");
+            throw new Exception("Failed to load data file '$file'");
         }
 
         return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);

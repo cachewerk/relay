@@ -2,6 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks;
 
+use Exception;
+
 function printUsage(string $script): void
 {
     $usage = <<<EOT
@@ -33,8 +35,9 @@ function printUsage(string $script): void
     fprintf(STDERR, "\n\nAvailable files:\n\n");
 
     $files = glob(__DIR__ . '/Benchmark*.php');
-    if ( ! is_array($files)) {
-        throw new \Exception("Could not read benchmark unit files!");
+
+    if (! is_array($files)) {
+        throw new Exception('Could not read benchmark files!');
     }
 
     foreach ($files as $file) {
@@ -43,9 +46,8 @@ function printUsage(string $script): void
 }
 
 /**
- * @param array<int|string, string> $opt
- * @param array<int, string> $default
- *
+ * @param  array<int|string, string>  $opt
+ * @param  array<int, string>  $default
  * @return array<int|string, string>
  */
 function getCsvOption(array $opt, string $key, array $default): array
@@ -61,8 +63,8 @@ function getCsvOption(array $opt, string $key, array $default): array
 }
 
 /**
- * @param array<int|string, string> $opt
- * @param array<int, string> $default
+ * @param  array<int|string, string>  $opt
+ * @param  array<int, string>  $default
  */
 function getCommandTypes(array $opt, string $key, array $default): int
 {
@@ -85,8 +87,8 @@ function getCommandTypes(array $opt, string $key, array $default): int
 }
 
 /**
- * @param array<int|string, string> $opt
- * @param array<int, string> $default
+ * @param  array<int|string, string>  $opt
+ * @param  array<int, string>  $default
  */
 function getKeyTypes(array $opt, string $key, array $default): int
 {
