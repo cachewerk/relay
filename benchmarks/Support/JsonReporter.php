@@ -7,7 +7,7 @@ class JsonReporter extends CliReporter
     public function finishedSubjects(Subjects $subjects, int $workers): void
     {
         $report = [];
-        $name = $subjects->benchmark->getName();
+        $name = $subjects->benchmark->name();
         $subjects = $subjects->sortByOpsPerSec();
 
         if (empty($subjects)) {
@@ -15,9 +15,7 @@ class JsonReporter extends CliReporter
             exit(1);
         }
 
-        $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
-
-        foreach ($subjects as $i => $subject) {
+        foreach ($subjects as $subject) {
             $opsPerWorker = $subject->opsPerSecMedian() / $workers;
             $rstdev = number_format($subject->opsPerSecRstDev(), 2);
 

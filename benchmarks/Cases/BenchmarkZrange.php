@@ -4,24 +4,26 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkZrange extends Benchmark
+class BenchmarkZRANGE extends Benchmark
 {
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
-    public function getName(): string
-    {
-        return 'ZRANGE';
-    }
-
     public static function flags(): int
     {
         return self::ZSET | self::READ;
     }
 
-    public function seedKeys(): void
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
+    }
+
+    public function seed(): void
     {
         $redis = $this->createPredis();
 
@@ -38,13 +40,6 @@ class BenchmarkZrange extends Benchmark
             $redis->zadd($item['id'], ...$args);
             $this->keys[] = $item['id'];
         }
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 
     protected function runBenchmark($client): int

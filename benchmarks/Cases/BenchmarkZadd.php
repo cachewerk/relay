@@ -4,31 +4,16 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkZadd extends Benchmark
+class BenchmarkZADD extends Benchmark
 {
     /**
      * @var array<int|string, array<float|string>>
      */
     protected array $data;
 
-    public function getName(): string
-    {
-        return 'ZADD';
-    }
-
-    protected function cmd(): string
-    {
-        return 'ZADD';
-    }
-
     public static function flags(): int
     {
         return self::ZSET | self::WRITE;
-    }
-
-    public function seedKeys(): void
-    {
-
     }
 
     public function setUp(): void

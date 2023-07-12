@@ -4,13 +4,8 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\BenchmarkSetCommand;
 
-class BenchmarkSismember extends BenchmarkSetCommand
+class BenchmarkSISMEMBER extends BenchmarkSetCommand
 {
-    public function getName(): string
-    {
-        return 'SISMEMBER';
-    }
-
     public static function flags(): int
     {
         return self::SET | self::READ;

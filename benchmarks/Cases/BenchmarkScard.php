@@ -4,29 +4,26 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\BenchmarkKeyCommand;
 
-class BenchmarkScard extends BenchmarkKeyCommand
+class BenchmarkSCARD extends BenchmarkKeyCommand
 {
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
-    public function getName(): string
-    {
-        return 'SCARD';
-    }
-
-    protected function cmd(): string
-    {
-        return 'SCARD';
-    }
-
     public static function flags(): int
     {
         return self::SET | self::READ;
     }
 
-    public function seedKeys(): void
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
+    }
+
+    public function seed(): void
     {
         $redis = $this->createPredis();
 
@@ -34,12 +31,5 @@ class BenchmarkScard extends BenchmarkKeyCommand
             $redis->sadd((string) $item['id'], array_keys($this->flattenArray($item)));
             $this->keys[] = $item['id'];
         }
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 }

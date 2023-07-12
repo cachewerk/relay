@@ -4,27 +4,27 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkZincrby extends Benchmark
+class BenchmarkZINCRBY extends Benchmark
 {
     /**
      * @var array<int|string, array<int|string, float>>
      */
     protected array $keys;
 
-    public function getName(): string
-    {
-        return 'ZINCRBY';
-    }
-
     public static function flags(): int
     {
         return self::ZSET | self::READ;
     }
 
-    public function seedKeys(): void
+    public function setUp(): void
     {
-        $redis = $this->createPredis();
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
+    }
 
+    public function seed(): void
+    {
         $rng = mt_rand() / mt_getrandmax();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
@@ -38,13 +38,6 @@ class BenchmarkZincrby extends Benchmark
 
             $this->keys[$item['id']] = $rec;
         }
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 
     protected function runBenchmark($client): int

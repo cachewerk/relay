@@ -14,7 +14,7 @@ class CliReporter extends Reporter
         fprintf(
             STDERR,
             "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup) for %2.2fs seconds\n\n",
-            $benchmark->getName(),
+            $benchmark->name(),
             $iterations,
             $warmup,
             $duration
@@ -31,7 +31,7 @@ class CliReporter extends Reporter
             STDERR,
             "Executed %s %s using %s in %sms (%s ops/sec) [memory: %s, network: %s]\n",
             number_format($iteration->ops),
-            $benchmark->getName(),
+            $benchmark->name(),
             $client,
             number_format($iteration->ms, 2),
             CliReporter::humanNumber($iteration->opsPerSec()),
@@ -56,7 +56,7 @@ class CliReporter extends Reporter
             STDERR,
             "Executed %s %s using %s in ~%sms [±%.2f%%] (~%s ops/s) [memory:%s, network:%s]\n\n",
             number_format($subject->opsTotal()),
-            $subject->benchmark->getName(),
+            $subject->benchmark->name(),
             $subject->getClient(),
             number_format($ms_median, 2),
             $rstdev,

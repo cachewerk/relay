@@ -64,9 +64,20 @@ abstract class Benchmark
         $this->auth = $auth;
     }
 
-    abstract public function getName(): string;
+    public function name(): string
+    {
+        return substr((string) strrchr(static::class, '\\'), 10);
+    }
 
-    abstract public function seedKeys(): void;
+    public function command(): string
+    {
+        return strtolower(substr((string) strrchr(static::class, '\\'), 10));
+    }
+
+    public function setUp(): void
+    {
+        //
+    }
 
     abstract public static function flags(): int;
 
@@ -85,11 +96,6 @@ abstract class Benchmark
         for ($i = 0; $i < $times; $i++) {
             $this->{$method}();
         }
-    }
-
-    public function setUp(): void
-    {
-        //
     }
 
     protected function flush(): void

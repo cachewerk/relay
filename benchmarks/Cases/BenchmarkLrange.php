@@ -4,24 +4,26 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkLrange extends Benchmark
+class BenchmarkLRANGE extends Benchmark
 {
     /**
      * @var array<int, string>
      */
     protected array $keys;
 
-    public function getName(): string
-    {
-        return 'LRANGE';
-    }
-
     public static function flags(): int
     {
         return self::LIST | self::READ;
     }
 
-    public function seedKeys(): void
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
+    }
+
+    public function seed(): void
     {
         $redis = $this->createPredis();
 
@@ -29,13 +31,6 @@ class BenchmarkLrange extends Benchmark
             $redis->rpush((string) $item['id'], $this->flattenArray($item));
             $this->keys[] = $item['id'];
         }
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 
     protected function runBenchmark($client): int

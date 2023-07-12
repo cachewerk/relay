@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\BenchmarkHashCommand;
 
-class BenchmarkHmget extends BenchmarkHashCommand
+class BenchmarkHMGET extends BenchmarkHashCommand
 {
     const MemsPerCommand = 4;
 
@@ -12,11 +12,6 @@ class BenchmarkHmget extends BenchmarkHashCommand
      * @var array<int, string>
      */
     protected array $queryMems;
-
-    public function getName(): string
-    {
-        return 'HMGET';
-    }
 
     public static function flags(): int
     {

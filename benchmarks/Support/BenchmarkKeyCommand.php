@@ -9,18 +9,14 @@ abstract class BenchmarkKeyCommand extends Benchmark
      */
     protected array $keys;
 
-    public function getName(): string
-    {
-        return 'GET';
-    }
-
-    abstract protected function cmd(): string;
-
     public function setUp(): void
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+
+        if (method_exists($this, 'seed')) {
+            $this->seed();
+        }
     }
 
     /**
@@ -28,7 +24,7 @@ abstract class BenchmarkKeyCommand extends Benchmark
      */
     protected function runBenchmark($client): int
     {
-        $cmd = $this->cmd();
+        $cmd = $this->command();
 
         foreach ($this->keys as $key) {
             $client->{$cmd}($key);

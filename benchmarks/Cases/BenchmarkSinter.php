@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkSinter extends Benchmark
+class BenchmarkSINTER extends Benchmark
 {
     const KeysPerCall = 8;
 
@@ -13,14 +13,16 @@ class BenchmarkSinter extends Benchmark
      */
     protected array $keyChunks;
 
-    public function getName(): string
-    {
-        return 'SINTER';
-    }
-
     public static function flags(): int
     {
         return self::SET | self::READ;
+    }
+
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
     }
 
     public function warmup(int $times, string $method): void
@@ -38,7 +40,7 @@ class BenchmarkSinter extends Benchmark
         }
     }
 
-    public function seedKeys(): void
+    public function seed(): void
     {
         $keys = [];
 
@@ -50,13 +52,6 @@ class BenchmarkSinter extends Benchmark
         }
 
         $this->keyChunks = array_chunk($keys, self::KeysPerCall);
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 
     protected function runBenchmark($client): int

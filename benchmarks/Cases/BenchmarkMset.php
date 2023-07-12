@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkMset extends Benchmark
+class BenchmarkMSET extends Benchmark
 {
     const KeysPerCall = 8;
 
@@ -13,24 +13,9 @@ class BenchmarkMset extends Benchmark
      */
     protected array $keyChunks;
 
-    public function getName(): string
-    {
-        return 'MSET';
-    }
-
-    protected function cmd(): string
-    {
-        return 'MSET';
-    }
-
     public static function flags(): int
     {
         return self::STRING | self::WRITE;
-    }
-
-    public function seedKeys(): void
-    {
-
     }
 
     public function setUp(): void

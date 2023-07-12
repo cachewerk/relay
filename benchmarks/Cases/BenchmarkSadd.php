@@ -4,31 +4,16 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkSadd extends Benchmark
+class BenchmarkSADD extends Benchmark
 {
     /**
      * @var array<int|string, array<int, mixed>>
      */
     protected array $data;
 
-    public function getName(): string
-    {
-        return 'SADD';
-    }
-
-    protected function cmd(): string
-    {
-        return 'SADD';
-    }
-
     public static function flags(): int
     {
         return self::SET | self::WRITE;
-    }
-
-    public function seedKeys(): void
-    {
-        //
     }
 
     public function setUp(): void

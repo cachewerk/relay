@@ -21,38 +21,14 @@ class BenchmarkZstdIgbinary extends Benchmark
      */
     protected array $keys;
 
-    public function getName(): string
+    public function name(): string
     {
-        return 'GET Compressed';
+        return 'GET (Compressed)';
     }
 
     public static function flags(): int
     {
         return self::STRING | self::READ | self::DEFAULT;
-    }
-
-    public function seedKeys(): void
-    {
-        $items = $this->randomItems();
-
-        $this->seedClient($this->predis, $items, true);
-        $this->seedClient($this->phpredis, $items);
-        $this->seedClient($this->relayNoCache, $items);
-    }
-
-    protected function setSerialization(Redis|Relay $client): void
-    {
-        $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-        $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
-    }
-
-    public function setUpClients(): void
-    {
-        parent::setUpClients();
-
-        foreach ([$this->phpredis, $this->relayNoCache, $this->relay] as $client) {
-            $this->setSerialization($client);
-        }
     }
 
     public function setUp(): void
@@ -63,7 +39,39 @@ class BenchmarkZstdIgbinary extends Benchmark
         $this->data = $this->loadJsonFile('meteorites.json', false);
         $this->keys = array_map(fn ($item) => $item->id, $this->data);
 
-        $this->seedKeys();
+        $this->seed();
+    }
+
+    public function seed(): void
+    {
+        $items = $this->randomItems();
+
+        $this->seedClient($this->predis, $items, true);
+        $this->seedClient($this->phpredis, $items);
+        $this->seedClient($this->relayNoCache, $items);
+    }
+
+    /**
+     * @param  \Redis|\Relay\Relay  $client
+     * @return void
+     */
+    protected function setSerialization($client): void
+    {
+        $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
+        $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+    }
+
+    public function setUpClients(): void
+    {
+        parent::setUpClients();
+
+        foreach ([
+            $this->phpredis,
+            $this->relayNoCache,
+            $this->relay,
+        ] as $client) {
+            $this->setSerialization($client);
+        }
     }
 
     public function refreshClients(): void

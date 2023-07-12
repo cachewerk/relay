@@ -18,7 +18,7 @@ abstract class BenchmarkHashCommand extends Benchmark
     {
         $this->flush();
         $this->setUpClients();
-        $this->seedKeys();
+        $this->seed();
     }
 
     public function warmup(int $times, string $method): void
@@ -34,7 +34,7 @@ abstract class BenchmarkHashCommand extends Benchmark
         }
     }
 
-    public function seedKeys(): void
+    public function seed(): void
     {
         $mems = [];
         $redis = $this->createPredis();

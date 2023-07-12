@@ -9,14 +9,19 @@ abstract class BenchmarkStringRangeCommand extends Benchmark
      */
     protected array $args;
 
-    abstract public function cmd(): string;
-
     public static function flags(): int
     {
         return self::STRING | self::READ;
     }
 
-    public function seedKeys(): void
+    public function setUp(): void
+    {
+        $this->flush();
+        $this->setUpClients();
+        $this->seed();
+    }
+
+    public function seed(): void
     {
         $redis = $this->createPredis();
 
@@ -28,13 +33,6 @@ abstract class BenchmarkStringRangeCommand extends Benchmark
 
             $this->args[$key] = $this->pickRandomRange(strlen($val));
         }
-    }
-
-    public function setUp(): void
-    {
-        $this->flush();
-        $this->setUpClients();
-        $this->seedKeys();
     }
 
     public function warmup(int $times, string $method): void
@@ -67,10 +65,10 @@ abstract class BenchmarkStringRangeCommand extends Benchmark
 
     protected function runBenchmark($client): int
     {
-        $cmd = $this->cmd();
+        $cmd = $this->command();
 
         foreach ($this->args as $key => [$start, $end]) {
-            $client->$cmd($key, $start, $end);
+            $client->{$cmd}($key, $start, $end);
         }
 
         return count($this->args);
