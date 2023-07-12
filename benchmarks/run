@@ -71,7 +71,9 @@ $benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
         return $v::flags() & Support\Benchmark::DEFAULT;
     }
 
-    return ($v::flags() & $filter_flags) == $v::flags();
+    $bench_flags = $v::flags() & ~(Support\Benchmark::DEFAULT);
+
+    return ($bench_flags & $filter_flags) == $bench_flags;
 });
 
 if ($user && $pass) {
