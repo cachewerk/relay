@@ -37,13 +37,18 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $this->seedClient($this->relayNoCache, $items);
     }
 
+    protected function setSerialization(\Relay\Relay|\Redis $client): void
+    {
+        $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
+        $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+    }
+
     public function setUpClients(): void
     {
         parent::setUpClients();
 
         foreach ([$this->phpredis, $this->relayNoCache, $this->relay] as $client) {
-            $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-            $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+            $this->setSerialization($client);
         }
     }
 
@@ -56,6 +61,12 @@ class BenchmarkZstdIgbinary extends Support\Benchmark
         $this->keys = array_map(fn ($item) => $item->id, $this->data);
 
         $this->seedKeys();
+    }
+
+    public function refreshClients(): void
+    {
+        parent::refreshClients();
+        $this->setSerialization($this->phpredis);
     }
 
     /** @phpstan-ignore-next-line */
