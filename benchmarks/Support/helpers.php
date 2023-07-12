@@ -17,7 +17,7 @@ function printUsage(string $script): void
                 --pass         The redis password for ACL authentication.  Defaults to none.
                 --workers      Specifies the number of worker threads. Defaults to 1.
                 --duration     Specifies the duration of the test in seconds. Defaults to 1.0.
-                --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 1 for multiple workers.
+                --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 2 for multiple workers.
                 --filter       Specifies a filter to apply to the test.  For example "--filter '^Relay$'" to only run Relay benchmarks.
                 --json         Output results in JSON instead of a table.
             -v, --verbose      Enables verbose output.
@@ -34,7 +34,7 @@ function printUsage(string $script): void
 
     fprintf(STDERR, "\n\nAvailable files:\n\n");
 
-    $files = glob(__DIR__ . '/Benchmark*.php');
+    $files = glob(__DIR__ . '/../Cases/Benchmark*.php');
 
     if (! is_array($files)) {
         throw new Exception('Could not read benchmark files!');
