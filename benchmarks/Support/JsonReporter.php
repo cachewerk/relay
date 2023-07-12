@@ -7,9 +7,14 @@ class JsonReporter extends CliReporter
     public function finishedSubjects(Subjects $subjects, int $workers): void
     {
         $report = [];
-
         $name = $subjects->benchmark->getName();
         $subjects = $subjects->sortByOpsPerSec();
+
+        if (empty($subjects)) {
+            self::printError('No benchmarks were run! Please rerun with different options.');
+            exit(1);
+        }
+
         $baseOpsPerSec = $subjects[0]->opsPerSecMedian();
 
         foreach ($subjects as $i => $subject) {
