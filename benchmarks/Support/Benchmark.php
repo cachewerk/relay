@@ -25,13 +25,15 @@ abstract class Benchmark
 
     const UTILITY = 0x80;
 
-    const ALL = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET | self::STREAM | self::HYPERLOGLOG | self::UTILITY;
+    const ALL_TYPES = self::STRING | self::LIST | self::HASH | self::SET | self::ZSET | self::STREAM | self::HYPERLOGLOG | self::UTILITY;
 
     const READ = 0x100;
 
     const WRITE = 0x200;
 
     const DEFAULT = 0x400;
+
+    const ALL = self::READ | self::WRITE | self::ALL_TYPES;
 
     protected string $host;
 

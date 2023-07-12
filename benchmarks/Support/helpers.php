@@ -95,7 +95,7 @@ function getKeyTypes(array $opt, string $key, array $default): int
     $result = 0;
 
     $lookup = [
-        'all' => Support\Benchmark::ALL,
+        'all' => Support\Benchmark::ALL_TYPES,
         'utility' => Support\Benchmark::UTILITY,
         'string' => Support\Benchmark::STRING,
         'hash' => Support\Benchmark::HASH,
