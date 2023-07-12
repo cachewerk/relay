@@ -12,7 +12,7 @@ First, follow the [installation instructions](https://relay.so/docs/installation
 Next, clone the Relay repository and install the Composer dependencies:
 
 ```bash
-git clone git@github.com:cachewerk/relay.git
+git clone https://github.com/cachewerk/relay.git
 cd relay
 composer install
 ```
