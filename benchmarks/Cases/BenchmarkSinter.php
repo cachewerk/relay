@@ -68,24 +68,4 @@ class BenchmarkSinter extends Benchmark
 
         return count($this->keyChunks);
     }
-
-    public function benchmarkPredis(): int
-    {
-        return $this->runBenchmark($this->predis);
-    }
-
-    public function benchmarkPhpRedis(): int
-    {
-        return $this->runBenchmark($this->phpredis);
-    }
-
-    public function benchmarkRelayNoCache(): int
-    {
-        return $this->runBenchmark($this->relayNoCache);
-    }
-
-    public function benchmarkRelay(): int
-    {
-        return $this->runBenchmark($this->relay);
-    }
 }
