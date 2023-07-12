@@ -58,7 +58,7 @@ array_splice($argv, 0, $optind);
 
 $benchmarks = array_map(function ($file) {
     if (is_readable(__DIR__ . '/Cases/' . basename($file))) {
-        return 'CacheWerk\\Relay\\Benchmarks\\Cases\\' . substr(str_replace(__DIR__ . '/Cases/', '', $file), 0, -4);
+        return 'CacheWerk\\Relay\\Benchmarks\\Cases\\' . substr(str_replace(__DIR__ . '/Cases/', '', basename($file)), 0, -4);
     }
 
     throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
