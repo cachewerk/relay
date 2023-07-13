@@ -52,7 +52,7 @@ abstract class Reporter
 
     /**
      * @param  string  $fmt
-     * @param  (bool|float|int|string|null)[]  $args
+     * @param  bool|float|int|string|null  ...$args
      * @return void
      */
     public static function printWarning(string $fmt, ...$args): void
@@ -62,7 +62,7 @@ abstract class Reporter
 
     /**
      * @param  string  $fmt
-     * @param  (bool|float|int|string|null)[]  $args
+     * @param  bool|float|int|string|null  ...$args
      * @return void
      */
     public static function printError(string $fmt, ...$args): void
