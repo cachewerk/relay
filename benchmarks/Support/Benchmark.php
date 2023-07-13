@@ -132,7 +132,7 @@ abstract class Benchmark
         $data = file_get_contents($file);
 
         if (! is_string($data)) {
-            throw new Exception("Failed to load data file '$file'");
+            throw new Exception("Failed to load data file `{$file}`");
         }
 
         return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);
@@ -252,8 +252,9 @@ abstract class Benchmark
         $exclude = null;
 
         if (! extension_loaded('redis')) {
-            Reporter::printWarning('Skip all PhpRedis tests because redis extension is not loaded');
             $exclude = 'PhpRedis';
+
+            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
         }
 
         return array_filter(
@@ -265,11 +266,11 @@ abstract class Benchmark
 
                 $method = substr($method, strlen('benchmark'));
 
-                if ($exclude && $method === $exclude) {
+                if ($method === $exclude) {
                     return false;
                 }
 
-                if ($filter && ! preg_match("/$filter/i", strtolower($method))) {
+                if ($filter && ! preg_match("/{$filter}/i", strtolower($method))) {
                     return false;
                 }
 
