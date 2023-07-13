@@ -143,6 +143,7 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+
         if (extension_loaded('redis')) {
             $this->phpredis = $this->createPhpRedis();
         }
@@ -158,6 +159,7 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
+
         if (extension_loaded('redis')) {
             $this->phpredis = $this->createPhpRedis();
         }
@@ -248,10 +250,12 @@ abstract class Benchmark
     public function getBenchmarkMethods(string $filter): array
     {
         $exclude = null;
+
         if (! extension_loaded('redis')) {
             Reporter::printWarning('Skip all PhpRedis tests because redis extension is not loaded');
             $exclude = 'PhpRedis';
         }
+
         return array_filter(
             get_class_methods($this),
             function ($method) use ($exclude, $filter) {

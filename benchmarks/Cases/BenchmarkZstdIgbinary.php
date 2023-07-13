@@ -49,6 +49,7 @@ class BenchmarkZstdIgbinary extends Benchmark
 
         $this->seedClient($this->predis, $items, true);
         $this->seedClient($this->relayNoCache, $items);
+
         if (extension_loaded('redis')) {
             $this->seedClient($this->phpredis, $items);
         }
@@ -71,10 +72,12 @@ class BenchmarkZstdIgbinary extends Benchmark
     public function setUpClients(): void
     {
         parent::setUpClients();
+
         $clients = [
             $this->relayNoCache,
             $this->relay,
         ];
+
         if (extension_loaded('redis')) {
             $clients[] = $this->phpredis;
         }
@@ -87,6 +90,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     public function refreshClients(): void
     {
         parent::refreshClients();
+
         if (extension_loaded('redis')) {
             $this->setSerialization($this->phpredis);
         }
