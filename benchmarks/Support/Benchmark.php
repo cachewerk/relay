@@ -265,7 +265,15 @@ abstract class Benchmark
 
                 $method = substr($method, strlen('benchmark'));
 
-                return (! $exclude || $method !== $exclude) && (! $filter || preg_match("/$filter/i", strtolower($method)));
+                if ($exclude && $method === $exclude) {
+                    return false;
+                }
+
+                if ($filter && ! preg_match("/$filter/i", strtolower($method))) {
+                    return false;
+                }
+
+                return true;
             }
         );
     }
