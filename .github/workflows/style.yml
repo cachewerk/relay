@@ -36,6 +36,20 @@ jobs:
       - name: Run PHPStan
         run: composer run phpstan
 
+  compatibility:
+
+    name: PHP 7.4 compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: pantheon-systems/phpcompatibility-action@v1
+        with:
+          test-versions: 7.4-
+
   editorconfig:
 
     name: EditorConfig
