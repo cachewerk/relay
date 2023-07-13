@@ -249,6 +249,7 @@ abstract class Benchmark
     {
         $exclude = null;
         if (! extension_loaded('redis')) {
+            Reporter::printWarning('Skip all PhpRedis tests because redis extension is not loaded');
             $exclude = 'PhpRedis';
         }
         return array_filter(

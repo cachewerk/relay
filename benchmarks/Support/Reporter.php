@@ -50,6 +50,11 @@ abstract class Reporter
         ) . ['', 'K', 'M', 'B'][$i];
     }
 
+    public static function printWarning(string $fmt, bool|float|int|string|null ...$args): void
+    {
+        fprintf(STDERR, "\n\033[33m WARNING \033[0m $fmt\n", ...$args);
+    }
+
     public static function printError(string $fmt, bool|float|int|string|null ...$args): void
     {
         fprintf(STDERR, "\n\033[41m ERROR \033[0m $fmt\n", ...$args);

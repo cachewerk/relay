@@ -6,6 +6,7 @@ use Redis;
 use Relay\Relay;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+use CacheWerk\Relay\Benchmarks\Support\Reporter;
 
 class BenchmarkZstdIgbinary extends Benchmark
 {
@@ -59,8 +60,12 @@ class BenchmarkZstdIgbinary extends Benchmark
      */
     protected function setSerialization($client): void
     {
-        $client->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
-        $client->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
+        if (! $client->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY)) {
+            Reporter::printWarning('Failed to set igbinary serializer');
+        }
+        if (! $client->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD)) {
+            Reporter::printWarning('Failed to enable zstd compression');
+        }
     }
 
     public function setUpClients(): void
