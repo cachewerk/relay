@@ -61,8 +61,8 @@ composer run bench -- --help
 
 ```bash
 # Run one (or more) specific benchmark
-./run BenchmarkHmget.php
-./run BenchmarkHmget.php BenchmarkHgetall.php 
+./run BenchmarkHMGET.php
+./run BenchmarkHMGET.php BenchmarkHGETALL.php 
 
 # Specify the number of worker threads
 ./run --workers=24
