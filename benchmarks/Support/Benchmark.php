@@ -141,9 +141,11 @@ abstract class Benchmark
     public function setUpClients(): void
     {
         $this->predis = $this->createPredis();
-        $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -156,7 +158,9 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-        $this->phpredis = $this->createPhpRedis();
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -243,16 +247,20 @@ abstract class Benchmark
      */
     public function getBenchmarkMethods(string $filter): array
     {
+        $exclude = null;
+        if (! extension_loaded('redis')) {
+            $exclude = 'PhpRedis';
+        }
         return array_filter(
             get_class_methods($this),
-            function ($method) use ($filter) {
+            function ($method) use ($exclude, $filter) {
                 if (! str_starts_with($method, 'benchmark')) {
                     return false;
                 }
 
                 $method = substr($method, strlen('benchmark'));
 
-                return ! $filter || preg_match("/$filter/i", strtolower($method));
+                return (! $exclude || $method !== $exclude) && (! $filter || preg_match("/$filter/i", strtolower($method)));
             }
         );
     }

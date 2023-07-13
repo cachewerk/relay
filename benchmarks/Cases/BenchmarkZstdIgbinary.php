@@ -47,8 +47,10 @@ class BenchmarkZstdIgbinary extends Benchmark
         $items = $this->randomItems();
 
         $this->seedClient($this->predis, $items, true);
-        $this->seedClient($this->phpredis, $items);
         $this->seedClient($this->relayNoCache, $items);
+        if (extension_loaded('redis')) {
+            $this->seedClient($this->phpredis, $items);
+        }
     }
 
     /**
@@ -57,19 +59,22 @@ class BenchmarkZstdIgbinary extends Benchmark
      */
     protected function setSerialization($client): void
     {
-        $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-        $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+        $client->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY);
+        $client->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD);
     }
 
     public function setUpClients(): void
     {
         parent::setUpClients();
-
-        foreach ([
-            $this->phpredis,
+        $clients = [
             $this->relayNoCache,
             $this->relay,
-        ] as $client) {
+        ];
+        if (extension_loaded('redis')) {
+            $clients[] = $this->phpredis;
+        }
+
+        foreach ($clients as $client) {
             $this->setSerialization($client);
         }
     }
@@ -77,7 +82,9 @@ class BenchmarkZstdIgbinary extends Benchmark
     public function refreshClients(): void
     {
         parent::refreshClients();
-        $this->setSerialization($this->phpredis);
+        if (extension_loaded('redis')) {
+            $this->setSerialization($this->phpredis);
+        }
     }
 
     protected function runBenchmark($client, bool $unserialize = false): int
