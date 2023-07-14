@@ -60,12 +60,18 @@ class BenchmarkZstdIgbinary extends Benchmark
      */
     protected function setSerialization($client): void
     {
-        if (! $client->setOption(Relay::OPT_SERIALIZER, Relay::SERIALIZER_IGBINARY)) {
-            Reporter::printWarning(sprintf('Unable to set igbinary serializer on %s', get_class($client)));
+        $className = get_class($client);
+
+        if (! defined("{$className}::SERIALIZER_IGBINARY") ||
+            ! $client->setOption($client::OPT_SERIALIZER, $client::SERIALIZER_IGBINARY)
+        ) {
+            Reporter::printWarning("Unable to set igbinary serializer on {$className}");
         }
 
-        if (! $client->setOption(Relay::OPT_COMPRESSION, Relay::COMPRESSION_ZSTD)) {
-            Reporter::printWarning(sprintf('Unable to set zstd compression on %s', get_class($client)));
+        if (! defined("{$className}::COMPRESSION_ZSTD") ||
+            ! $client->setOption($client::OPT_COMPRESSION, $client::COMPRESSION_ZSTD)
+        ) {
+            Reporter::printWarning("Unable to set zstd compression on {$className}");
         }
     }
 
