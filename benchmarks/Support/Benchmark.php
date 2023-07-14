@@ -132,7 +132,7 @@ abstract class Benchmark
         $data = file_get_contents($file);
 
         if (! is_string($data)) {
-            throw new Exception("Failed to load data file '$file'");
+            throw new Exception("Failed to load data file `{$file}`");
         }
 
         return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);
@@ -141,9 +141,12 @@ abstract class Benchmark
     public function setUpClients(): void
     {
         $this->predis = $this->createPredis();
-        $this->phpredis = $this->createPhpRedis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -156,7 +159,10 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-        $this->phpredis = $this->createPhpRedis();
+
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -243,16 +249,32 @@ abstract class Benchmark
      */
     public function getBenchmarkMethods(string $filter): array
     {
+        $exclude = null;
+
+        if (! extension_loaded('redis')) {
+            $exclude = 'PhpRedis';
+
+            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
+        }
+
         return array_filter(
             get_class_methods($this),
-            function ($method) use ($filter) {
+            function ($method) use ($exclude, $filter) {
                 if (! str_starts_with($method, 'benchmark')) {
                     return false;
                 }
 
                 $method = substr($method, strlen('benchmark'));
 
-                return ! $filter || preg_match("/$filter/i", strtolower($method));
+                if ($method === $exclude) {
+                    return false;
+                }
+
+                if ($filter && ! preg_match("/{$filter}/i", strtolower($method))) {
+                    return false;
+                }
+
+                return true;
             }
         );
     }

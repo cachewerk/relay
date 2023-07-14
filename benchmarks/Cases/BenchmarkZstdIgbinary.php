@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use Redis;
 use Relay\Relay;
 
+use CacheWerk\Relay\Benchmarks\Support\Reporter;
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
 class BenchmarkZstdIgbinary extends Benchmark
@@ -47,8 +47,11 @@ class BenchmarkZstdIgbinary extends Benchmark
         $items = $this->randomItems();
 
         $this->seedClient($this->predis, $items, true);
-        $this->seedClient($this->phpredis, $items);
         $this->seedClient($this->relayNoCache, $items);
+
+        if (extension_loaded('redis')) {
+            $this->seedClient($this->phpredis, $items);
+        }
     }
 
     /**
@@ -57,19 +60,35 @@ class BenchmarkZstdIgbinary extends Benchmark
      */
     protected function setSerialization($client): void
     {
-        $client->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
-        $client->setOption(Redis::OPT_COMPRESSION, Redis::COMPRESSION_ZSTD);
+        $className = get_class($client);
+
+        if (! defined("{$className}::SERIALIZER_IGBINARY") ||
+            ! $client->setOption($client::OPT_SERIALIZER, $client::SERIALIZER_IGBINARY)
+        ) {
+            Reporter::printWarning("Unable to set igbinary serializer on {$className}");
+        }
+
+        if (! defined("{$className}::COMPRESSION_ZSTD") ||
+            ! $client->setOption($client::OPT_COMPRESSION, $client::COMPRESSION_ZSTD)
+        ) {
+            Reporter::printWarning("Unable to set zstd compression on {$className}");
+        }
     }
 
     public function setUpClients(): void
     {
         parent::setUpClients();
 
-        foreach ([
-            $this->phpredis,
+        $clients = [
             $this->relayNoCache,
             $this->relay,
-        ] as $client) {
+        ];
+
+        if (extension_loaded('redis')) {
+            $clients[] = $this->phpredis;
+        }
+
+        foreach ($clients as $client) {
             $this->setSerialization($client);
         }
     }
@@ -77,7 +96,10 @@ class BenchmarkZstdIgbinary extends Benchmark
     public function refreshClients(): void
     {
         parent::refreshClients();
-        $this->setSerialization($this->phpredis);
+
+        if (extension_loaded('redis')) {
+            $this->setSerialization($this->phpredis);
+        }
     }
 
     protected function runBenchmark($client, bool $unserialize = false): int
@@ -101,21 +123,6 @@ class BenchmarkZstdIgbinary extends Benchmark
     public function benchmarkPredis(): int
     {
         return $this->runBenchmark($this->predis, true);
-    }
-
-    public function benchmarkPhpRedis(): int
-    {
-        return $this->runBenchmark($this->phpredis);
-    }
-
-    public function benchmarkRelayNoCache(): int
-    {
-        return $this->runBenchmark($this->relayNoCache);
-    }
-
-    public function benchmarkRelay(): int
-    {
-        return $this->runBenchmark($this->relay);
     }
 
     /**
