@@ -19,14 +19,31 @@ if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/Support/helpers.php';
 
-$opt = getopt(
-    'h:p:s:a:v',
-    [
-        'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
-        'json', 'help', 'user:', 'pass:', 'command-type:', 'key-type:'
-    ],
-    $optind
+$short_options = ['h:', 'p:', 's:', 'a:', 'v'];
+$long_options = [
+    'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
+    'json', 'help', 'user:', 'pass:', 'command-type:', 'key-type:'
+];
+
+$opt = getopt(implode($short_options), $long_options, $optind);
+
+$options = array_reduce(
+    array_merge($short_options, $long_options),
+    function ($carry, $item) {
+        $item = rtrim($item, ':');
+        $prefix = strlen($item) > 1 ? '--' : '-';
+        $carry[$prefix . $item] = null;
+        return $carry;
+    },
+    ['--' => null]
 );
+
+for ($i = 1; $i < $optind; ++$i) {
+    if (str_starts_with($argv[$i], '-') && ! array_key_exists($argv[$i], $options)) {
+        fprintf(STDERR, "\n\033[41m ERROR \033[0m Unknown option '{$argv[$i]}'.\n");
+        exit(1);
+    }
+}
 
 $host = $opt['h'] ?? $opt['host'] ?? '127.0.0.1';
 $port = $opt['p'] ?? $opt['port'] ?? 6379;
