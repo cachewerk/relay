@@ -17,7 +17,8 @@ RUN pecl install igbinary && \
 ARG RELAY=v0.6.6
 
 RUN ARCH=$(uname -m | sed 's/_/-/') \
-  ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-el9-$ARCH.tar.gz" \
+  PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
+  ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-el9-$ARCH.tar.gz" \
   && curl -sfSL $ARTIFACT | tar xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
