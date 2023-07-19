@@ -30,13 +30,14 @@ RUN pecl install igbinary && \
 ARG RELAY=v0.6.5
 
 # Download Relay
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.0-centos7-$PLATFORM.tar.gz" | tar xz -C /tmp
+RUN ARCH=$(uname -m | sed 's/_/-/') \
+  PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
+  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-centos7-$ARCH.tar.gz" | tar xz -C /tmp
 
 # Copy relay.{so,ini}
-RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay.ini" $(php-config --ini-dir)/50-relay.ini \
-  && cp "/tmp/relay-$RELAY-php8.0-centos7-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
+RUN ARCH=$(uname -m | sed 's/_/-/') \
+  && cp "/tmp/relay-$RELAY-php8.0-centos7-$ARCH/relay.ini" $(php-config --ini-dir)/50-relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.0-centos7-$ARCH/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
