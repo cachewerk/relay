@@ -43,9 +43,7 @@ abstract class BenchmarkStringRangeCommand extends Benchmark
 
         parent::warmup($times, $method);
 
-        foreach (array_keys($this->args) as $key) {
-            $this->relay->get((string) $key);
-        }
+        $this->readSimpleKeys(array_keys($this->args));
     }
 
     /**

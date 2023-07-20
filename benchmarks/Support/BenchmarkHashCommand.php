@@ -29,9 +29,7 @@ abstract class BenchmarkHashCommand extends Benchmark
 
         parent::warmup($times, $method);
 
-        foreach ($this->keys as $key) {
-            $this->relay->hgetall((string) $key);
-        }
+        $this->readSimpleKeys($this->keys);
     }
 
     public function seed(): void
