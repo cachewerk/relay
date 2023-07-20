@@ -34,9 +34,7 @@ class BenchmarkSINTER extends Benchmark
         parent::warmup($times, $method);
 
         foreach ($this->keyChunks as $chunk) {
-            foreach ($chunk as $key) {
-                $this->relay->smembers((string) $key);
-            }
+            $this->readSimpleKeys($chunk);
         }
     }
 

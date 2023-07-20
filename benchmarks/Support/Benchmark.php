@@ -145,7 +145,8 @@ abstract class Benchmark
      *
      * @return string[] An array of string key names.
      **/
-    protected function seedSimpleKeys(): array {
+    protected function seedSimpleKeys(): array
+    {
         $keys = [];
 
         $redis = $this->createPredis();
@@ -174,6 +175,28 @@ abstract class Benchmark
         }
 
         return $keys;
+    }
+
+    /**
+     * Generic function to read an entire key based on the Benchmark's specified key type.
+     *
+     * @param array<int, int|string> $keys
+     */
+    public function readSimpleKeys($keys): void
+    {
+        foreach ($keys as $key) {
+            if ($this->flags() & Self::STRING) {
+                $this->relay->get($key);
+            } else if ($this->flags() & Self::LIST) {
+                $this->relay->lrange($key, 0, -1);
+            } else if ($this->flags() & Self::HASH) {
+                $this->relay->hgetall($key);
+            } else if ($this->flags() & Self::SET) {
+                $this->relay->smembers($key);
+            } else {
+                throw new Exception("Unsupported key type");
+            }
+        }
     }
 
     public function setUpClients(): void
