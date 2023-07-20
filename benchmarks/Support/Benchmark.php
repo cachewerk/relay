@@ -138,6 +138,44 @@ abstract class Benchmark
         return json_decode((string) $data, $assoc, 512, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * Generic function to seed keys of whatever type this benchmark operates
+     * against.  Will throw an exception if the command does not operate against
+     * a single key type (e.g. DEL).
+     *
+     * @return string[] An array of string key names.
+     **/
+    protected function seedSimpleKeys(): array {
+        $keys = [];
+
+        $redis = $this->createPredis();
+        $items = $this->loadJsonFile('meteorites.json');
+
+        foreach ($items as $item) {
+            $key = (string)$item['id'];
+
+            if ($this->flags() & Self::STRING) {
+                $redis->set($key, serialize($item));
+            } else if ($this->flags() & Self::LIST) {
+                $redis->rpush($key, $this->flattenArray($item));
+            } else if ($this->flags() & Self::HASH) {
+                $redis->hmset($key, $this->flattenArray($item));
+            } else if ($this->flags() & Self::SET) {
+                $redis->sadd($key, array_keys($this->flattenArray($item)));
+            } else if ($this->flags() & Self::ZSET) {
+                $redis->zadd($key, [array_rand($item) => mt_rand()/mt_getrandmax()]);
+            } else if ($this->flags() & Self::HYPERLOGLOG) {
+                $redis->pfadd($key, [array_rand($item)]);
+            } else {
+                throw new Exception("Unsupported key type");
+            }
+
+            $keys[] = $item['id'];
+        }
+
+        return $keys;
+    }
+
     public function setUpClients(): void
     {
         $this->predis = $this->createPredis();
