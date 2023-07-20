@@ -17,7 +17,7 @@ jobs:
     name: Benchmarks
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    
+
     services:
       redis:
         image: redis
