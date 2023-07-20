@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
 
-class BenchmarkLRANGE extends Benchmark
+class BenchmarkLINDEX extends Benchmark
 {
     /**
      * @var array<int, string>
@@ -28,10 +28,19 @@ class BenchmarkLRANGE extends Benchmark
         $this->keys = $this->seedSimpleKeys();
     }
 
+    public function warmup(int $times, string $method): void {
+        if ($times == 0) {
+            return;
+        }
+
+        parent::warmup($times, $method);
+        $this->readSimpleKeys($this->keys);
+    }
+
     protected function runBenchmark($client): int
     {
-        foreach ($this->keys as $key) {
-            $client->lrange($key, 0, -1);
+        foreach ($this->keys as $i => $key) {
+            $client->lindex($key, $i % 32);
         }
 
         return count($this->keys);
