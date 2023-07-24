@@ -36,6 +36,35 @@ jobs:
       - name: Run PHPStan
         run: composer run phpstan
 
+  pint:
+
+    name: Pint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: relay
+          tools: composer, pint, cs2pr
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run PHPStan
+        id: pint
+        run: composer exec -- pint --verbose --test
+
+      - name: Annotate Pint results
+        if: ${{ failure() && steps.pint.outcome == 'failure' }}
+        run: composer exec -- pint --test --format=checkstyle | cs2pr
+
   compatibility:
 
     name: PHP 7.4 compatibility
