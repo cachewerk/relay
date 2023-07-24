@@ -52,7 +52,7 @@ class RelayOpenTelemetry
      * @param  ?\OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
      * @return void
      */
-    public function __construct(callable $client, ?TracerProviderInterface $tracerProvider = null)
+    public function __construct(callable $client, TracerProviderInterface $tracerProvider = null)
     {
         if (! $tracerProvider) {
             $tracerProvider = Globals::tracerProvider();
@@ -144,7 +144,7 @@ class RelayOpenTelemetry
      * @param  ?string  $type
      * @return array<mixed>|false
      */
-    public function scan(&$iterator, $match = null, int $count = 0, ?string $type = null)
+    public function scan(&$iterator, $match = null, int $count = 0, string $type = null)
     {
         $span = $this->tracer->spanBuilder('Relay::scan')
             ->setAttribute('db.operation', 'SCAN')

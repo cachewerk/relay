@@ -153,22 +153,22 @@ abstract class Benchmark
         $items = $this->loadJsonFile('meteorites.json');
 
         foreach ($items as $item) {
-            $key = (string)$item['id'];
+            $key = (string) $item['id'];
 
-            if ($this->flags() & Self::STRING) {
+            if ($this->flags() & self::STRING) {
                 $redis->set($key, serialize($item));
-            } else if ($this->flags() & Self::LIST) {
+            } elseif ($this->flags() & self::LIST) {
                 $redis->rpush($key, $this->flattenArray($item));
-            } else if ($this->flags() & Self::HASH) {
+            } elseif ($this->flags() & self::HASH) {
                 $redis->hmset($key, $this->flattenArray($item));
-            } else if ($this->flags() & Self::SET) {
+            } elseif ($this->flags() & self::SET) {
                 $redis->sadd($key, array_keys($this->flattenArray($item)));
-            } else if ($this->flags() & Self::ZSET) {
-                $redis->zadd($key, [array_rand($item) => mt_rand()/mt_getrandmax()]);
-            } else if ($this->flags() & Self::HYPERLOGLOG) {
+            } elseif ($this->flags() & self::ZSET) {
+                $redis->zadd($key, [array_rand($item) => mt_rand() / mt_getrandmax()]);
+            } elseif ($this->flags() & self::HYPERLOGLOG) {
                 $redis->pfadd($key, [array_rand($item)]);
             } else {
-                throw new Exception("Unsupported key type");
+                throw new Exception('Unsupported key type');
             }
 
             $keys[] = $item['id'];
@@ -180,21 +180,21 @@ abstract class Benchmark
     /**
      * Generic function to read an entire key based on the Benchmark's specified key type.
      *
-     * @param array<int, int|string> $keys
+     * @param  array<int, int|string>  $keys
      */
     public function readSimpleKeys($keys): void
     {
         foreach ($keys as $key) {
-            if ($this->flags() & Self::STRING) {
+            if ($this->flags() & self::STRING) {
                 $this->relay->get($key);
-            } else if ($this->flags() & Self::LIST) {
+            } elseif ($this->flags() & self::LIST) {
                 $this->relay->lrange($key, 0, -1);
-            } else if ($this->flags() & Self::HASH) {
+            } elseif ($this->flags() & self::HASH) {
                 $this->relay->hgetall($key);
-            } else if ($this->flags() & Self::SET) {
+            } elseif ($this->flags() & self::SET) {
                 $this->relay->smembers($key);
             } else {
-                throw new Exception("Unsupported key type");
+                throw new Exception('Unsupported key type');
             }
         }
     }

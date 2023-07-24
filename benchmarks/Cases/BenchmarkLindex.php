@@ -28,7 +28,8 @@ class BenchmarkLINDEX extends Benchmark
         $this->keys = $this->seedSimpleKeys();
     }
 
-    public function warmup(int $times, string $method): void {
+    public function warmup(int $times, string $method): void
+    {
         if ($times == 0) {
             return;
         }

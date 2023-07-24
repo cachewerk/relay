@@ -2,8 +2,6 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkKeyCommand;
-
 class BenchmarkHashKeyCommand extends BenchmarkKeyCommand
 {
     /**

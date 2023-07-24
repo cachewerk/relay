@@ -39,7 +39,8 @@ class BenchmarkGETBIT extends Benchmark
         $this->readSimpleKeys($this->keys);
     }
 
-    public function runBenchmark($client): int {
+    public function runBenchmark($client): int
+    {
         foreach ($this->keys as $i => $key) {
             $client->getbit($key, $i);
         }

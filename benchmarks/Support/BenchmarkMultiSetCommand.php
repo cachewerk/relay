@@ -2,8 +2,6 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-use CacheWerk\Relay\Benchmarks\Support\Benchmark;
-
 class BenchmarkMultiSetCommand extends Benchmark
 {
     const KeysPerCall = 8;
