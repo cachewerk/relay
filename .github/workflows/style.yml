@@ -67,7 +67,7 @@ jobs:
 
   compatibility:
 
-    name: PHP 7.4 compatibility
+    name: Compatibility
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
