@@ -30,24 +30,24 @@ class BenchmarkLPOS extends Benchmark
 
     public function seed(): void
     {
-        $this->mems = [];
+        $mems = [];
 
         $redis = $this->createPredis();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
             $key_mems = $this->flattenArray($item);
             foreach ($key_mems as $mem) {
-                $this->mems[$mem] = true;
+                $mems[$mem] = $mem;
             }
 
             $redis->rpush((string) $item['id'], $key_mems);
             $this->keys[] = (string) $item['id'];
         }
 
-        $this->mems = array_keys($this->mems);
+        $this->mems = array_keys($mems);
     }
 
-    public function warmup($times, $method): void
+    public function warmup(int $times, string $method): void
     {
         if ($times == 0) {
             return;
@@ -60,6 +60,7 @@ class BenchmarkLPOS extends Benchmark
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $i => $key) {
+            // @phpstan-ignore-next-line
             $client->lpos($key, $this->mems[$i % count($this->mems)]);
         }
 
