@@ -57,7 +57,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Run PHPStan
+      - name: Run Pint
         id: pint
         run: composer exec -- pint --verbose --test
 
