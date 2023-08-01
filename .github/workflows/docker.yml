@@ -11,9 +11,9 @@ concurrency:
 
 jobs:
 
-  builds:
+  build_artifacts:
 
-    name: Build
+    name: Artifact
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -49,32 +49,32 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build Docker container
+      - name: Build images
         run: |
           docker build --pull \
             --tag ${{ matrix.build }}-${{ matrix.version }} \
             --file docker/${{ matrix.build }}.Dockerfile \
             --build-arg RELAY=${{ matrix.version }} .
 
-      - name: Run tests
-        env:
-          SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
+      - name: Show configuration for Relay
         run: |
           docker run \
             ${{ matrix.build }}-${{ matrix.version }} \
-            $SHELL -c "php --ri relay"
+            php --ri relay
 
+      - name: Run quicktest
+        run: |
           docker run \
-              --network="host" \
-              --volume $(pwd):/root/relay/ \
-              --env REDIS_HOST=$REDIS_HOST \
-              ${{ matrix.build }}-${{ matrix.version }} \
-              $SHELL -c "php /root/relay/.github/workflows/support/quicktest.php"
+            --network="host" \
+            --volume $(pwd):/root/relay/ \
+            --env REDIS_HOST=$REDIS_HOST \
+            ${{ matrix.build }}-${{ matrix.version }} \
+            php /root/relay/.github/workflows/support/quicktest.php
 
-  packages:
+  build_packages:
 
     name: Package
     runs-on: ubuntu-latest
@@ -103,21 +103,24 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build Docker container
+      - name: Build images
         run: |
           docker build --pull \
             --tag ${{ matrix.package }} \
             --file docker/${{ matrix.package }}.Dockerfile .
 
-      - name: Run tests
+      - name: Show configuration for Relay
         run: |
           docker run ${{ matrix.package }} bash -c "php --ri relay"
+
+      - name: Run quicktest
+        run: |
           docker run \
-              --network="host" \
-              --volume $(pwd):/root/relay/ \
-              --env REDIS_HOST=$REDIS_HOST \
-              ${{ matrix.package }} \
-              bash -c "php /root/relay/.github/workflows/support/quicktest.php"
+            --network="host" \
+            --volume $(pwd):/root/relay/ \
+            --env REDIS_HOST=$REDIS_HOST \
+            ${{ matrix.package }} \
+            bash -c "php /root/relay/.github/workflows/support/quicktest.php"
