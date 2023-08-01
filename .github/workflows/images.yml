@@ -48,9 +48,6 @@ jobs:
           --health-timeout 1s
           --health-retries 5
 
-    env:
-      SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -66,7 +63,7 @@ jobs:
         run: |
           docker run \
             ${{ matrix.build }}-${{ matrix.version }} \
-            $SHELL -c "php --ri relay"
+            php --ri relay
 
       - name: Run quicktest
         run: |
@@ -75,7 +72,7 @@ jobs:
             --volume $(pwd):/root/relay/ \
             --env REDIS_HOST=$REDIS_HOST \
             ${{ matrix.build }}-${{ matrix.version }} \
-            $SHELL -c "php /root/relay/.github/workflows/support/quicktest.php"
+            php /root/relay/.github/workflows/support/quicktest.php
 
   build_repositories:
 
