@@ -60,8 +60,10 @@ class BenchmarkLPOS extends Benchmark
     protected function runBenchmark($client): int
     {
         foreach ($this->keys as $i => $key) {
-            // @phpstan-ignore-next-line
-            $client->lpos($key, $this->mems[$i % count($this->mems)]);
+            $client->lpos( // @phpstan-ignore-line
+                $key,
+                $this->mems[$i % count($this->mems)]
+            );
         }
 
         return count($this->keys);
@@ -73,7 +75,11 @@ class BenchmarkLPOS extends Benchmark
     public function benchmarkPredis(): int
     {
         foreach ($this->keys as $i => $key) {
-            $this->predis->executeRaw(['LPOS', $key, $this->mems[$i % count($this->mems)]]);
+            $this->predis->executeRaw([
+                'LPOS',
+                $key,
+                $this->mems[$i % count($this->mems)],
+            ]);
         }
 
         return count($this->keys);
