@@ -48,6 +48,9 @@ jobs:
           --health-timeout 1s
           --health-retries 5
 
+    env:
+      SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -59,13 +62,14 @@ jobs:
             --file docker/${{ matrix.build }}.Dockerfile \
             --build-arg RELAY=${{ matrix.version }} .
 
-      - name: Run quicktest
-        env:
-          SHELL: "${{ matrix.build == 'alpine' && 'sh' || 'bash' }}"
+      - name: Show configuration for Relay
         run: |
           docker run \
             ${{ matrix.build }}-${{ matrix.version }} \
             $SHELL -c "php --ri relay"
+
+      - name: Run quicktest
+        run: |
           docker run \
             --network="host" \
             --volume $(pwd):/root/relay/ \
@@ -111,9 +115,12 @@ jobs:
             --tag ${{ matrix.package }} \
             --file docker/${{ matrix.package }}.Dockerfile .
 
-      - name: Run quicktest
+      - name: Show configuration for Relay
         run: |
           docker run ${{ matrix.package }} bash -c "php --ri relay"
+
+      - name: Run quicktest
+        run: |
           docker run \
             --network="host" \
             --volume $(pwd):/root/relay/ \
