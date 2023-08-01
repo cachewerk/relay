@@ -1,4 +1,4 @@
-name: Images
+name: Docker builds
 
 on:
   workflow_dispatch:
@@ -11,9 +11,9 @@ concurrency:
 
 jobs:
 
-  build_binaries:
+  build_artifacts:
 
-    name: Build from Relay binaries
+    name: Artifact
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -74,9 +74,9 @@ jobs:
             ${{ matrix.build }}-${{ matrix.version }} \
             php /root/relay/.github/workflows/support/quicktest.php
 
-  build_repositories:
+  build_packages:
 
-    name: Build from package repositories
+    name: Package
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
