@@ -2,14 +2,14 @@
 
 name: "Docker"
 
-on:  # yamllint disable-line rule:truthy
+on:
     pull_request:
         paths:
         - "**/Dockerfile"
         - ".hadolint.yaml"
     push:
         branches:
-        - "master"
+        - "main"
         paths:
         - "**/Dockerfile"
         - ".hadolint.yaml"
