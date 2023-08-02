@@ -39,7 +39,7 @@ $options = array_reduce(
 );
 
 for ($i = 1; $i < $optind; ++$i) {
-    if (str_starts_with($argv[$i], '-') && ! array_key_exists($argv[$i], $options)) {
+    if (str_starts_with($argv[$i], '-') && ! array_key_exists(explode('=', $argv[$i])[0], $options)) {
         fprintf(STDERR, "\n\033[41m ERROR \033[0m Unknown option '{$argv[$i]}'.\n");
         exit(1);
     }
