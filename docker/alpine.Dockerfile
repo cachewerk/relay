@@ -5,14 +5,17 @@ RUN apk update
 RUN apk add \
   curl \
   php81 \
-  php81-dev \
-  php81-pecl-msgpack \
-  php81-pecl-igbinary \
+  php81-dev
+
+# Install Relay dependencies
+RUN apk add \
   ck \
   hiredis \
   hiredis-ssl \
   lz4-libs \
-  zstd-libs
+  zstd-libs \
+  php81-pecl-msgpack \
+  php81-pecl-igbinary
 
 ARG RELAY=v0.6.6
 
