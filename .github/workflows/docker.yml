@@ -36,6 +36,7 @@ jobs:
           - ubuntu/ubuntu20
           - litespeed
           - openlitespeed
+          - sle15
 
     services:
       redis:
