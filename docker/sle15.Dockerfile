@@ -2,22 +2,20 @@ FROM registry.suse.com/suse/sle15:latest
 
 RUN zypper addrepo http://download.opensuse.org/distribution/leap/15.5/repo/oss/ OSS
 
-RUN zypper --gpg-auto-import-keys update && \
-    zypper install -y \
-        libck0 \
-        libhiredis1_1_0 \
-        openssl-3 \
-        php8
+RUN zypper --gpg-auto-import-keys update \
+  && zypper install -y \
+    awk \
+    make \
+    openssl-3 \
+    php8-pecl \
+    php8-devel
 
 ARG RELAY=v0.6.6
 
 # Install Relay dependencies
-
 RUN zypper install -y \
-    awk \
-    make \
-    php8-devel \
-    php8-pecl
+  libck0 \
+  libhiredis1_1_0
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack && \
@@ -26,7 +24,6 @@ RUN pecl install msgpack && \
 # Relay requires the `igbinary` extension
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/igbinary.ini
-
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
