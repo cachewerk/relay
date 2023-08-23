@@ -6,7 +6,6 @@ RUN zypper --gpg-auto-import-keys update \
   && zypper install -y \
     awk \
     make \
-    openssl-3 \
     php8-pecl \
     php8-devel
 
