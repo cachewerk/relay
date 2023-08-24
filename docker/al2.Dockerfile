@@ -22,8 +22,9 @@ RUN pecl config-set php_ini /etc/php.ini
 RUN yum install -y \
   libzstd \
   lz4 \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.1.x86_64.rpm \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.7.x86_64.rpm
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.7.x86_64.rpm \
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.1.x86_64.rpm
+  
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack && \
