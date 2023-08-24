@@ -2,7 +2,6 @@ FROM rockylinux/rockylinux:9
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
 RUN dnf -y module reset php
@@ -22,6 +21,11 @@ RUN dnf -y install \
   php-msgpack \
   php-igbinary
 
+# Install Relay dependencies
+RUN yum install -y \
+  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm \
+  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm
+
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
@@ -30,7 +34,7 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
-  && cp "/tmp/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
+  && cp "/tmp/relay.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
 RUN UUID=$(cat /proc/sys/kernel/random/uuid) \
