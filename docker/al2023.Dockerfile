@@ -16,6 +16,12 @@ RUN pecl install igbinary && \
 
 ARG RELAY=v0.6.6
 
+# Install Relay dependencies
+RUN yum install -y \
+  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libopenssl1_1-1.1.1l-150500.15.4.x86_64.rpm \
+  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm \
+  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm
+
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
   ARTIFACT="https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-el9-$ARCH.tar.gz" \
@@ -23,7 +29,7 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" $(php-config --ini-dir)/50-relay.ini \
-  && cp "/tmp/relay-pkg.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
