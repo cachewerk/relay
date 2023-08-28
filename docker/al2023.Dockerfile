@@ -1,4 +1,4 @@
-FROM amazonlinux:2023
+FROM --platform=linux/amd64 amazonlinux:2023
 
 RUN dnf install -y \
   php-cli \
@@ -17,10 +17,11 @@ RUN pecl install igbinary && \
 ARG RELAY=v0.6.6
 
 # Install Relay dependencies
-RUN yum install -y \
-  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libopenssl1_1-1.1.1l-150500.15.4.x86_64.rpm \
-  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm \
-  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm
+RUN yum install -y --nogpgcheck \
+  --repofrompath opensuse,http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/ \
+  libopenssl1_1 \
+  libhiredis1_1_0 \
+  libck0
 
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
