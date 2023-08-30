@@ -14,10 +14,14 @@ RUN apt-get install -y \
 
 # Install Relay dependencies
 RUN apt-get install -y \
+  libck0 \
   php-msgpack \
   php-igbinary
 
 ARG RELAY=v0.6.6
+
+RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /usr/src \
+  && PREFIX=/usr USE_SSL=1 make -C /usr/src/hiredis-1.2.0 install
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
@@ -27,7 +31,7 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
 # Copy relay.{so,ini}
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   && cp "/tmp/relay-$RELAY-php7.4-debian-$ARCH/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-$ARCH/relay-pkg.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay-$RELAY-php7.4-debian-$ARCH/relay.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
