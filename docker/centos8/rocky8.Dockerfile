@@ -13,7 +13,7 @@ ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 ENV PHP_INI_DIR=/etc/opt/remi/php80/php.d/
 ENV PHP_EXT_DIR=/opt/remi/php80/root/usr/lib64/php/modules/
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.7
 
 # Install Relay dependencies
 RUN yum install -y \
