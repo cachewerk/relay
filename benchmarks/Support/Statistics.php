@@ -49,7 +49,7 @@ class Statistics
 
         $sum = array_sum($values);
 
-        if (0 == $sum) {
+        if ($sum === 0) {
             return 0;
         }
 
