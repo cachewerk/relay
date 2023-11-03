@@ -19,7 +19,7 @@ RUN apt-get install -y \
 
 ARG RELAY=v0.6.8
 
-ARG PHP=$(php -r 'echo PHP_MAJOR_VERSION, ".", PHP_MINOR_VERSION;')
+ARG PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);')
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
