@@ -14,7 +14,7 @@
     },
     "require-dev": {
         "illuminate/redis": "^7|^8|^9|^10",
-        "open-telemetry/api": "^0.0.17|^1.0",
+        "open-telemetry/api": "^1.0",
         "phpstan/phpstan": "^1.7",
         "predis/predis": "^1.1|^2.0",
         "psr/simple-cache": "^1|^2|^3",

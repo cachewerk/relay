@@ -10,10 +10,10 @@ use ReflectionMethod;
 
 use Relay\Relay;
 
+use OpenTelemetry\API\Globals;
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
-use OpenTelemetry\API\Common\Instrumentation\Globals;
 
 class RelayOpenTelemetry
 {
