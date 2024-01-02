@@ -14,15 +14,15 @@ ENV PATH="/opt/remi/php80/root/usr/bin/:$PATH"
 ENV PHP_INI_DIR=/etc/opt/remi/php80/php.d/
 ENV PHP_EXT_DIR=/opt/remi/php80/root/usr/lib64/php/modules/
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.8
 
 # Install Relay dependencies
 RUN yum install -y \
   openssl11 \
   libzstd \
   lz4 \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.7.x86_64.rpm \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.1.x86_64.rpm
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
 
 # Relay requires the `msgpack` and `igbinary` extension
 RUN yum install -y \

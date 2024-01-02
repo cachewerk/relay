@@ -22,8 +22,8 @@ RUN pecl config-set php_ini /etc/php.ini
 RUN yum install -y \
   libzstd \
   lz4 \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.7.x86_64.rpm \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.1.x86_64.rpm
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
+  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack && \
@@ -33,7 +33,7 @@ RUN pecl install msgpack && \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.8
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \

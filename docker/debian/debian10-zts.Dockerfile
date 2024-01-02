@@ -26,7 +26,7 @@ RUN curl --output php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}
   make -j$(nproc) && \
   make install
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.8
 
 RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> '/etc/apt/sources.list'
 

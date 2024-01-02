@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - v0.6.6
+          - v0.6.8
           - dev
         build:
           - alpine
@@ -34,6 +34,7 @@ jobs:
           - debian/debian10
           - debian/debian10-zts
           - ubuntu/ubuntu20
+          - mint21
           - litespeed
           - openlitespeed
           - sle15

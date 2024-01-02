@@ -18,7 +18,7 @@ RUN apt-get install -y \
   php-msgpack \
   php-igbinary
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.8
 
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /usr/src \
   && PREFIX=/usr USE_SSL=1 make -C /usr/src/hiredis-1.2.0 install
@@ -26,12 +26,11 @@ RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | t
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
   PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
-  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-$ARCH.tar.gz" | tar xz -C /tmp
+  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-$ARCH.tar.gz" | tar xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
-RUN ARCH=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-$ARCH/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-$ARCH/relay.so" $(php-config --extension-dir)/relay.so
+RUN cp "/tmp/relay.ini" $(php-config --ini-dir)/30-relay.ini \
+  && cp "/tmp/relay-pkg.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so

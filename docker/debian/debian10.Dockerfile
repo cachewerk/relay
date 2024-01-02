@@ -32,7 +32,7 @@ RUN apt-get install -y \
   php8.1-msgpack \
   php8.1-igbinary
 
-ARG RELAY=v0.6.6
+ARG RELAY=v0.6.8
 
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /usr/src \
   && PREFIX=/usr USE_SSL=1 make -C /usr/src/hiredis-1.2.0 install
