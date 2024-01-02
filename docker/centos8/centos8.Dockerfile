@@ -3,7 +3,6 @@ FROM --platform=linux/amd64 centos:8.4.2105
 # CentOS Linux 8 is EOL (https://stackoverflow.com/a/70930049)
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
 
-RUN dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
 RUN dnf install -y "https://rpms.remirepo.net/enterprise/remi-release-8.4.rpm"
 RUN dnf install -y yum-utils
 
@@ -21,9 +20,10 @@ ENV PHP_EXT_DIR=/opt/remi/php80/root/usr/lib64/php/modules/
 ARG RELAY=v0.6.8
 
 # Install Relay dependencies
-RUN yum install -y \
-  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm \
-  http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm
+RUN yum install -y --nogpgcheck \
+  --repofrompath opensuse,http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/ \
+  libhiredis1_1_0 \
+  libck0
 
 # Relay requires the `msgpack` and `igbinary` extension
 RUN yum install -y \
