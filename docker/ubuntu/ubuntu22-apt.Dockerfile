@@ -8,7 +8,7 @@ RUN apt-get install -y curl software-properties-common
 RUN add-apt-repository ppa:ondrej/php
 
 RUN apt-get install -y \
-  php8.1-fpm
+  php8.3-fpm
 
 # Add Relay repository
 RUN curl -fsSL "https://repos.r2.relay.so/key.gpg" | gpg --dearmor -o /usr/share/keyrings/cachewerk.gpg
@@ -17,7 +17,7 @@ RUN apt-get update
 
 # Install Relay
 RUN apt-get install -y \
-  php8.1-relay
+  php8.3-relay
 
 ## If no specific PHP version is installed just omit the version number:
 

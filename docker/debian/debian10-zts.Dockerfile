@@ -26,7 +26,7 @@ RUN curl --output php-${PHP}.tar.gz https://www.php.net/distributions/php-${PHP}
   make -j$(nproc) && \
   make install
 
-ARG RELAY=v0.6.8
+ARG RELAY=v0.7.0
 
 # Download Relay
 RUN PHP=$(php -r "echo substr(PHP_VERSION, 0, 3);") \
