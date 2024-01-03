@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
-use LogicException;
-
 use Relay\Relay;
+use Relay\Cluster;
 
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Redis\Connector;
@@ -44,12 +43,15 @@ class RelayConnector extends PhpRedisConnector implements Connector
      * @param  array<mixed>  $config
      * @param  array<mixed>  $clusterOptions
      * @param  array<mixed>  $options
-     *
-     * @throws \LogicException
+     * @return \CacheWerk\Relay\Laravel\RelayClusterConnection
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
-        throw new LogicException('Relay does not support clusters, at this point');
+        $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
+
+        return new RelayClusterConnection($this->createRedisClusterInstance(
+            array_map([$this, 'buildClusterConnectionString'], $config), $options
+        ));
     }
 
     /**
@@ -57,8 +59,6 @@ class RelayConnector extends PhpRedisConnector implements Connector
      *
      * @param  array<int>  $config
      * @return \Relay\Relay
-     *
-     * @throws \LogicException
      */
     protected function createClient(array $config)
     {
@@ -109,5 +109,83 @@ class RelayConnector extends PhpRedisConnector implements Connector
         }
 
         return $client;
+    }
+
+    /**
+     * Establish a connection with the Redis host.
+     *
+     * @param  \Relay  $client
+     * @param  array  $config
+     * @return void
+     */
+    protected function establishConnection($client, array $config)
+    {
+        $persistent = $config['persistent'] ?? false;
+
+        $parameters = [
+            $this->formatHost($config),
+            $config['port'],
+            Arr::get($config, 'timeout', 0.0),
+            $persistent ? Arr::get($config, 'persistent_id', null) : null,
+            Arr::get($config, 'retry_interval', 0),
+        ];
+
+        $parameters[] = Arr::get($config, 'read_timeout', 0.0);
+
+        if (! is_null($context = Arr::get($config, 'context'))) {
+            $parameters[] = $context;
+        }
+
+        $client->{$persistent ? 'pconnect' : 'connect'}(...$parameters);
+    }
+
+    /**
+     * Create a new Relay cluster instance.
+     *
+     * @param  array  $servers
+     * @param  array  $options
+     * @return \Relay\Cluster
+     */
+    protected function createRedisClusterInstance(array $servers, array $options)
+    {
+        $parameters = [
+            null,
+            array_values($servers),
+            $options['timeout'] ?? 0,
+            $options['read_timeout'] ?? 0,
+            isset($options['persistent']) && $options['persistent'],
+        ];
+
+        $parameters[] = $options['password'] ?? null;
+
+        if (! is_null($context = Arr::get($options, 'context'))) {
+            $parameters[] = $context;
+        }
+
+        return tap(new Cluster(...$parameters), function ($client) use ($options) {
+            if (! empty($options['prefix'])) {
+                $client->setOption(Relay::OPT_PREFIX, $options['prefix']);
+            }
+
+            if (! empty($options['scan'])) {
+                $client->setOption(Relay::OPT_SCAN, $options['scan']);
+            }
+
+            if (! empty($options['failover'])) {
+                $client->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $options['failover']);
+            }
+
+            if (array_key_exists('serializer', $options)) {
+                $client->setOption(Relay::OPT_SERIALIZER, $options['serializer']);
+            }
+
+            if (array_key_exists('compression', $options)) {
+                $client->setOption(Relay::OPT_COMPRESSION, $options['compression']);
+            }
+
+            if (array_key_exists('compression_level', $options)) {
+                $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $options['compression_level']);
+            }
+        });
     }
 }
