@@ -102,7 +102,7 @@ class RelayNewRelic
      * @param  ?string  $type
      * @return array<mixed>|false
      */
-    public function scan(&$iterator, $match = null, int $count = 0, string $type = null)
+    public function scan(&$iterator, $match = null, int $count = 0, ?string $type = null)
     {
         return newrelic_record_datastore_segment(function () use (&$iterator, $match, $count, $type) {
             return $this->relay->scan($iterator, $match, $count, $type);

@@ -40,7 +40,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
      * @param  ?int  $ttl
      * @return void
      */
-    public function __construct(protected Relay $relay, int $ttl = null)
+    public function __construct(protected Relay $relay, ?int $ttl = null)
     {
         $this->ttl = (int) ($ttl ?: ini_get('session.gc_maxlifetime') ?: 1440);
     }

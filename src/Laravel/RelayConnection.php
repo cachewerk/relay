@@ -134,7 +134,7 @@ class RelayConnection extends PhpRedisConnection implements Connection
      * @param  ?int  $db
      * @return bool
      */
-    public function flushMemory(string $endpointId = null, int $db = null)
+    public function flushMemory(?string $endpointId = null, ?int $db = null)
     {
         return $this->client->flushMemory($endpointId, $db);
     }
