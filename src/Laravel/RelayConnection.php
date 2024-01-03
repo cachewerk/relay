@@ -34,10 +34,10 @@ class RelayConnection extends PhpRedisConnection implements Connection
      * Registers a new `invalidated` event listener.
      *
      * @param  callable  $callback
-     * @param  string  $pattern
+     * @param  ?string  $pattern
      * @return bool
      */
-    public function onInvalidated(?callable $callback, string $pattern = null)
+    public function onInvalidated(?callable $callback, ?string $pattern = null)
     {
         return $this->client->onInvalidated($callback, $pattern);
     }

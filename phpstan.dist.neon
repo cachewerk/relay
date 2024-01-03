@@ -10,9 +10,10 @@ parameters:
   treatPhpDocTypesAsCertain: false
 
   ignoreErrors:
-    - '#^Parameter \#1 \$client of class CacheWerk\\Relay\\Laravel\\RelayConnection constructor expects Redis, Relay\\Relay given\.$#'
-    - '#^Parameter \#1 \$client of method Illuminate\\Redis\\Connectors\\PhpRedisConnector::establishConnection\(\) expects Redis, Relay\\Relay given\.$#'
-    - '#^Return type \(Relay\\Relay\) of method \S+ should be compatible with return type \(Redis\) of method#'
+    - '#^Parameter \#1 \$client of class CacheWerk\\Relay\\Laravel\\.+ constructor expects Redis, Relay\\.+ given#'
+    - '#^Parameter \#1 \$client .+::establishConnection\(\) should be compatible with parameter \$client#'
+    - '#^Return type \(Relay\\.+\) of method \S+ should be compatible with return type \(Redis.*\) of method#'
+    - '#^Return type \(CacheWerk\\.+\) of method \S+::connectToCluster\(\) should be compatible with return type .+ of method#'
     - '#^PHPDoc type Relay\\Relay of property \S+ is not covariant with PHPDoc type Redis#'
     - '#^Method \S+\\RelayNewRelic::(scan|hscan|sscan|zscan)\(\) should return \S+ but returns mixed#'
     - '#^Method \S+\\RelaySessionHandler::\S+ should return bool but returns bool\|Relay\\Relay#'

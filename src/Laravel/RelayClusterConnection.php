@@ -14,17 +14,18 @@ class RelayClusterConnection extends RelayConnection implements Connection
     /**
      * The Redis client.
      *
-     * @var \Relay\Relay
+     * @var \Relay\Cluster
      */
     protected $client;
 
     /**
      * Flush the selected Redis database on all master nodes.
      *
-     * @return mixed
+     * @return void
      */
     public function flushdb()
     {
+        /** @var string $arguments */
         $arguments = func_get_args();
 
         $async = strtoupper((string) ($arguments[0] ?? null)) === 'ASYNC';

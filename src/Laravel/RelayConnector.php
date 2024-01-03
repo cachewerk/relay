@@ -16,16 +16,17 @@ class RelayConnector extends PhpRedisConnector implements Connector
     /**
      * Create a new Relay connection.
      *
-     * @param  array<mixed>  $config
-     * @param  array<mixed>  $options
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $options
      * @return \CacheWerk\Relay\Laravel\RelayConnection
      */
     public function connect(array $config, array $options)
     {
+        /** @var array<string, mixed> $formattedOptions */
         $formattedOptions = Arr::pull($config, 'options', []);
 
         if (isset($config['prefix'])) {
-            $formattedOptions['prefix'] = $config['prefix']; // @phpstan-ignore-line
+            $formattedOptions['prefix'] = $config['prefix'];
         }
 
         $connector = function () use ($config, $options, $formattedOptions) {
@@ -40,18 +41,29 @@ class RelayConnector extends PhpRedisConnector implements Connector
     /**
      * Create a new clustered Relay connection.
      *
-     * @param  array<mixed>  $config
-     * @param  array<mixed>  $clusterOptions
-     * @param  array<mixed>  $options
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $clusterOptions
+     * @param  array<string, mixed>  $options
      * @return \CacheWerk\Relay\Laravel\RelayClusterConnection
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
-        $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
+        $options = array_merge($options, $clusterOptions, (array) Arr::pull($config, 'options', []));
 
         return new RelayClusterConnection($this->createRedisClusterInstance(
             array_map([$this, 'buildClusterConnectionString'], $config), $options
         ));
+    }
+
+    /**
+     * Build a single cluster seed string from an array.
+     *
+     * @param  array<string, string>  $server
+     * @return string
+     */
+    protected function buildClusterConnectionString(array $server)
+    {
+        return $this->formatHost($server).':'.$server['port'];
     }
 
     /**
@@ -114,8 +126,8 @@ class RelayConnector extends PhpRedisConnector implements Connector
     /**
      * Establish a connection with the Redis host.
      *
-     * @param  \Relay  $client
-     * @param  array  $config
+     * @param  Relay  $client
+     * @param  array<string, mixed>  $config
      * @return void
      */
     protected function establishConnection($client, array $config)
@@ -142,8 +154,8 @@ class RelayConnector extends PhpRedisConnector implements Connector
     /**
      * Create a new Relay cluster instance.
      *
-     * @param  array  $servers
-     * @param  array  $options
+     * @param  array<int, string>  $servers
+     * @param  array<string, mixed>  $options
      * @return \Relay\Cluster
      */
     protected function createRedisClusterInstance(array $servers, array $options)
@@ -162,30 +174,32 @@ class RelayConnector extends PhpRedisConnector implements Connector
             $parameters[] = $context;
         }
 
-        return tap(new Cluster(...$parameters), function ($client) use ($options) {
-            if (! empty($options['prefix'])) {
-                $client->setOption(Relay::OPT_PREFIX, $options['prefix']);
-            }
+        $client = new Cluster(...$parameters); // @phpstan-ignore-line
 
-            if (! empty($options['scan'])) {
-                $client->setOption(Relay::OPT_SCAN, $options['scan']);
-            }
+        if (! empty($options['prefix'])) {
+            $client->setOption(Relay::OPT_PREFIX, $options['prefix']);
+        }
 
-            if (! empty($options['failover'])) {
-                $client->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $options['failover']);
-            }
+        if (! empty($options['scan'])) {
+            $client->setOption(Relay::OPT_SCAN, $options['scan']);
+        }
 
-            if (array_key_exists('serializer', $options)) {
-                $client->setOption(Relay::OPT_SERIALIZER, $options['serializer']);
-            }
+        if (! empty($options['failover'])) {
+            $client->setOption(Cluster::OPT_SLAVE_FAILOVER, $options['failover']);
+        }
 
-            if (array_key_exists('compression', $options)) {
-                $client->setOption(Relay::OPT_COMPRESSION, $options['compression']);
-            }
+        if (array_key_exists('serializer', $options)) {
+            $client->setOption(Relay::OPT_SERIALIZER, $options['serializer']);
+        }
 
-            if (array_key_exists('compression_level', $options)) {
-                $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $options['compression_level']);
-            }
-        });
+        if (array_key_exists('compression', $options)) {
+            $client->setOption(Relay::OPT_COMPRESSION, $options['compression']);
+        }
+
+        if (array_key_exists('compression_level', $options)) {
+            $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $options['compression_level']);
+        }
+
+        return $client;
     }
 }
