@@ -2,7 +2,7 @@ FROM registry.suse.com/suse/sle15:latest
 
 RUN zypper addrepo http://download.opensuse.org/distribution/leap/15.5/repo/oss/ OSS
 
-RUN zypper --gpg-auto-import-keys update \
+RUN zypper --gpg-auto-import-keys update -y \
   && zypper install -y \
     awk \
     make \
