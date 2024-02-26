@@ -31,7 +31,7 @@ class RelayCache implements CacheInterface
      */
     public function __construct(Relay $relay)
     {
-        $this->relay = new $relay;
+        $this->relay = $relay;
     }
 
     /**
