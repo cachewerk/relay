@@ -1,4 +1,4 @@
-FROM debian:11
+FROM debian:12
 
 RUN apt-get update
 
@@ -12,7 +12,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/ondrej.gpg] https://packages.sury.o
 RUN apt-get update
 
 RUN apt-get install -y \
-  php8.2-fpm
+  php8.3-fpm
 
 # Add Relay repository
 RUN wget -q "https://repos.r2.relay.so/key.gpg" -O- | gpg --dearmor -o /usr/share/keyrings/cachewerk.gpg
@@ -21,7 +21,7 @@ RUN apt-get update
 
 # Install Relay
 RUN apt-get install -y \
-  php8.2-relay
+  php8.3-relay
 
 ## If no specific PHP version is installed just omit the version number:
 
