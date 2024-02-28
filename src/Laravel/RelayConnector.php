@@ -63,7 +63,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      */
     protected function buildClusterConnectionString(array $server)
     {
-        return $this->formatHost($server).':'.$server['port'];
+        return sprintf('%s:%d', $this->formatHost($server), $server['port']);
     }
 
     /**
