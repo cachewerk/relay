@@ -22,7 +22,7 @@ RUN dnf -y install \
   php-igbinary
 
 # Install Relay dependencies
-RUN yum install -y --nogpgcheck \
+RUN dnf install -y --nogpgcheck \
   --repofrompath opensuse,http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/ \
   libhiredis1_1_0 \
   libck0
