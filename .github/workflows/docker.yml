@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
 
-  build_artifacts:
+  artifacts:
 
     name: Artifact
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build images
         run: |
@@ -76,7 +76,7 @@ jobs:
             ${{ matrix.build }}-${{ matrix.version }} \
             php /root/relay/.github/workflows/support/quicktest.php
 
-  build_packages:
+  packages:
 
     name: Package
     runs-on: ubuntu-latest
@@ -107,7 +107,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build images
         run: |
