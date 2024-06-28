@@ -14,7 +14,8 @@ ARG RELAY=v0.7.0
 # Install Relay dependencies
 RUN zypper install -y \
   libck0 \
-  libhiredis1_1_0
+  libhiredis1_1_0 \
+  liblz4-1
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack && \
