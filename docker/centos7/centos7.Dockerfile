@@ -1,5 +1,11 @@
 FROM --platform=linux/amd64 centos:7
 
+# It's dead, Jim
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+RUN yum -y update
+
 RUN yum install -y "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
 
 RUN yum-config-manager --disable 'remi-php*' \
