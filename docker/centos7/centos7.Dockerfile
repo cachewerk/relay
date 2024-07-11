@@ -27,8 +27,8 @@ RUN yum install -y \
   openssl11 \
   libzstd \
   lz4 \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
-  https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
+  https://rpmfind.net/linux/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
+  http://rpmfind.net/linux/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
 
 # Relay requires the `msgpack` and `igbinary` extension
 RUN yum install -y \
@@ -46,3 +46,6 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
+
+# Ensure relay was installed properly.
+RUN php -m | grep relay
