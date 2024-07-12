@@ -41,6 +41,5 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
 
-
 # Ensure Relay is correctly installed
 RUN php --ri relay
