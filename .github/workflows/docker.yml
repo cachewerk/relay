@@ -31,7 +31,7 @@ jobs:
           - centos8/centos8
           - centos8/rocky8
           - el9/el9
-          - debian/debian10
+          - debian/debian11
           - ubuntu/ubuntu20
           - mint21
           - litespeed
