@@ -15,7 +15,7 @@ $ php --ri relay
 ## Debian (manual)
 
 ```bash
-docker build --pull --tag relay-debian --file debian10.Dockerfile .
+docker build --pull --tag relay-debian --file debian11.Dockerfile .
 docker run -it relay-debian bash
 $ php --ri relay
 ```
