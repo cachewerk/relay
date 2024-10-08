@@ -8,13 +8,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   semgrep:
-
-    name: Semgrep
+    name: semgrep-oss/scan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+
+    container:
+      image: semgrep/semgrep
+
+    if: (github.actor != 'dependabot[bot]')
 
     steps:
-      - name: semgrep-action
-        uses: semgrep/semgrep-action@v1
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config auto
