@@ -1,0 +1,20 @@
+name: Security
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  semgrep:
+
+    name: Semgrep
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: semgrep-action
+        uses: semgrep/semgrep-action@v1
