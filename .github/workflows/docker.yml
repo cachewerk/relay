@@ -33,6 +33,7 @@ jobs:
           - el9/el9
           - debian/debian11
           - ubuntu/ubuntu20
+          - ubuntu/ubuntu24
           - mint21
           - litespeed
           - openlitespeed

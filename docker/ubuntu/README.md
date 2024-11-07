@@ -17,7 +17,7 @@ The installation using APT is identical for 16.04, 18.04, 20.04 and 22.04.
 ## Ubuntu (manual)
 
 ```bash
-docker build --pull --tag relay-ubuntu --file ubuntu20.Dockerfile .
+docker build --pull --tag relay-ubuntu --file ubuntu24.Dockerfile .
 docker run -it relay-ubuntu bash
 $ php --ri relay
 ```
