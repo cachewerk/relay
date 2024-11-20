@@ -136,7 +136,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         $parameters = [
             $this->formatHost($config),
-            $config['port'],
+            is_scalar($config['port']) ? (int) $config['port'] : 0,
             Arr::get($config, 'timeout', 0.0),
             $persistent ? Arr::get($config, 'persistent_id', null) : null,
             Arr::get($config, 'retry_interval', 0),
