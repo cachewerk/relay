@@ -46,3 +46,51 @@ jobs:
 
       - name: Test benchmarks
         run: composer run bench -- --runs=1
+
+  laravel:
+
+    name: Laravel
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 1s
+          --health-timeout 1s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: redis, relay
+          tools: composer
+          coverage: none
+
+      - name: Install Laravel installer
+        run: composer require laravel/installer --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Laravel example app
+        run: composer exec laravel new example-app
+
+      - name: Install Composer dependencies
+        working-directory: example-app
+        run: |
+          composer config repositories.cachewerk/relay path ${{ github.workspace }}
+          composer require cachewerk/relay @dev
+
+      - name: Make and run test command
+        working-directory: example-app
+        run: |
+          php artisan make:command VerifyRelay --no-interaction
+          sed -i 's|//|dump(\\CacheWerk\\Relay\\Laravel\\Relay::stats(), \\Illuminate\\Support\\Facades\\Redis::info());|' app/Console/Commands/VerifyRelay.php
+          REDIS_CLIENT=relay php artisan app:verify-relay
