@@ -94,6 +94,8 @@ jobs:
           - debian/debian11-apt
           - debian/debian12-apt
           - ubuntu/ubuntu22-apt
+          - litespeed/lsphp-apt
+          - litespeed/lsphp-dnf
 
     services:
       redis:

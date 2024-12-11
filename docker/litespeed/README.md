@@ -10,6 +10,15 @@ docker run -it relay-ls bash
 $ php --ri relay
 ```
 
+Alternatively use the `lsphp*-relay` packages:
+
+```bash
+docker build --pull --tag relay-lsphp --file lsphp-apt.Dockerfile .
+# docker build --pull --tag relay-lsphp --file lsphp-dnf.Dockerfile .
+docker run -it relay-lsphp bash
+$ php --ri relay
+```
+
 ## OpenLiteSpeed
 
 ```bash
