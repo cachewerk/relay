@@ -12,10 +12,13 @@ RUN apt-get install -y \
 
 RUN wget -q "https://packages.sury.org/php/apt.gpg" -O- | apt-key add -
 RUN add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -sc) main"
-RUN add-apt-repository "deb https://deb.debian.org/debian bookworm main" # for libck 0.7.1
+
+# Required for libck 0.7.1
+RUN add-apt-repository "deb https://deb.debian.org/debian bookworm main"
+
 RUN apt-get update
 
-# Fix `php-config` link to `sed`
+# Fix `sed` link so `php-config` works
 RUN ln -s /bin/sed /usr/bin/sed
 
 RUN apt-get install -y \
