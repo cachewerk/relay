@@ -34,8 +34,8 @@ jobs:
           - debian/debian11
           - ubuntu/ubuntu20
           - ubuntu/ubuntu24
-          - litespeed
-          - openlitespeed
+          - litespeed/litespeed
+          - litespeed/openlitespeed
           - mint21
           - sle15
           - php-cli

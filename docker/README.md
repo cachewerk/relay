@@ -26,16 +26,6 @@ docker run -it relay-alpine sh
 $ php --ri relay
 ```
 
-## LiteSpeed
-
-```bash
-docker build --pull --tag relay-litespeed --file litespeed.Dockerfile .
-docker run -it relay-litespeed bash
-$ php --ri relay
-```
-
-For OpenLiteSpeed, see [openlitespeed.Dockerfile](/docker/openlitespeed.Dockerfile).
-
 ## Apache 2
 
 ```bash
@@ -58,12 +48,12 @@ $ php --ri relay
 
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
-```
+```bash
 docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.9.1 .
 ```
 
 To install the nightly developments builds use the `dev` version:
 
-```
+```bash
 docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=dev .
 ```
