@@ -18,25 +18,25 @@ RUN apt-get update
 RUN ln -s /bin/sed /usr/bin/sed
 
 RUN apt-get install -y \
-  php8.1-dev
+  php8.4-dev
 
 # Install Relay dependencies
 RUN apt-get install -y \
   lz4 \
   zstd \
-  php8.1-msgpack \
-  php8.1-igbinary
+  php8.4-msgpack \
+  php8.4-igbinary
 
-ARG RELAY=v0.9.0
+ARG RELAY=v0.9.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.1-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
+  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.4-debian-$PLATFORM+libssl3.tar.gz" -O - | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-$RELAY-php8.1-debian-$PLATFORM/relay-pkg.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay-$RELAY-php8.4-debian-$PLATFORM/relay.ini" $(php-config --ini-dir)/30-relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.4-debian-$PLATFORM/relay.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so

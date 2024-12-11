@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - v0.9.0
+          - v0.9.1
           - dev
         build:
           - alpine
@@ -34,10 +34,11 @@ jobs:
           - debian/debian11
           - ubuntu/ubuntu20
           - ubuntu/ubuntu24
-          - mint21
           - litespeed
           - openlitespeed
+          - mint21
           - sle15
+          - php-cli
 
     services:
       redis:

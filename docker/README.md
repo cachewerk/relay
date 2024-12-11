@@ -49,8 +49,8 @@ $ php --ri relay
 This image uses `mlocati/php-extension-installer` to install the extension.
 
 ```bash
-docker build --pull --tag relay-php81 --file php81-cli.Dockerfile .
-docker run -it relay-php81 bash
+docker build --pull --tag relay-php-cli --file php-cli.Dockerfile .
+docker run -it relay-php-cli bash
 $ php --ri relay
 ```
 
@@ -59,7 +59,7 @@ $ php --ri relay
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
 ```
-docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.9.0 .
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.9.1 .
 ```
 
 To install the nightly developments builds use the `dev` version:
