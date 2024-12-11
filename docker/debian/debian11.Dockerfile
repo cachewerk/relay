@@ -24,14 +24,19 @@ RUN apt-get install -y \
 RUN apt-get install -y \
   lz4 \
   zstd \
+  libck-dev \
   php8.4-msgpack \
   php8.4-igbinary
+
+# Install hiredis-ssl
+RUN wget -c https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz -O - | tar -xzC /tmp \
+  && PREFIX=/usr USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
 ARG RELAY=v0.9.1
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.4-debian-$PLATFORM+libssl3.tar.gz" -O - | tar xz -C /tmp
+  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.4-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
@@ -40,6 +45,3 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
-
-# Ensure Relay is correctly installed
-RUN php --ri relay
