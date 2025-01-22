@@ -1,7 +1,7 @@
 # Relay
 
 [Documentation](https://relay.so/docs) |
-[Twitter](https://twitter.com/RelayPHP) |
+[Bluesky](https://bsky.app/profile/relay.so) |
 [Discord](https://discord.gg/exYBXqTXgY) |
 [Discussions](https://github.com/cachewerk/relay/discussions) |
 [API](https://relay.so/api)
