@@ -8,7 +8,6 @@ A PSR-22 compatible tracing layer for Relay.
 ## Usage
 
 ```php
-// connect to server
 $relay = new Relay(host: '127.0.0.1', port: 6379);
 
 // use global trace provider
@@ -17,6 +16,5 @@ $client = RelayOpenTelemetry($client);
 // use custom trace provider
 $client = RelayOpenTelemetry($client, $tracerProvider);
 
-// use as regular
-$users = $relay->get('users:count');
+$users = $client->get('users:count');
 ```
