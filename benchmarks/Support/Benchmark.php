@@ -4,7 +4,7 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Exception;
 use Redis as PhpRedis;
-use Relay\Relay as Relay;
+use Relay\Relay;
 use Predis\Client as Predis;
 
 abstract class Benchmark
