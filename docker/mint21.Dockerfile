@@ -15,7 +15,7 @@ RUN apt-get install -y \
   php-msgpack \
   php-igbinary
 
-ARG RELAY=v0.11.0
+ARG RELAY=v0.11.1
 
 # Download Relay
 RUN PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
