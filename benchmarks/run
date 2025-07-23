@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 if (! extension_loaded('relay')) {
-    fprintf(STDERR, "\n\033[41m ERROR \033[0m The `relay` extension is not loaded in this PHP environment.\n");
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m The `relay` extension is not installed in this PHP environment.\n");
     exit(1);
 }
 
@@ -19,16 +19,16 @@ if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/Support/helpers.php';
 
-$short_options = ['h:', 'p:', 's:', 'a:', 'v'];
-$long_options = [
+$shortOptions = ['h:', 'p:', 's:', 'a:', 'v'];
+$longOptions = [
     'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
     'json', 'help', 'user:', 'pass:', 'command-type:', 'key-type:'
 ];
 
-$opt = getopt(implode($short_options), $long_options, $optind);
+$opt = getopt(implode($shortOptions), $longOptions, $optind);
 
 $options = array_reduce(
-    array_merge($short_options, $long_options),
+    array_merge($shortOptions, $longOptions),
     function ($carry, $item) {
         $item = rtrim($item, ':');
         $prefix = strlen($item) > 1 ? '--' : '-';
@@ -51,11 +51,13 @@ $auth = $opt['a'] ?? $opt['auth'] ?? null;
 $user = $opt['user'] ?? null;
 $pass = $opt['pass'] ?? null;
 
-$key_types = getKeyTypes($opt, 'key-type', ['all']);
-$cmd_types = getCommandTypes($opt, 'command-type', ['default']);
+$keyTypes = getKeyTypes($opt, 'key-type', ['all']);
+$cmdTypes = getCommandTypes($opt, 'command-type', ['default']);
+
+$canFork = extension_loaded('pcntl');
 
 $threads = Support\System::cpu()->threads;
-$workers = (int) ($opt['workers'] ?? max(1, $threads - 2));
+$workers = (int) ($opt['workers'] ?? max(1, $canFork ? $threads - 2 : 1));
 
 $duration = $opt['duration'] ?? 1.0;
 $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
@@ -71,6 +73,11 @@ if (isset($opt['help'])) {
     exit(0);
 }
 
+if ($workers > 1 && ! $canFork) {
+    fprintf(STDERR, "\n\033[41m ERROR \033[0m The `pcntl` extension is required to benchmark more than one worker.\n");
+    exit(1);
+}
+
 array_splice($argv, 0, $optind);
 
 $benchmarks = array_map(function ($file) {
@@ -81,16 +88,16 @@ $benchmarks = array_map(function ($file) {
     throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Cases/Benchmark*.php') : $argv);
 
-$filter_flags = count($argv) ? Support\Benchmark::ALL : $cmd_types | $key_types;
+$filterFlags = count($argv) ? Support\Benchmark::ALL : $cmdTypes | $keyTypes;
 
-$benchmarks = array_filter($benchmarks, function ($v) use ($filter_flags) {
-    if (($filter_flags & Support\Benchmark::DEFAULT)) {
+$benchmarks = array_filter($benchmarks, function ($v) use ($filterFlags) {
+    if (($filterFlags & Support\Benchmark::DEFAULT)) {
         return $v::flags() & Support\Benchmark::DEFAULT;
     }
 
-    $bench_flags = $v::flags() & ~(Support\Benchmark::DEFAULT);
+    $benchFlags = $v::flags() & ~(Support\Benchmark::DEFAULT);
 
-    return ($bench_flags & $filter_flags) == $bench_flags;
+    return ($benchFlags & $filterFlags) == $benchFlags;
 });
 
 if ($user && $pass) {
