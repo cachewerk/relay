@@ -80,7 +80,7 @@ class RelayCredisAdapter
                     return $this;
                 } else {
                     $this->isMulti = true;
-                    $this->redisMulti = $this->relay->{$name}(...$args);
+                    $this->redisMulti = $this->relay->{$name}() ?: null; // @phpstan-ignore-line
 
                     return $this;
                 }
