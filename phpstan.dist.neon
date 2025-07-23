@@ -1,6 +1,6 @@
 parameters:
 
-  level: max
+  level: 9
 
   paths:
     - benchmarks/
