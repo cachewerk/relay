@@ -25,7 +25,8 @@
     },
     "suggest": {
         "ext-relay": "Required to use package.",
-        "ext-redis": "Required to run benchmarks."
+        "ext-redis": "Required to run benchmarks.",
+        "ext-pcntl": "Required to run benchmarks with multiple workers."
     },
     "autoload": {
         "psr-4": {
