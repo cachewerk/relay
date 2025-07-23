@@ -25,7 +25,7 @@ class RelayClusterConnection extends RelayConnection implements Connection
      */
     public function flushdb()
     {
-        /** @var string $arguments */
+        /** @var string[] $arguments */
         $arguments = func_get_args();
 
         $async = strtoupper((string) ($arguments[0] ?? null)) === 'ASYNC';

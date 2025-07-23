@@ -118,7 +118,7 @@ class Subject
             return $iteration->opsPerSec();
         }, $this->iterations);
 
-        return min($ops);
+        return empty($ops) ? 0 : min($ops);
     }
 
     public function opsTotal(): int

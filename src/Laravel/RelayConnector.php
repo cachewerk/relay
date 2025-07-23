@@ -148,7 +148,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
             $parameters[] = $context;
         }
 
-        $client->{$persistent ? 'pconnect' : 'connect'}(...$parameters);
+        $client->{$persistent ? 'pconnect' : 'connect'}(...$parameters); // @phpstan-ignore-line
     }
 
     /**

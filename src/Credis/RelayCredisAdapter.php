@@ -86,7 +86,7 @@ class RelayCredisAdapter
                 }
             } elseif ($name == 'exec' || $name == 'discard') {
                 $this->isMulti = false;
-                $response = $this->redisMulti->{$name}();
+                $response = $this->redisMulti ? $this->redisMulti->{$name}() : null;
                 $this->redisMulti = null;
 
                 return $response;
