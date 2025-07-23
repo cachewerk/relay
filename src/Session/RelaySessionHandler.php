@@ -78,7 +78,8 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
         if (isset($this->sessionId, $this->sessionData) && $this->sessionId === $id) {
             $data = $this->sessionData;
 
-            unset($this->sessionId, $this->sessionData);
+            $this->sessionId = null;
+            $this->sessionData = null;
 
             return $data;
         }
