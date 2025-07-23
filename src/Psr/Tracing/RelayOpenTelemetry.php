@@ -303,6 +303,7 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
+            /** @var \Relay\Relay $pipe */
             $pipe = $this->relay->{$method}();
 
             foreach ($transaction->commands as $command) {

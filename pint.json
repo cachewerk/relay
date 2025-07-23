@@ -5,6 +5,7 @@
         "spacing": "one"
     },
     "ordered_imports": false,
+    "phpdoc_order": false,
     "no_alternative_syntax": false,
     "no_superfluous_phpdoc_tags": false,
     "no_extra_blank_lines": {

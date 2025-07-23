@@ -29,7 +29,7 @@ class ConcurrentRunner extends Runner
     }
 
     /**
-     * @return array<int, mixed>
+     * @return array<int, int>
      */
     protected function loadOperations(string $method, string $nonce): array
     {
@@ -39,6 +39,7 @@ class ConcurrentRunner extends Runner
             $result[] = unserialize($iteration);
         }
 
+        /** @var array<int, int> $result */
         return $result;
     }
 
@@ -132,7 +133,7 @@ class ConcurrentRunner extends Runner
             $tot_ops,
             ($end - $start) / 1e+6,
             $cmd2 - $cmd1,
-            $max_mem, // @phpstan-ignore-line
+            $max_mem,
             $rx2 - $rx1, $tx2 - $tx1
         );
     }

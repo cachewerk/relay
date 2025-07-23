@@ -13,19 +13,20 @@
         "ext-relay": "*"
     },
     "require-dev": {
-        "illuminate/redis": "^7|^8|^9|^10",
+        "illuminate/redis": "^7|^8|^9|^10|^11|^12",
         "open-telemetry/api": "^1.0",
-        "phpstan/phpstan": "^1.7",
-        "predis/predis": "^1.1|^2.0",
+        "phpstan/phpstan": "^2.0",
+        "predis/predis": "^1.1|^2.0|^3.0",
         "psr/simple-cache": "^1|^2|^3",
-        "symfony/console": "^5.0|^6.0"
+        "symfony/console": "^5.0|^6.0|^7.0"
     },
     "provide": {
         "psr/simple-cache-implementation": "^1|^2|^3"
     },
     "suggest": {
         "ext-relay": "Required to use package.",
-        "ext-redis": "Required to run benchmarks."
+        "ext-redis": "Required to run benchmarks.",
+        "ext-pcntl": "Required to run benchmarks with multiple workers."
     },
     "autoload": {
         "psr-4": {

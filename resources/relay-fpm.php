@@ -1,6 +1,6 @@
 <?php
 
-$refresh = intval($_GET['refresh'] ?? 60);
+$refresh = intval($_GET['refresh'] ?? 60); // @phpstan-ignore-line
 
 $info = \Relay\Relay::stats();
 $license = \Relay\Relay::license();

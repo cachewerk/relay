@@ -67,7 +67,7 @@ class Statistics
         $count = count($values);
         sort($values);
 
-        $mid = floor(($count - 1) / 2);
+        $mid = (int) floor(($count - 1) / 2);
 
         return ($values[$mid] + $values[$mid + 1 - $count % 2]) / 2;
     }

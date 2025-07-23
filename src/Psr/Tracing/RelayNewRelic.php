@@ -215,6 +215,7 @@ class RelayNewRelic
             : 'multi';
 
         return newrelic_record_datastore_segment(function () use ($method, $transaction) {
+            /** @var \Relay\Relay $pipe */
             $pipe = $this->relay->{$method}();
 
             foreach ($transaction->commands as $command) {
