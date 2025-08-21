@@ -29,18 +29,17 @@ class ConcurrentRunner extends Runner
     }
 
     /**
-     * @return array<int, int>
+     * @return list<array{int, int, int, int}>
      */
     protected function loadOperations(string $method, string $nonce): array
     {
-        $result = [];
-
-        foreach ($this->redis->smembers("benchmark_run:{$this->run_id}:{$method}:{$nonce}") as $iteration) {
-            $result[] = unserialize($iteration);
-        }
-
-        /** @var array<int, int> $result */
-        return $result;
+        return array_map(
+            /** @return array{int, int, int, int} */
+            static function (string $iteration): array {
+                return unserialize($iteration);
+            },
+            $this->redis->smembers("benchmark_run:{$this->run_id}:{$method}:{$nonce}")
+        );
     }
 
     protected function blockForWorkers(string $nonce, float $timeout = 1.0): void
