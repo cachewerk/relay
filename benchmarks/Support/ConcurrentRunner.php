@@ -37,6 +37,7 @@ class ConcurrentRunner extends Runner
             static function (string $iteration): array {
                 /** @var array{int, int, int, int} $measurements */
                 $measurements = unserialize($iteration);
+
                 return $measurements;
             },
             $this->redis->smembers("benchmark_run:{$this->run_id}:{$method}:{$nonce}")
