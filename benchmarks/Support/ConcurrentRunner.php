@@ -34,9 +34,10 @@ class ConcurrentRunner extends Runner
     protected function loadOperations(string $method, string $nonce): array
     {
         return array_map(
-            /** @return array{int, int, int, int} */
             static function (string $iteration): array {
-                return unserialize($iteration);
+                /** @var array{int, int, int, int} $measurements */
+                $measurements = unserialize($iteration);
+                return $measurements;
             },
             $this->redis->smembers("benchmark_run:{$this->run_id}:{$method}:{$nonce}")
         );
