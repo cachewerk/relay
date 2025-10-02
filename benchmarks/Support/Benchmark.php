@@ -140,7 +140,7 @@ abstract class Benchmark
 
     /**
      * Generic function to seed keys of whatever type this benchmark operates
-     * against.  Will throw an exception if the command does not operate against
+     * against. Will throw an exception if the command does not operate against
      * a single key type (e.g. DEL).
      *
      * @return string[] An array of string key names.

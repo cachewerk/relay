@@ -3,7 +3,7 @@ FROM archlinux:latest
 RUN pacman -Syu --noconfirm \
   && pacman -S --noconfirm php
 
-ARG RELAY=v0.11.1
+ARG RELAY=v0.12.0
 
 # Install Relay dependencies
 RUN pacman -S --noconfirm \
