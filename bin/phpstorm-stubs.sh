@@ -28,4 +28,5 @@ echo "Adjusting stubs..."
     -e 's/^(\s*)\): ([^;]+);$/\1): \2 {}/' \
     -e 's/^(\s+\*) @alias (.+)$/\1 @see \2()/' \
     -e 's/^(\s+\*) @var \$context array/\1 @example $context array/' \
+    -e '/#\[\\SensitiveParameter\]$/N;s/#\[\\SensitiveParameter\]\s*\n\s*/#[\\SensitiveParameter] /' \
     relay.stub.php
