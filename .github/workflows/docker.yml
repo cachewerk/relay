@@ -34,6 +34,7 @@ jobs:
           - debian/debian11
           - ubuntu/ubuntu20
           - ubuntu/ubuntu24
+          - ubuntu/ubuntu24-zend
           - litespeed/litespeed
           - litespeed/openlitespeed
           - mint21
