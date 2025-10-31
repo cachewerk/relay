@@ -78,7 +78,11 @@ class ConcurrentRunner extends Runner
     protected function runConcurrentOnce(Benchmark $benchmark, Reporter $reporter, Subject $subject, string $class, string $method): Iteration
     {
         $start = hrtime(true);
-        [$rx1, $tx1] = $this->getNetworkStats();
+        if ($method === 'benchmarkMemcached') {
+            [$rx1, $tx1] = $this->getMemcachedNetworkStats();
+        } else {
+            [$rx1, $tx1] = $this->getRedisNetworkStats();
+        }
         $cmd1 = $this->getRedisCommandCount();
 
         $pids = [];
@@ -116,7 +120,11 @@ class ConcurrentRunner extends Runner
             pcntl_waitpid($pid, $status, WUNTRACED);
         }
 
-        [$rx2, $tx2] = $this->getNetworkStats();
+        if ($method === 'benchmarkMemcached') {
+            [$rx2, $tx2] = $this->getMemcachedNetworkStats();
+        } else {
+            [$rx2, $tx2] = $this->getRedisNetworkStats();
+        }
         $cmd2 = $this->getRedisCommandCount();
 
         $end = $max_mem = $tot_ops = 0;
