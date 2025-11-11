@@ -224,10 +224,7 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-
-        if (extension_loaded('redis')) {
-            $this->phpredis = $this->createPhpRedis();
-        }
+        $this->phpredis = $this->createPhpRedis();
     }
 
     /**
@@ -326,9 +323,19 @@ abstract class Benchmark
 
         return new class
         {
-            public function get($key)
+            public function clear(): bool
+            {
+                return apcu_clear_cache();
+            }
+
+            public function get(string $key): mixed
             {
                 return apcu_fetch($key);
+            }
+
+            public function set(string $key, $value): bool
+            {
+                return apcu_store($key, $value);
             }
         };
     }
