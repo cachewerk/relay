@@ -28,7 +28,7 @@ abstract class Reporter
      */
     public static function humanMemory($bytes)
     {
-        $i = (int)floor(log($bytes, 1024));
+        $i = (int) floor(log($bytes, 1024));
 
         return number_format(
             $bytes / pow(1024, $i),
@@ -42,7 +42,7 @@ abstract class Reporter
      */
     public static function humanNumber($number)
     {
-        $i = $number > 0 ? (int)floor(log($number, 1000)) : 0;
+        $i = $number > 0 ? (int) floor(log($number, 1000)) : 0;
 
         return number_format(
             $number / pow(1000, $i),
