@@ -19,6 +19,11 @@ RUN apt-get install -y \
   php8.3-zend-xml
 
 # Install Relay dependencies
+RUN apt-get install -y \
+  libhiredis-dev \
+  libck-dev
+
+# Install Relay dependencies
 RUN pecl install \
   msgpack \
   igbinary
