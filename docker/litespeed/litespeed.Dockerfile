@@ -4,6 +4,21 @@ FROM litespeedtech/litespeed:6.0.8-lsphp74
 ENV PHP_EXT_DIR=/usr/local/lsws/lsphp74/lib/php/20190902/
 ENV PHP_INI_DIR=/usr/local/lsws/lsphp74/etc/php/7.4/mods-available/
 
+RUN apt-get update && apt-get install -y \
+  build-essential
+
+# Install Relay dependencies
+RUN apt-get install -y \
+  libssl-dev
+
+# Install Relay dependency (hiredis)
+RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
+  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
+
+# Install Relay dependency (concurrency kit)
+RUN curl -L https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz | tar -xzC /tmp \
+  && cd /tmp/ck-0.7.2 && ./configure && make -j$(nproc) && make install
+
 ARG RELAY=v0.12.1
 
 # Download Relay
@@ -13,7 +28,7 @@ RUN PLATFORM=$(uname -m | sed 's/_/-/') \
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
   && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay.ini" "$PHP_INI_DIR/60-relay.ini" \
-  && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
+  && cp "/tmp/relay-$RELAY-php7.4-debian-$PLATFORM/relay.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"

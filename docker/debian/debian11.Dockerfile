@@ -32,9 +32,9 @@ RUN apt-get install -y \
   php8.4-msgpack \
   php8.4-igbinary
 
-# Install hiredis-ssl
-RUN wget -c https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz -O - | tar -xzC /tmp \
-  && PREFIX=/usr USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
+# Install Relay dependency (hiredis)
+RUN wget -qO- https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
+  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
 ARG RELAY=v0.12.1
 
