@@ -4,6 +4,20 @@ FROM litespeedtech/litespeed:6.0.8-lsphp74
 ENV PHP_EXT_DIR=/usr/local/lsws/lsphp74/lib/php/20190902/
 ENV PHP_INI_DIR=/usr/local/lsws/lsphp74/etc/php/7.4/mods-available/
 
+RUN apt-get update && apt-get install -y \
+  build-essential \
+  git
+
+# Install Relay dependencies
+RUN apt-get install -y \
+  libck-dev \
+  libssl-dev
+
+# Install hiredis 1.1.0+
+RUN git clone --depth 1 --branch v1.1.0 https://github.com/redis/hiredis.git /tmp/hiredis && \
+  cd /tmp/hiredis && \
+  USE_SSL=1 make -j$(nproc) install
+
 ARG RELAY=v0.12.1
 
 # Download Relay
