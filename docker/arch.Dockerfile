@@ -1,35 +1,29 @@
-FROM archlinux:latest
+FROM archlinux:base-devel
 
 RUN pacman -Syu --noconfirm \
   && pacman -S --noconfirm php
 
-ARG RELAY=v0.12.1
+RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
+  php /tmp/go-pear.phar
 
 # Install Relay dependencies
 RUN pacman -S --noconfirm \
-  base-devel \
-  # hiredis \
   libck \
   lz4
 
-# Install hiredis-ssl
+# Install Relay dependency (hiredis)
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
-  && PREFIX=/usr USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
-
-# Install php-pear
-RUN curl -L https://aur.archlinux.org/cgit/aur.git/snapshot/php-pear.tar.gz | sudo -u nobody tar -xzC /tmp \
-  && pushd /tmp/php-pear \
-  && sudo -u nobody makepkg --skippgpcheck \
-  && pacman -U --noconfirm php-pear-1:1.10.23-2-any.pkg.tar.zst \
-  && popd
+  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
 # Relay requires the `msgpack` extension
 RUN pecl install msgpack \
-  && echo "extension = msgpack.so" > $(php-config --ini-dir)/msgpack.ini
+  && echo "extension = msgpack.so" > $(php-config --ini-dir)/10-msgpack.ini
 
 # Relay requires the `igbinary` extension
 RUN pecl install igbinary \
-  && echo "extension = igbinary.so" > $(php-config --ini-dir)/igbinary.ini
+  && echo "extension = igbinary.so" > $(php-config --ini-dir)/10-igbinary.ini
+
+ARG RELAY=v0.12.1
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
@@ -37,7 +31,7 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
   && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-el9-$ARCH.tar.gz" | tar -xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
-RUN cp "/tmp/relay.ini" "$(php-config --ini-dir)/relay.ini" \
+RUN cp "/tmp/relay.ini" "$(php-config --ini-dir)/20-relay.ini" \
   && cp "/tmp/relay.so" "$(php-config --extension-dir)/relay.so"
 
 # Inject UUID
