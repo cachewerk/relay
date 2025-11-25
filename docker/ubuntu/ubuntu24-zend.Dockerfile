@@ -37,8 +37,8 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
   && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-$ARCH+libssl3.tar.gz" | tar xz --strip-components=1 -C /tmp
 
 # Inject UUID
-RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" /tmp/relay-pkg.so
+RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" /tmp/relay.so
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" /etc/php/8.3/cli/conf.d/40-relay.ini \
-  && cp "/tmp/relay-pkg.so" /usr/lib/php/20230831/relay.so
+  && cp "/tmp/relay.so" /usr/lib/php/20230831/relay.so

@@ -26,7 +26,7 @@ RUN ARCH=$(uname -m | sed 's/_/-/') \
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-pkg.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
