@@ -10,16 +10,15 @@ RUN apt-get install -y \
   curl \
   php-dev
 
-# Install hiredis 1.1.0+
-RUN git clone --depth 1 --branch v1.1.0 https://github.com/redis/hiredis.git /tmp/hiredis && \
-  cd /tmp/hiredis && \
-  USE_SSL=1 make -j$(nproc) install
-
 # Install Relay dependencies
 RUN apt-get install -y \
   libck-dev \
   php-msgpack \
   php-igbinary
+
+# Install Relay dependency (hiredis)
+RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
+  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
 ARG RELAY=v0.12.1
 

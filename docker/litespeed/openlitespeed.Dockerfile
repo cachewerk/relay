@@ -5,18 +5,16 @@ ENV PHP_EXT_DIR=/usr/local/lsws/lsphp81/lib/php/20210902
 ENV PHP_INI_DIR=/usr/local/lsws/lsphp81/etc/php/8.1/mods-available/
 
 RUN apt-get update && apt-get install -y \
-  build-essential \
-  git
+  build-essential
 
 # Install Relay dependencies
 RUN apt-get install -y \
   libck-dev \
   libssl-dev
 
-# Install hiredis 1.1.0+
-RUN git clone --depth 1 --branch v1.1.0 https://github.com/redis/hiredis.git /tmp/hiredis && \
-  cd /tmp/hiredis && \
-  USE_SSL=1 make -j$(nproc) install
+# Install Relay dependency (hiredis)
+RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
+  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
 ARG RELAY=v0.12.1
 
