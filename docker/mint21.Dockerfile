@@ -10,8 +10,14 @@ RUN apt-get install -y \
   curl \
   php-dev
 
+# Install hiredis 1.1.0+
+RUN git clone --depth 1 --branch v1.1.0 https://github.com/redis/hiredis.git /tmp/hiredis && \
+  cd /tmp/hiredis && \
+  USE_SSL=1 make -j$(nproc) install
+
 # Install Relay dependencies
 RUN apt-get install -y \
+  libck-dev \
   php-msgpack \
   php-igbinary
 
@@ -19,7 +25,8 @@ ARG RELAY=v0.12.1
 
 # Download Relay
 RUN PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \
-  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-x86-64+libssl3.tar.gz" | tar xz --strip-components=1 -C /tmp
+  && curl -L "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php$PHP-debian-x86-64+libssl3.tar.gz" | \
+  tar xz --strip-components=1 -C /tmp
 
 # Copy relay.{so,ini}
 RUN cp "/tmp/relay.ini" $(php-config --ini-dir)/30-relay.ini \
