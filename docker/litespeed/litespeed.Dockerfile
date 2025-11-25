@@ -9,12 +9,15 @@ RUN apt-get update && apt-get install -y \
 
 # Install Relay dependencies
 RUN apt-get install -y \
-  libck-dev \
   libssl-dev
 
 # Install Relay dependency (hiredis)
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
   && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
+
+# Install Relay dependency (concurrency kit)
+RUN curl -L https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz | tar -xzC /tmp \
+  && cd /tmp/ck-0.7.2 && ./configure && make -j$(nproc) && make install
 
 ARG RELAY=v0.12.1
 
