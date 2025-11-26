@@ -2,6 +2,7 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use Memcached;
 use Predis\Client as Predis;
 
 class Runner
@@ -16,6 +17,8 @@ class Runner
     protected mixed $auth;
 
     protected Predis $redis;
+
+    protected ?Memcached $memcached;
 
     protected string $run_id;
 
@@ -66,10 +69,24 @@ class Runner
 
         fprintf(
             STDERR,
-            "Connected to Redis (%s) at %s\n\n",
+            "Connected to Redis (%s) at %s\n",
             $this->redis->info()['Server']['redis_version'],
             $this->port ? "tcp://{$host}:{$port}" : "unix:{$host}",
         );
+
+        $this->setUpMemcached();
+
+        if ($this->memcached) {
+            if (($version = $this->memcached->getVersion()) === false) {
+                throw new \ErrorException("Connection refused [tcp://{$host}:11211]");
+            }
+            fprintf(
+                STDERR,
+                "Connected to Memcached (%s) at %s\n",
+                $version["{$host}:11211"],
+                "tcp://{$host}:11211", // TODO: support unix socket
+            );
+        }
     }
 
     protected function setUpRedis(): void
@@ -100,6 +117,23 @@ class Runner
         ]);
     }
 
+    protected function setUpMemcached(): void
+    {
+        if (! extension_loaded('memcached')) {
+            return;
+        }
+
+        $memcached = new Memcached();
+        $memcached->setOptions([
+            Memcached::OPT_CONNECT_TIMEOUT => 500,
+            Memcached::OPT_SEND_TIMEOUT => 500,
+            Memcached::OPT_RECV_TIMEOUT => 500,
+        ]);
+        $memcached->addServer($this->host, 11211);
+
+        $this->memcached = $memcached;
+    }
+
     protected function resetStats(): void
     {
         $this->redis->config('RESETSTAT');
@@ -112,13 +146,26 @@ class Runner
     /**
      * @return array<int, int>
      */
-    protected function getNetworkStats(): array
+    protected function getMemcachedNetworkStats(): array
     {
-        $info = $this->redis->info('STATS')['Stats'];
+        $stats = $this->memcached->getStats()["{$this->host}:11211"];
 
         return [
-            $info['total_net_input_bytes'],
-            $info['total_net_output_bytes'],
+            $stats['bytes_read'],
+            $stats['bytes_written'],
+        ];
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    protected function getRedisNetworkStats(): array
+    {
+        $stats = $this->redis->info('STATS')['Stats'];
+
+        return [
+            $stats['total_net_input_bytes'],
+            $stats['total_net_output_bytes'],
         ];
     }
 
@@ -157,7 +204,11 @@ class Runner
                 $t2 = microtime(true);
             } while ($t2 - $t1 < $this->duration);
 
-            [$rx, $tx] = $this->getNetworkStats();
+            if ($method === 'benchmarkMemcached') {
+                [$rx, $tx] = $this->getMemcachedNetworkStats();
+            } else {
+                [$rx, $tx] = $this->getRedisNetworkStats();
+            }
             $millis = ($t2 - $t1) * 1000;
             $memory = memory_get_peak_usage();
             $cmds = $this->getRedisCommandCount() - $cmds1;

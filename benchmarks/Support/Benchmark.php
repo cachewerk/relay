@@ -3,6 +3,7 @@
 namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Exception;
+use Memcached;
 use Redis as PhpRedis;
 use Relay\Relay;
 use Predis\Client as Predis;
@@ -50,7 +51,9 @@ abstract class Benchmark
 
     protected Predis $predis;
 
-    protected PhpRedis $phpredis;
+    protected ?PhpRedis $phpredis;
+
+    protected ?Memcached $memcached;
 
     /**
      * @param  string  $host
@@ -101,6 +104,9 @@ abstract class Benchmark
     protected function flush(): void
     {
         $this->createPredis()->flushall();
+        if (($memcached = $this->createMemcached()) !== null) {
+            $memcached->flush();
+        }
     }
 
     /**
@@ -150,6 +156,7 @@ abstract class Benchmark
         $keys = [];
 
         $redis = $this->createPredis();
+        $memcached = $this->createMemcached();
         $items = $this->loadJsonFile('meteorites.json');
 
         foreach ($items as $item) {
@@ -157,6 +164,9 @@ abstract class Benchmark
 
             if ($this->flags() & self::STRING) {
                 $redis->set($key, serialize($item));
+                if ($memcached) {
+                    $memcached->set($key, serialize($item));
+                }
             } elseif ($this->flags() & self::LIST) {
                 $redis->rpush($key, $this->flattenArray($item));
             } elseif ($this->flags() & self::HASH) {
@@ -204,10 +214,8 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
-
-        if (extension_loaded('redis')) {
-            $this->phpredis = $this->createPhpRedis();
-        }
+        $this->phpredis = $this->createPhpRedis();
+        $this->memcached = $this->createMemcached();
     }
 
     /**
@@ -220,10 +228,8 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-
-        if (extension_loaded('redis')) {
-            $this->phpredis = $this->createPhpRedis();
-        }
+        $this->phpredis = $this->createPhpRedis();
+        $this->memcached = $this->createMemcached();
     }
 
     /**
@@ -264,8 +270,12 @@ abstract class Benchmark
         return $relay;
     }
 
-    protected function createPhpRedis(): PhpRedis
+    protected function createPhpRedis(): ?PhpRedis
     {
+        if (! extension_loaded('redis')) {
+            return null;
+        }
+
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
@@ -305,17 +315,40 @@ abstract class Benchmark
         ]);
     }
 
+    protected function createMemcached(): ?Memcached
+    {
+        if (! extension_loaded('memcached')) {
+            return null;
+        }
+
+        $memcached = new Memcached();
+        $memcached->setOptions([
+            Memcached::OPT_CONNECT_TIMEOUT => 500,
+            Memcached::OPT_SEND_TIMEOUT => 500,
+            Memcached::OPT_RECV_TIMEOUT => 500,
+        ]);
+        $memcached->addServer($this->host, 11211); // TODO: add CLI options
+
+        return $memcached;
+    }
+
     /**
      * @return array<string>
      */
     public function getBenchmarkMethods(string $filter): array
     {
-        $exclude = null;
+        $exclude = [];
 
-        if (! extension_loaded('redis')) {
-            $exclude = 'PhpRedis';
+        if ($this->phpredis === null) {
+            $exclude[] = 'PhpRedis';
 
             Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
+        }
+
+        if ($this->memcached === null) {
+            $exclude[] = 'Memcached';
+
+            Reporter::printWarning('Skipping Memcached runs, extension is not loaded');
         }
 
         return array_filter(
@@ -327,7 +360,7 @@ abstract class Benchmark
 
                 $method = substr($method, strlen('benchmark'));
 
-                if ($method === $exclude) {
+                if (in_array($method, $exclude, true)) {
                     return false;
                 }
 
@@ -358,5 +391,10 @@ abstract class Benchmark
     public function benchmarkRelay(): int
     {
         return $this->runBenchmark($this->relay);
+    }
+
+    public function benchmarkMemcached(): int
+    {
+        return $this->runBenchmark($this->memcached);
     }
 }
