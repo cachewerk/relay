@@ -23,7 +23,7 @@ RUN pecl install msgpack \
 RUN pecl install igbinary \
   && echo "extension = igbinary.so" > $(php-config --ini-dir)/10-igbinary.ini
 
-ARG RELAY=v0.12.1
+ARG RELAY=v0.20.0
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \

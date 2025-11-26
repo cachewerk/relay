@@ -36,7 +36,7 @@ RUN apt-get install -y \
 RUN wget -qO- https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
   && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
-ARG RELAY=v0.12.1
+ARG RELAY=v0.20.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

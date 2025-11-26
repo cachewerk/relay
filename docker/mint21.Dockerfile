@@ -20,7 +20,7 @@ RUN apt-get install -y \
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
   && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
-ARG RELAY=v0.12.1
+ARG RELAY=v0.20.0
 
 # Download Relay
 RUN PHP=$(php -r 'echo substr(PHP_VERSION, 0, 3);') \

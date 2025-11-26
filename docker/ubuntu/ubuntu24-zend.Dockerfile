@@ -34,7 +34,7 @@ RUN cp /usr/lib/php/8.3-zend/msgpack.so /usr/lib/php/20230831/ \
   && echo "extension=msgpack.so" > /etc/php/8.3/cli/conf.d/30-msgpack.ini \
   && echo "extension=igbinary.so" > /etc/php/8.3/cli/conf.d/30-igbinary.ini
 
-ARG RELAY=v0.12.1
+ARG RELAY=v0.20.0
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \

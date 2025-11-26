@@ -25,7 +25,7 @@ RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | t
 RUN curl -L https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz | tar -xzC /tmp \
   && cd /tmp/ck-0.7.2 && ./configure && make -j$(nproc) && make install
 
-ARG RELAY=v0.12.1
+ARG RELAY=v0.20.0
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
