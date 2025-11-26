@@ -5,6 +5,10 @@ RUN pacman -Syu --noconfirm \
   php-igbinary \
   hiredis
 
+# Install PECL
+RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
+  php /tmp/go-pear.phar
+
 ARG RELAY=v0.12.1
 
 # Relay requires the `msgpack` extension
