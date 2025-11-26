@@ -1,27 +1,10 @@
 FROM archlinux:base-devel
 
 RUN pacman -Syu --noconfirm \
-  && pacman -S --noconfirm php
-
-RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
-  php /tmp/go-pear.phar
-
-# Install Relay dependencies
-RUN pacman -S --noconfirm \
-  libck \
-  lz4
-
-# Install Relay dependency (hiredis)
-RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
-  && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
-
-# Relay requires the `msgpack` extension
-RUN pecl install msgpack \
-  && echo "extension = msgpack.so" > $(php-config --ini-dir)/10-msgpack.ini
-
-# Relay requires the `igbinary` extension
-RUN pecl install igbinary \
-  && echo "extension = igbinary.so" > $(php-config --ini-dir)/10-igbinary.ini
+  && pacman -S --noconfirm php \
+  php-msgpack \
+  php-igbinary \
+  hiredis
 
 ARG RELAY=v0.12.1
 
