@@ -2,19 +2,18 @@ FROM archlinux:base-devel
 
 ARG RELAY=v0.12.1
 
-RUN pacman -Syu --noconfirm \
-  && pacman -S --noconfirm php \
+RUN pacman-key --init \
+  && pacman -Syu --noconfirm \
+  && pacman -S --noconfirm archlinux-keyring \
+  php \
   php-igbinary \
-  hiredis
-
-# Install Relay dependencies
-RUN pacman -S --noconfirm \
+  hiredis \
   libck \
   lz4
 
 # Install Relay dependency (hiredis)
 RUN pacman -U --noconfirm \
-  'https://archive.archlinux.org/packages/h/hiredis/hiredis-1.2.0-1-x86_64.pkg.tar.zst'
+  'https://archive.archlinux.org/packages/h/hiredis/hiredis-1.2.0-3-x86_64.pkg.tar.zst'
 
 # Install PECL
 RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
