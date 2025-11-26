@@ -13,7 +13,7 @@ RUN pacman-key --init \
 
 # Install Relay dependency (hiredis)
 RUN pacman -U --noconfirm \
-  'https://archive.archlinux.org/packages/h/hiredis/hiredis-1.2.0-3-x86_64.pkg.tar.zst'
+  'https://archive.archlinux.org/packages/h/hiredis/hiredis-1.1.0-1-x86_64.pkg.tar.zst'
 
 # Install PECL
 RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
