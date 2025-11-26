@@ -24,22 +24,7 @@ jobs:
           - v0.12.1
           - dev
         build:
-          - alpine
-          - al2
-          - al2023
-          - centos7/centos7
-          - centos8/centos8
-          - centos8/rocky8
-          - el9/el9
-          - debian/debian11
-          - ubuntu/ubuntu20
-          - ubuntu/ubuntu24
-          - ubuntu/ubuntu24-zend
-          - litespeed/litespeed
-          - litespeed/openlitespeed
-          - mint21
-          - sle15
-          - php-cli
+          - arch
 
     services:
       redis:
