@@ -27,6 +27,7 @@ jobs:
           - alpine
           - al2
           - al2023
+          - arch
           - centos7/centos7
           - centos8/centos8
           - centos8/rocky8
