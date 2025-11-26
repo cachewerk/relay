@@ -2,11 +2,14 @@ FROM archlinux:base-devel
 
 RUN pacman -Syu --noconfirm \
   && pacman -S --noconfirm php \
-  php-msgpack \
   php-igbinary \
   hiredis
 
 ARG RELAY=v0.12.1
+
+# Relay requires the `msgpack` extension
+RUN pecl install msgpack \
+  && echo "extension = msgpack.so" > $(php-config --ini-dir)/10-msgpack.ini
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
