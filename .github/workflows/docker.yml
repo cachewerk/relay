@@ -91,8 +91,12 @@ jobs:
         package:
           - apache2
           - centos7/centos7-yum
+          - centos7/centos7-yum-single
           - centos8/centos8-dnf
+          - centos8/centos8-dnf-single
+          - centos8/rocky8-dnf
           - el9/el9-dnf
+          - el9/el9-dnf-single
           - debian/debian11-apt
           - debian/debian12-apt
           - ubuntu/ubuntu22-apt
