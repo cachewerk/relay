@@ -1,4 +1,4 @@
-FROM ubuntu/apache2:2.4-20.04_edge
+FROM ubuntu/apache2:2.4-24.04_edge
 
 RUN apt-get update
 
@@ -13,4 +13,4 @@ RUN apt-get update
 
 # Install Relay (match the PHP version Apache is using)
 RUN apt-get install -y \
-  php7.4-relay
+  php8.3-relay
