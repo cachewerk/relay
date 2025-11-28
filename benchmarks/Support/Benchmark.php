@@ -5,6 +5,7 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 use Exception;
 use Redis as PhpRedis;
 use Relay\Relay;
+use Relay\Table;
 use Predis\Client as Predis;
 
 abstract class Benchmark
@@ -50,7 +51,11 @@ abstract class Benchmark
 
     protected Predis $predis;
 
-    protected PhpRedis $phpredis;
+    protected Table $table;
+
+    protected ?PhpRedis $phpredis;
+
+    protected ?object $apcu;
 
     /**
      * @param  string  $host
@@ -204,10 +209,9 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
-
-        if (extension_loaded('redis')) {
-            $this->phpredis = $this->createPhpRedis();
-        }
+        $this->phpredis = $this->createPhpRedis();
+        $this->table = $this->createRelayTable();
+        $this->apcu = $this->createAPCu();
     }
 
     /**
@@ -220,10 +224,7 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-
-        if (extension_loaded('redis')) {
-            $this->phpredis = $this->createPhpRedis();
-        }
+        $this->phpredis = $this->createPhpRedis();
     }
 
     /**
@@ -264,8 +265,12 @@ abstract class Benchmark
         return $relay;
     }
 
-    protected function createPhpRedis(): PhpRedis
+    protected function createPhpRedis(): ?PhpRedis
     {
+        if (! extension_loaded('redis')) {
+            return null;
+        }
+
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
@@ -305,17 +310,53 @@ abstract class Benchmark
         ]);
     }
 
+    public function createRelayTable(): Table
+    {
+        return new Table;
+    }
+
+    protected function createAPCu(): ?object
+    {
+        if (! extension_loaded('apcu')) {
+            return null;
+        }
+
+        return new class
+        {
+            public function clear(): bool
+            {
+                return apcu_clear_cache();
+            }
+
+            public function get(string $key): mixed
+            {
+                return apcu_fetch($key);
+            }
+
+            public function set(string $key, $value): bool
+            {
+                return apcu_store($key, $value);
+            }
+        };
+    }
+
     /**
      * @return array<string>
      */
     public function getBenchmarkMethods(string $filter): array
     {
-        $exclude = null;
+        $exclude = [];
 
         if (! extension_loaded('redis')) {
-            $exclude = 'PhpRedis';
+            $exclude[] = 'PhpRedis';
 
             Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
+        }
+
+        if (! extension_loaded('apcu')) {
+            $exclude[] = 'APCu';
+
+            Reporter::printWarning('Skipping APCu runs, extension is not loaded');
         }
 
         return array_filter(
@@ -327,7 +368,7 @@ abstract class Benchmark
 
                 $method = substr($method, strlen('benchmark'));
 
-                if ($method === $exclude) {
+                if (in_array($method, $exclude, true)) {
                     return false;
                 }
 
@@ -358,5 +399,15 @@ abstract class Benchmark
     public function benchmarkRelay(): int
     {
         return $this->runBenchmark($this->relay);
+    }
+
+    public function benchmarkRelayTable(): int
+    {
+        return $this->runBenchmark($this->table);
+    }
+
+    public function benchmarkAPCu(): int
+    {
+        return $this->runBenchmark($this->apcu);
     }
 }
