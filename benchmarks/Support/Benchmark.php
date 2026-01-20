@@ -51,9 +51,9 @@ abstract class Benchmark
 
     protected Predis $predis;
 
-    protected Table $table;
-
     protected ?PhpRedis $phpredis;
+
+    protected object $table;
 
     protected ?object $apcu;
 
@@ -225,6 +225,8 @@ abstract class Benchmark
     {
         $this->predis = $this->createPredis();
         $this->phpredis = $this->createPhpRedis();
+        $this->table = $this->createRelayTable();
+        $this->apcu = $this->createAPCu();
     }
 
     /**
@@ -310,9 +312,26 @@ abstract class Benchmark
         ]);
     }
 
-    public function createRelayTable(): Table
+    public function createRelayTable(): object
     {
-        return new Table;
+        return new class
+        {
+            public function clear(): bool
+            {
+                return Table::clearAll();
+            }
+
+            public function get(string $key): mixed
+            {
+                return Table::get($key);
+            }
+
+            public function set(string $key, $value): bool
+            {
+                return Table::set($key, $value);
+            }
+        };
+
     }
 
     protected function createAPCu(): ?object
