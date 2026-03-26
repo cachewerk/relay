@@ -85,6 +85,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    env:
+      RELAY_VERSION: v0.20.0
+
     strategy:
       fail-fast: false
       matrix:
@@ -123,6 +126,17 @@ jobs:
       - name: Show configuration for Relay
         run: |
           docker run ${{ matrix.package }} bash -c "php --ri relay"
+
+      - name: Verify Relay version
+        run: |
+          VERSION=$(docker run ${{ matrix.package }} bash -c "php -r \"echo phpversion('relay');\"")
+          EXPECTED="${{ env.RELAY_VERSION }}"
+          EXPECTED="${EXPECTED#v}"
+          if [[ "$VERSION" != "$EXPECTED" ]]; then
+            echo "::error::Expected version $EXPECTED but got: $VERSION"
+            exit 1
+          fi
+          echo "Relay version: $VERSION"
 
       - name: Run quicktest
         run: |
