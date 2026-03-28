@@ -99,16 +99,30 @@ class RelayOpenTelemetry
             return $this->relay->{$name}(...$arguments);
         }
 
+        $operation = $this->command[$name]
+            ? strtoupper($name)
+            : null;
+
+        $statement = null;
+
+        if ($operation !== null && array_filter($arguments, static fn (mixed $argument): bool => ! is_scalar($argument) && $argument !== null) === []) {
+            $statement = $arguments === []
+                ? $operation
+                : sprintf('%s %s', $operation, implode(' ', array_map(
+                    static fn (mixed $argument): string => match (true) {
+                        $argument === null => 'null',
+                        is_bool($argument) => $argument ? 'true' : 'false',
+                        is_int($argument), is_float($argument), is_string($argument) => (string) $argument,
+                        default => throw new LogicException('Trace statement arguments must be scalar or null'),
+                    },
+                    $arguments
+                )));
+        }
+
         $span = $this->tracer->spanBuilder('Relay::' . strtolower($name))
             ->setAttribute('db.system', 'redis')
-            ->setAttribute('db.operation', $this->command[$name]
-                ? strtoupper($name)
-                : null
-            )
-            ->setAttribute('db.statement', $this->command[$name]
-                ? sprintf('%s %s', $this->command[$name], implode(' ', $arguments))
-                : null
-            )
+            ->setAttribute('db.operation', $operation)
+            ->setAttribute('db.statement', $statement)
             ->setSpanKind(SpanKind::KIND_CLIENT)
             ->startSpan();
 
