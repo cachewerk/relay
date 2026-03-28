@@ -11,10 +11,10 @@ A PSR-22 compatible tracing layer for Relay.
 $relay = new Relay(host: '127.0.0.1', port: 6379);
 
 // use global trace provider
-$client = RelayOpenTelemetry($client);
+$client = new RelayOpenTelemetry(fn () => $relay);
 
 // use custom trace provider
-$client = RelayOpenTelemetry($client, $tracerProvider);
+$client = new RelayOpenTelemetry(fn () => $relay, $tracerProvider);
 
 $users = $client->get('users:count');
 ```
