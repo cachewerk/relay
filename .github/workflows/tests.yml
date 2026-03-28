@@ -86,7 +86,7 @@ jobs:
         working-directory: example-app
         run: |
           composer config repositories.cachewerk/relay path ${{ github.workspace }}
-          composer require cachewerk/relay @dev
+          composer require cachewerk/relay @dev --no-scripts
 
       - name: Make and run test command
         working-directory: example-app
