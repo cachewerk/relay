@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - v0.20.0
+          - v0.21.0
           - dev
         build:
           - alpine
@@ -86,7 +86,7 @@ jobs:
     timeout-minutes: 10
 
     env:
-      RELAY_VERSION: v0.20.0
+      RELAY_VERSION: v0.21.0
 
     strategy:
       fail-fast: false
