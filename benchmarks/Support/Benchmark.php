@@ -6,6 +6,7 @@ use Exception;
 use Redis as PhpRedis;
 use Relay\Relay;
 use Predis\Client as Predis;
+use Predis\Client;
 
 abstract class Benchmark
 {
@@ -82,7 +83,7 @@ abstract class Benchmark
     abstract public static function flags(): int;
 
     /**
-     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  PhpRedis|Relay|Client  $client
      * @return int
      */
     abstract protected function runBenchmark($client): int;

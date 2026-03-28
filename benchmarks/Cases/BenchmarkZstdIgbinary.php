@@ -6,6 +6,7 @@ use Relay\Relay;
 
 use CacheWerk\Relay\Benchmarks\Support\Reporter;
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+use Predis\Client;
 
 class BenchmarkZstdIgbinary extends Benchmark
 {
@@ -55,7 +56,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     }
 
     /**
-     * @param  \Redis|\Relay\Relay  $client
+     * @param  \Redis|Relay  $client
      * @return void
      */
     protected function setSerialization($client): void
@@ -126,7 +127,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     }
 
     /**
-     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  \Redis|Relay|Client  $client
      * @param  array<int, object>  $items
      * @param  bool  $serialize
      * @return void

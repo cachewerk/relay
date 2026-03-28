@@ -6,16 +6,17 @@ namespace CacheWerk\Relay\Laravel;
 
 use Illuminate\Contracts\Redis\Connection;
 use Illuminate\Redis\Connections\PhpRedisConnection;
+use Relay\Relay;
 
 /**
- * @mixin \Relay\Relay
+ * @mixin Relay
  */
 class RelayConnection extends PhpRedisConnection implements Connection
 {
     /**
      * The Redis client.
      *
-     * @var \Relay\Relay
+     * @var Relay
      */
     protected $client;
 

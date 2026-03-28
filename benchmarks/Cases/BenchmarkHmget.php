@@ -3,6 +3,8 @@
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\BenchmarkHashCommand;
+use Predis\Client;
+use Relay\Relay;
 
 class BenchmarkHMGET extends BenchmarkHashCommand
 {
@@ -26,7 +28,7 @@ class BenchmarkHMGET extends BenchmarkHashCommand
     }
 
     /**
-     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  \Redis|Relay|Client  $client
      * @return int
      */
     protected function runBenchmark($client): int

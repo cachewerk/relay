@@ -20,14 +20,14 @@ class RelayOpenTelemetry
     /**
      * The Relay instance.
      *
-     * @var \Relay\Relay
+     * @var Relay
      */
     protected Relay $relay;
 
     /**
      * The OpenTelemetry tracer provider instance.
      *
-     * @var \OpenTelemetry\API\Trace\TracerInterface
+     * @var TracerInterface
      */
     protected TracerInterface $tracer;
 
@@ -49,7 +49,7 @@ class RelayOpenTelemetry
      * Creates a new instance.
      *
      * @param  callable  $client
-     * @param  ?\OpenTelemetry\API\Trace\TracerProviderInterface  $tracerProvider
+     * @param  ?TracerProviderInterface  $tracerProvider
      * @return void
      */
     public function __construct(callable $client, ?TracerProviderInterface $tracerProvider = null)
@@ -254,7 +254,7 @@ class RelayOpenTelemetry
     /**
      * Hijack pipelines.
      *
-     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     * @return Transaction
      */
     public function pipeline()
     {
@@ -265,7 +265,7 @@ class RelayOpenTelemetry
      * Hijack pipelines.
      *
      * @param  int  $mode
-     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     * @return Transaction
      */
     public function multi(int $mode = Relay::MULTI)
     {
@@ -287,7 +287,7 @@ class RelayOpenTelemetry
      *
      * @phpstan-return mixed
      *
-     * @param  \CacheWerk\Relay\Psr\Tracing\Transaction  $transaction
+     * @param  Transaction  $transaction
      * @return array<int, mixed>|bool
      */
     public function executeBufferedTransaction(Transaction $transaction)
@@ -303,7 +303,7 @@ class RelayOpenTelemetry
             ->startSpan();
 
         try {
-            /** @var \Relay\Relay $pipe */
+            /** @var Relay $pipe */
             $pipe = $this->relay->{$method}();
 
             foreach ($transaction->commands as $command) {

@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace CacheWerk\Relay\Laravel;
 
 use Illuminate\Contracts\Redis\Connection;
+use Relay\Cluster;
 
 /**
- * @mixin \Relay\Cluster
+ * @mixin Cluster
  */
 class RelayClusterConnection extends RelayConnection implements Connection
 {
     /**
      * The Redis client.
      *
-     * @var \Relay\Cluster
+     * @var Cluster
      */
     protected $client;
 
