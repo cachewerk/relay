@@ -85,6 +85,7 @@ jobs:
       - name: Install Composer dependencies
         working-directory: example-app
         run: |
+          echo '{"agents":["relay"],"guidelines":false,"mcp":false,"nightwatch_mcp":false,"sail":false,"skills":[]}' > boost.json
           composer config repositories.cachewerk/relay path ${{ github.workspace }}
           composer require cachewerk/relay @dev
 
