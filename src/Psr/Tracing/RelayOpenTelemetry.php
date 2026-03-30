@@ -86,7 +86,7 @@ class RelayOpenTelemetry
      * Executes Relay methods inside OpenTelemetry span.
      *
      * @param  string  $name
-     * @param  array<mixed>  $arguments
+     * @param  array<bool|float|int|string>  $arguments
      * @return mixed
      */
     public function __call(string $name, array $arguments)
