@@ -86,7 +86,7 @@ class RelayOpenTelemetry
      * Executes Relay methods inside OpenTelemetry span.
      *
      * @param  string  $name
-     * @param  array<mixed>  $arguments
+     * @param  array<bool|float|int|string>  $arguments
      * @return mixed
      */
     public function __call(string $name, array $arguments)
@@ -106,7 +106,7 @@ class RelayOpenTelemetry
                 : null
             )
             ->setAttribute('db.statement', $this->command[$name]
-                ? sprintf('%s %s', $this->command[$name], implode(' ', $arguments))
+                ? sprintf('%s %s', $this->command[$name], implode(' ', array_map('strval', $arguments)))
                 : null
             )
             ->setSpanKind(SpanKind::KIND_CLIENT)
