@@ -18,7 +18,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      *
      * @param  array<string, mixed>  $config
      * @param  array<string, mixed>  $options
-     * @return \CacheWerk\Relay\Laravel\RelayConnection
+     * @return RelayConnection
      */
     public function connect(array $config, array $options)
     {
@@ -44,7 +44,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      * @param  array<string, mixed>  $config
      * @param  array<string, mixed>  $clusterOptions
      * @param  array<string, mixed>  $options
-     * @return \CacheWerk\Relay\Laravel\RelayClusterConnection
+     * @return RelayClusterConnection
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
@@ -70,7 +70,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      * Create the Relay client instance.
      *
      * @param  array<int>  $config
-     * @return \Relay\Relay
+     * @return Relay
      */
     protected function createClient(array $config)
     {
@@ -156,7 +156,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      *
      * @param  array<int, string>  $servers
      * @param  array<string, mixed>  $options
-     * @return \Relay\Cluster
+     * @return Cluster
      */
     protected function createRedisClusterInstance(array $servers, array $options)
     {

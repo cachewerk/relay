@@ -82,7 +82,7 @@ abstract class Benchmark
     abstract public static function flags(): int;
 
     /**
-     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  PhpRedis|Relay|Predis  $client
      * @return int
      */
     abstract protected function runBenchmark($client): int;

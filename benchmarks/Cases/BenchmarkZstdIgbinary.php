@@ -2,7 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
+use Redis as PhpRedis;
 use Relay\Relay;
+use Predis\Client as Predis;
 
 use CacheWerk\Relay\Benchmarks\Support\Reporter;
 use CacheWerk\Relay\Benchmarks\Support\Benchmark;
@@ -55,7 +57,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     }
 
     /**
-     * @param  \Redis|\Relay\Relay  $client
+     * @param  PhpRedis|Relay  $client
      * @return void
      */
     protected function setSerialization($client): void
@@ -126,7 +128,7 @@ class BenchmarkZstdIgbinary extends Benchmark
     }
 
     /**
-     * @param  \Redis|\Relay\Relay|\Predis\Client  $client
+     * @param  PhpRedis|Relay|Predis  $client
      * @param  array<int, object>  $items
      * @param  bool  $serialize
      * @return void

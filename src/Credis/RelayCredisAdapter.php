@@ -14,7 +14,7 @@ class RelayCredisAdapter
     /**
      * The Relay client.
      *
-     * @var \Relay\Relay
+     * @var Relay
      */
     protected $relay;
 
@@ -32,14 +32,14 @@ class RelayCredisAdapter
      *
      * @see Credis_Client::__call()
      *
-     * @var \Relay\Relay|null
+     * @var Relay|null
      */
     protected $redisMulti = null;
 
     /**
      * Create a new instance.
      *
-     * @param  \Relay\Relay  $relay
+     * @param  Relay  $relay
      * @return void
      */
     public function __construct(Relay $relay)
@@ -50,7 +50,7 @@ class RelayCredisAdapter
     /**
      * Hijack method.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function connect(): void
     {

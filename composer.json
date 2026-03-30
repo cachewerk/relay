@@ -14,6 +14,7 @@
     },
     "require-dev": {
         "illuminate/redis": "^7|^8|^9|^10|^11|^12",
+        "laravel/pint": "^1.29",
         "open-telemetry/api": "^1.0",
         "phpstan/phpstan": "^2.0",
         "predis/predis": "^1.1|^2.0|^3.0",

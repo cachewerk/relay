@@ -16,7 +16,7 @@ class RelayNewRelic
     /**
      * The Relay instance.
      *
-     * @var \Relay\Relay
+     * @var Relay
      */
     protected Relay $relay;
 
@@ -172,7 +172,7 @@ class RelayNewRelic
     /**
      * Hijack pipelines.
      *
-     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     * @return Transaction
      */
     public function pipeline()
     {
@@ -183,7 +183,7 @@ class RelayNewRelic
      * Hijack pipelines.
      *
      * @param  int  $mode
-     * @return \CacheWerk\Relay\Psr\Tracing\Transaction
+     * @return Transaction
      */
     public function multi(int $mode = Relay::MULTI)
     {
@@ -205,7 +205,7 @@ class RelayNewRelic
      *
      * @phpstan-return mixed
      *
-     * @param  \CacheWerk\Relay\Psr\Tracing\Transaction  $transaction
+     * @param  Transaction  $transaction
      * @return array<int, mixed>|bool
      */
     public function executeBufferedTransaction(Transaction $transaction)
@@ -215,7 +215,7 @@ class RelayNewRelic
             : 'multi';
 
         return newrelic_record_datastore_segment(function () use ($method, $transaction) {
-            /** @var \Relay\Relay $pipe */
+            /** @var Relay $pipe */
             $pipe = $this->relay->{$method}();
 
             foreach ($transaction->commands as $command) {

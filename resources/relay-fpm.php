@@ -1,9 +1,11 @@
 <?php
 
+use Relay\Relay;
+
 $refresh = intval($_GET['refresh'] ?? 60); // @phpstan-ignore-line
 
-$info = \Relay\Relay::stats();
-$license = \Relay\Relay::license();
+$info = Relay::stats();
+$license = Relay::license();
 
 $mem = $info['memory'];
 $endpoints = $info['endpoints'];
