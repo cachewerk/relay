@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
+use Relay\Relay;
+
 use Illuminate\Contracts\Redis\Connection;
 use Illuminate\Redis\Connections\PhpRedisConnection;
-use Relay\Relay;
 
 /**
  * @mixin Relay

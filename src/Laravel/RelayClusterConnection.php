@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
-use Illuminate\Contracts\Redis\Connection;
 use Relay\Cluster;
+
+use Illuminate\Contracts\Redis\Connection;
 
 /**
  * @mixin Cluster
