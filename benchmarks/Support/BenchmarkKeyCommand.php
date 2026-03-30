@@ -2,6 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use Predis\Client;
+use Relay\Relay;
+
 abstract class BenchmarkKeyCommand extends Benchmark
 {
     /**
@@ -20,7 +23,7 @@ abstract class BenchmarkKeyCommand extends Benchmark
     }
 
     /**
-     * @param  \Relay\Relay|\Redis|\Predis\Client  $client
+     * @param  Relay|\Redis|Client  $client
      */
     protected function runBenchmark($client): int
     {
