@@ -2,13 +2,17 @@ FROM php:8.2-cli
 
 ARG RELAY=^0.21.0
 
+# Install PIE dependencies
+RUN apt-get update && apt-get install -y \
+  git \
+  uuid-runtime
+
 # Install PIE
 RUN curl -fsSL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
   && chmod +x /usr/local/bin/pie
 
 # Install Relay dependencies
-RUN apt-get update && apt-get install -y \
-  git \
+RUN apt-get install -y \
   libhiredis-dev \
   libck-dev \
   libssl-dev
