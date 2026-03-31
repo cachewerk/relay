@@ -7,6 +7,10 @@ RUN apt-get update && apt-get install -y \
   libck-dev \
   && rm -rf /var/lib/apt/lists/*
 
+# Install igbinary and msgpack (required by Relay)
+RUN pecl install igbinary msgpack \
+  && docker-php-ext-enable igbinary msgpack
+
 # Install PIE
 RUN curl -fsSL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
   && chmod +x /usr/local/bin/pie
