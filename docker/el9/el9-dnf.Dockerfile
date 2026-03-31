@@ -6,11 +6,11 @@ RUN dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 RUN dnf update -y
 
 RUN dnf install -y \
-  php82-php-cli \
-  php82-syspaths
+  php85-php-cli \
+  php85-syspaths
 
 # Add Relay repository
 RUN curl -s -o /etc/yum.repos.d/cachewerk.repo "https://repos.r2.relay.so/rpm/el.repo"
 
 # Install Relay
-RUN dnf install -y php82-php-relay
+RUN dnf install -y php85-php-relay

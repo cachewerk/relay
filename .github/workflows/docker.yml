@@ -137,6 +137,7 @@ jobs:
             exit 1
           fi
           echo "Relay version: $VERSION"
+          docker run ${{ matrix.package }} php --version
 
       - name: Run quicktest
         run: |

@@ -22,15 +22,15 @@ RUN apt-get update
 RUN ln -s /bin/sed /usr/bin/sed
 
 RUN apt-get install -y \
-  php8.4-dev
+  php8.5-dev
 
 # Install Relay dependencies
 RUN apt-get install -y \
   lz4 \
   zstd \
   libck-dev \
-  php8.4-msgpack \
-  php8.4-igbinary
+  php8.5-msgpack \
+  php8.5-igbinary
 
 # Install Relay dependency (hiredis)
 RUN wget -qO- https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
@@ -40,12 +40,12 @@ ARG RELAY=v0.21.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.4-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
+  && wget -c "https://builds.r2.relay.so/$RELAY/relay-$RELAY-php8.5-debian-$PLATFORM.tar.gz" -O - | tar xz -C /tmp
 
 # Copy relay.{so,ini}
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
-  && cp "/tmp/relay-$RELAY-php8.4-debian-$PLATFORM/relay.ini" $(php-config --ini-dir)/30-relay.ini \
-  && cp "/tmp/relay-$RELAY-php8.4-debian-$PLATFORM/relay.so" $(php-config --extension-dir)/relay.so
+  && cp "/tmp/relay-$RELAY-php8.5-debian-$PLATFORM/relay.ini" $(php-config --ini-dir)/30-relay.ini \
+  && cp "/tmp/relay-$RELAY-php8.5-debian-$PLATFORM/relay.so" $(php-config --extension-dir)/relay.so
 
 # Inject UUID
 RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
