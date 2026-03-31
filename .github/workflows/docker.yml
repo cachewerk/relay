@@ -101,8 +101,8 @@ jobs:
           - ubuntu/ubuntu22-apt
           - litespeed/lsphp-apt
           - litespeed/lsphp-dnf
-          - pie/php82
-          - pie/php85
+          - pie/pinned
+          - pie/latest
 
     services:
       redis:
@@ -130,7 +130,7 @@ jobs:
           docker run ${{ matrix.package }} bash -c "php --ri relay"
 
       - name: Verify Relay version
-        if: ${{ !startsWith(matrix.package, 'pie/') }}
+        if: ${{ matrix.package != 'pie/pinned' }}
         run: |
           VERSION=$(docker run ${{ matrix.package }} bash -c "php -r \"echo phpversion('relay');\"")
           EXPECTED="${{ env.RELAY_VERSION }}"
