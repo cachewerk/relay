@@ -101,6 +101,8 @@ jobs:
           - ubuntu/ubuntu22-apt
           - litespeed/lsphp-apt
           - litespeed/lsphp-dnf
+          - pie/php82
+          - pie/php85
 
     services:
       redis:
@@ -128,6 +130,7 @@ jobs:
           docker run ${{ matrix.package }} bash -c "php --ri relay"
 
       - name: Verify Relay version
+        if: ${{ !startsWith(matrix.package, 'pie/') }}
         run: |
           VERSION=$(docker run ${{ matrix.package }} bash -c "php -r \"echo phpversion('relay');\"")
           EXPECTED="${{ env.RELAY_VERSION }}"
@@ -147,50 +150,3 @@ jobs:
             --env REDIS_HOST=$REDIS_HOST \
             ${{ matrix.package }} \
             bash -c "php /root/relay/.github/workflows/support/quicktest.php"
-
-  pie:
-
-    name: PIE
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    strategy:
-      fail-fast: false
-      matrix:
-        build:
-          - pie/php85
-          - pie/php82
-
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 1s
-          --health-timeout 1s
-          --health-retries 5
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Build images
-        run: |
-          docker build --pull \
-            --tag ${{ matrix.build }} \
-            --file docker/${{ matrix.build }}.Dockerfile .
-
-      - name: Show configuration for Relay
-        run: |
-          docker run ${{ matrix.build }} php --ri relay
-
-      - name: Run quicktest
-        run: |
-          docker run \
-            --network="host" \
-            --volume $(pwd):/root/relay/ \
-            --env REDIS_HOST=$REDIS_HOST \
-            ${{ matrix.build }} \
-            php /root/relay/.github/workflows/support/quicktest.php
