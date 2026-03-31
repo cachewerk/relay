@@ -20,7 +20,7 @@ RUN pecl install igbinary msgpack \
 # Install Relay
 RUN pie install "cachewerk/ext-relay:${RELAY}"
 
-# Verify installed version
+# Verify version (optional)
 RUN INSTALLED=$(php -r "echo phpversion('relay');") \
   && EXPECTED="${RELAY#v}" \
   && if [ "$INSTALLED" != "$EXPECTED" ]; then echo "Expected $EXPECTED but got $INSTALLED"; exit 1; fi
