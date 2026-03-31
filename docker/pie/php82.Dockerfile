@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-ARG RELAY=0.21.0
+ARG RELAY=^0.20.0
 
 # Install Relay's required libraries and uuidgen for PIE's config.m4
 RUN apt-get update && apt-get install -y \
