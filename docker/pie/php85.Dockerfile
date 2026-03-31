@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
   uuid-runtime \
   libhiredis-dev \
   libck-dev \
+  libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install igbinary and msgpack (required by Relay)
