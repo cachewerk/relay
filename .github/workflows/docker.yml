@@ -123,7 +123,8 @@ jobs:
         run: |
           docker build --pull \
             --tag ${{ matrix.package }} \
-            --file docker/${{ matrix.package }}.Dockerfile .
+            --file docker/${{ matrix.package }}.Dockerfile \
+            ${{ matrix.package == 'pie/pie-latest' && format('--build-arg RELAY={0}', env.RELAY_VERSION) || '' }} .
 
       - name: Show configuration for Relay
         run: |
