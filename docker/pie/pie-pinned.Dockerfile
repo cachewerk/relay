@@ -1,14 +1,10 @@
 FROM php:8.2-cli
 
-ARG RELAY=^0.21.0
-
-# Install PIE dependencies
-RUN apt-get update && apt-get install -y \
-  git \
-  uuid-runtime
+ARG RELAY=0.20.0
 
 # Install PIE
-RUN curl -fsSL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
+RUN apt-get update && apt-get install -y git uuid-runtime \
+  && curl -fsSL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
   && chmod +x /usr/local/bin/pie
 
 # Install Relay dependencies
@@ -22,4 +18,9 @@ RUN pecl install igbinary msgpack \
   && docker-php-ext-enable igbinary msgpack
 
 # Install Relay
-RUN pie install "cachewerk/ext-relay:$RELAY"
+RUN pie install "cachewerk/ext-relay:${RELAY}"
+
+# Verify installed version
+RUN INSTALLED=$(php -r "echo phpversion('relay');") \
+  && EXPECTED="${RELAY#v}" \
+  && if [ "$INSTALLED" != "$EXPECTED" ]; then echo "Expected $EXPECTED but got $INSTALLED"; exit 1; fi
