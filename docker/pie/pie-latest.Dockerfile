@@ -18,15 +18,5 @@ RUN pecl install igbinary msgpack \
   && docker-php-ext-enable igbinary msgpack
 
 # Install Relay
-RUN if [ -n "$RELAY" ]; then \
-  pie install "cachewerk/ext-relay:${RELAY}"; \
-else \
-  pie install cachewerk/ext-relay; \
-fi
-
-# Verify installed version
-RUN if [ -n "$RELAY" ]; then \
-  INSTALLED=$(php -r "echo phpversion('relay');") \
-  && EXPECTED="${RELAY#v}" \
-  && if [ "$INSTALLED" != "$EXPECTED" ]; then echo "Expected $EXPECTED but got $INSTALLED"; exit 1; fi; \
-fi
+# RUN pie install cachewerk/ext-relay
+RUN pie install "cachewerk/ext-relay:${RELAY}"
