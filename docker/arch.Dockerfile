@@ -8,8 +8,10 @@ RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
 
 # Install Relay dependencies
 RUN pacman -S --noconfirm \
-  libck \
   lz4
+
+RUN curl -L https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz | tar -xzC /tmp \
+  && cd /tmp/ck-0.7.2 && ./configure && make install
 
 # Install Relay dependency (hiredis)
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
