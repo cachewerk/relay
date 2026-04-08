@@ -10,7 +10,7 @@
     },
     "require": {
         "php": "^7.4|^8.0",
-        "ext-relay": ">=0.21.0"
+        "ext-relay": "*"
     },
     "require-dev": {
         "illuminate/redis": "^7|^8|^9|^10|^11|^12|^13",

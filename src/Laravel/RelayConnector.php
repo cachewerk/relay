@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
+use InvalidArgumentException;
+
 use Relay\Relay;
 use Relay\Cluster;
-
-use InvalidArgumentException;
 
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Redis\Connector;

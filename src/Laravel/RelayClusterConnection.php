@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
+use InvalidArgumentException;
+
 use Relay\Cluster;
 
 use Illuminate\Contracts\Redis\Connection;
-use InvalidArgumentException;
 
 /**
  * @mixin Cluster
