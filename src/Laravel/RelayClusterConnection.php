@@ -25,9 +25,9 @@ class RelayClusterConnection extends RelayConnection implements Connection
     /**
      * The default node to use from the cluster.
      *
-     * @var string|array<mixed>
+     * @var string|array<mixed>|null
      */
-    protected $defaultNode;
+    protected $defaultNode = null;
 
     /**
      * Scan all keys based on the given options.
@@ -40,10 +40,16 @@ class RelayClusterConnection extends RelayConnection implements Connection
      */
     public function scan($cursor, $options = [])
     {
+        /** @var string|array<mixed> $node */
+        $node = $options['node'] ?? $this->defaultNode();
+
+        /** @var int $count */
+        $count = $options['count'] ?? 10;
+
         $result = $this->client->scan($cursor,
-            $options['node'] ?? $this->defaultNode(),
+            $node,
             $options['match'] ?? '*',
-            $options['count'] ?? 10
+            $count
         );
 
         if ($result === false) {
