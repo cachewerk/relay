@@ -7,6 +7,7 @@ namespace CacheWerk\Relay\Laravel;
 use Relay\Cluster;
 
 use Illuminate\Contracts\Redis\Connection;
+use InvalidArgumentException;
 
 /**
  * @mixin Cluster
@@ -19,6 +20,37 @@ class RelayClusterConnection extends RelayConnection implements Connection
      * @var Cluster
      */
     protected $client;
+
+    /**
+     * The default node to use from the cluster.
+     *
+     * @var string|array<mixed>
+     */
+    protected $defaultNode;
+
+    /**
+     * Scan all keys based on the given options.
+     *
+     * @param  mixed  $cursor
+     * @param  array<string, mixed>  $options
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function scan($cursor, $options = [])
+    {
+        $result = $this->client->scan($cursor,
+            $options['node'] ?? $this->defaultNode(),
+            $options['match'] ?? '*',
+            $options['count'] ?? 10
+        );
+
+        if ($result === false) {
+            $result = [];
+        }
+
+        return $cursor === 0 && empty($result) ? false : [$cursor, $result];
+    }
 
     /**
      * Flush the selected Redis database on all master nodes.
@@ -37,5 +69,23 @@ class RelayClusterConnection extends RelayConnection implements Connection
                 ? $this->command('rawCommand', [$master, 'flushdb', 'async'])
                 : $this->command('flushdb', [$master]);
         }
+    }
+
+    /**
+     * Return default node to use for cluster.
+     *
+     * @return string|array<mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function defaultNode()
+    {
+        if (! isset($this->defaultNode)) {
+            $this->defaultNode = $this->client->_masters()[0] ?? throw new InvalidArgumentException(
+                'Unable to determine default node. No master nodes found in the cluster.'
+            );
+        }
+
+        return $this->defaultNode;
     }
 }
