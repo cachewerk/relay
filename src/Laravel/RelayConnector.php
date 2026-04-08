@@ -7,6 +7,8 @@ namespace CacheWerk\Relay\Laravel;
 use Relay\Relay;
 use Relay\Cluster;
 
+use InvalidArgumentException;
+
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Redis\Connector;
 use Illuminate\Redis\Connectors\PhpRedisConnector;
@@ -85,7 +87,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
         }
 
         if (array_key_exists('backoff_algorithm', $config)) {
-            $client->setOption(Relay::OPT_BACKOFF_ALGORITHM, $config['backoff_algorithm']);
+            $client->setOption(Relay::OPT_BACKOFF_ALGORITHM, $this->parseBackoffAlgorithm($config['backoff_algorithm']));
         }
 
         if (array_key_exists('backoff_base', $config)) {
@@ -229,5 +231,35 @@ class RelayConnector extends PhpRedisConnector implements Connector
         }
 
         return $client;
+    }
+
+    /**
+     * Parse a "friendly" backoff algorithm name into an integer.
+     *
+     * @param  mixed  $algorithm
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function parseBackoffAlgorithm($algorithm)
+    {
+        if (is_int($algorithm)) {
+            return $algorithm;
+        }
+
+        $algorithms = [
+            'default' => Relay::BACKOFF_ALGORITHM_DEFAULT,
+            'decorrelated_jitter' => Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER,
+            'equal_jitter' => Relay::BACKOFF_ALGORITHM_EQUAL_JITTER,
+            'exponential' => Relay::BACKOFF_ALGORITHM_EXPONENTIAL,
+            'uniform' => Relay::BACKOFF_ALGORITHM_UNIFORM,
+            'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
+        ];
+
+        if (! isset($algorithms[$algorithm])) {
+            throw new InvalidArgumentException("Algorithm [{$algorithm}] is not a valid backoff algorithm.");
+        }
+
+        return $algorithms[$algorithm];
     }
 }
