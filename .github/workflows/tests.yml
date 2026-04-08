@@ -49,9 +49,20 @@ jobs:
 
   laravel:
 
-    name: Laravel
+    name: Laravel ${{ matrix.laravel }} (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
     timeout-minutes: 5
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - laravel: '11'
+            php: '8.2'
+          - laravel: '12'
+            php: '8.2'
+          - laravel: '13'
+            php: '8.3'
 
     services:
       redis:
@@ -71,23 +82,19 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php }}
           extensions: redis, relay
           tools: composer
           coverage: none
 
-      - name: Install Laravel installer
-        run: composer require laravel/installer --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Install Laravel example app
-        run: composer exec laravel new example-app
+      - name: Create Laravel app
+        run: composer create-project laravel/laravel example-app "^${{ matrix.laravel }}.0" --no-interaction --prefer-dist
 
       - name: Install Composer dependencies
         working-directory: example-app
         run: |
-          echo '{"agents":["relay"],"guidelines":false,"mcp":false,"nightwatch_mcp":false,"sail":false,"skills":[]}' > boost.json
           composer config repositories.cachewerk/relay path ${{ github.workspace }}
-          composer require cachewerk/relay @dev
+          composer require cachewerk/relay @dev --no-interaction
 
       - name: Make and run test command
         working-directory: example-app
