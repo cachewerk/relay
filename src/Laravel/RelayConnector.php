@@ -80,6 +80,22 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         $client->setOption(Relay::OPT_PHPREDIS_COMPATIBILITY, true);
 
+        if (array_key_exists('max_retries', $config)) {
+            $client->setOption(Relay::OPT_MAX_RETRIES, $config['max_retries']);
+        }
+
+        if (array_key_exists('backoff_algorithm', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_ALGORITHM, $config['backoff_algorithm']);
+        }
+
+        if (array_key_exists('backoff_base', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_BASE, $config['backoff_base']);
+        }
+
+        if (array_key_exists('backoff_cap', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_CAP, $config['backoff_cap']);
+        }
+
         if (! empty($config['password'])) {
             if (isset($config['username']) && $config['username'] !== '' && is_string($config['password'])) {
                 $client->auth([$config['username'], $config['password']]);
@@ -118,6 +134,14 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         if (array_key_exists('compression_level', $config)) {
             $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $config['compression_level']);
+        }
+
+        if (! empty($config['tcp_keepalive'])) {
+            $client->setOption(Relay::OPT_TCP_KEEPALIVE, $config['tcp_keepalive']);
+        }
+
+        if (defined('Relay\Relay::OPT_PACK_IGNORE_NUMBERS') && array_key_exists('pack_ignore_numbers', $config)) {
+            $client->setOption(Relay::OPT_PACK_IGNORE_NUMBERS, $config['pack_ignore_numbers']);
         }
 
         return $client;
@@ -198,6 +222,10 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         if (array_key_exists('compression_level', $options)) {
             $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $options['compression_level']);
+        }
+
+        if (! empty($options['tcp_keepalive'])) {
+            $client->setOption(Relay::OPT_TCP_KEEPALIVE, $options['tcp_keepalive']);
         }
 
         return $client;
