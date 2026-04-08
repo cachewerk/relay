@@ -35,7 +35,7 @@ class RelayClusterConnection extends RelayConnection implements Connection
      * @param  array<string, mixed>  $options
      * @return mixed
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function scan($cursor, $options = [])
     {
@@ -76,7 +76,7 @@ class RelayClusterConnection extends RelayConnection implements Connection
      *
      * @return string|array<mixed>
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function defaultNode()
     {

@@ -239,7 +239,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
      * @param  mixed  $algorithm
      * @return int
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function parseBackoffAlgorithm($algorithm)
     {
