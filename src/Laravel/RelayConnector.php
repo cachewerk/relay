@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel;
 
+use InvalidArgumentException;
+
 use Relay\Relay;
 use Relay\Cluster;
 
@@ -80,6 +82,22 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         $client->setOption(Relay::OPT_PHPREDIS_COMPATIBILITY, true);
 
+        if (array_key_exists('max_retries', $config)) {
+            $client->setOption(Relay::OPT_MAX_RETRIES, $config['max_retries']);
+        }
+
+        if (array_key_exists('backoff_algorithm', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_ALGORITHM, $this->parseBackoffAlgorithm($config['backoff_algorithm']));
+        }
+
+        if (array_key_exists('backoff_base', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_BASE, $config['backoff_base']);
+        }
+
+        if (array_key_exists('backoff_cap', $config)) {
+            $client->setOption(Relay::OPT_BACKOFF_CAP, $config['backoff_cap']);
+        }
+
         if (! empty($config['password'])) {
             if (isset($config['username']) && $config['username'] !== '' && is_string($config['password'])) {
                 $client->auth([$config['username'], $config['password']]);
@@ -118,6 +136,14 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         if (array_key_exists('compression_level', $config)) {
             $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $config['compression_level']);
+        }
+
+        if (! empty($config['tcp_keepalive'])) {
+            $client->setOption(Relay::OPT_TCP_KEEPALIVE, $config['tcp_keepalive']);
+        }
+
+        if (defined('Relay\Relay::OPT_PACK_IGNORE_NUMBERS') && array_key_exists('pack_ignore_numbers', $config)) {
+            $client->setOption(Relay::OPT_PACK_IGNORE_NUMBERS, $config['pack_ignore_numbers']);
         }
 
         return $client;
@@ -200,6 +226,40 @@ class RelayConnector extends PhpRedisConnector implements Connector
             $client->setOption(Relay::OPT_COMPRESSION_LEVEL, $options['compression_level']);
         }
 
+        if (! empty($options['tcp_keepalive'])) {
+            $client->setOption(Relay::OPT_TCP_KEEPALIVE, $options['tcp_keepalive']);
+        }
+
         return $client;
+    }
+
+    /**
+     * Parse a "friendly" backoff algorithm name into an integer.
+     *
+     * @param  int|string  $algorithm
+     * @return int
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function parseBackoffAlgorithm($algorithm)
+    {
+        if (is_int($algorithm)) {
+            return $algorithm;
+        }
+
+        $algorithms = [
+            'default' => Relay::BACKOFF_ALGORITHM_DEFAULT,
+            'decorrelated_jitter' => Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER,
+            // 'equal_jitter' => Relay::BACKOFF_ALGORITHM_EQUAL_JITTER,
+            // 'exponential' => Relay::BACKOFF_ALGORITHM_EXPONENTIAL,
+            // 'uniform' => Relay::BACKOFF_ALGORITHM_UNIFORM,
+            // 'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
+        ];
+
+        if (! isset($algorithms[$algorithm])) {
+            throw new InvalidArgumentException("Algorithm [{$algorithm}] is not a valid backoff algorithm.");
+        }
+
+        return $algorithms[$algorithm];
     }
 }
