@@ -250,10 +250,10 @@ class RelayConnector extends PhpRedisConnector implements Connector
         $algorithms = [
             'default' => Relay::BACKOFF_ALGORITHM_DEFAULT,
             'decorrelated_jitter' => Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER,
-            'equal_jitter' => Relay::BACKOFF_ALGORITHM_EQUAL_JITTER,
-            'exponential' => Relay::BACKOFF_ALGORITHM_EXPONENTIAL,
-            'uniform' => Relay::BACKOFF_ALGORITHM_UNIFORM,
-            'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
+            // 'equal_jitter' => Relay::BACKOFF_ALGORITHM_EQUAL_JITTER,
+            // 'exponential' => Relay::BACKOFF_ALGORITHM_EXPONENTIAL,
+            // 'uniform' => Relay::BACKOFF_ALGORITHM_UNIFORM,
+            // 'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
         ];
 
         if (! isset($algorithms[$algorithm])) {
