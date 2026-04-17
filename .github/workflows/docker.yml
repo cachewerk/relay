@@ -41,6 +41,7 @@ jobs:
           - mint21
           - sle15
           - php-cli
+          - frankenphp
 
     services:
       redis:
