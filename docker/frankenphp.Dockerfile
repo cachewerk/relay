@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 # Relay requires the `msgpack` and `igbinary` extension
 RUN install-php-extensions igbinary msgpack
 
-ARG RELAY=v0.21.0
+ARG RELAY=v0.22.0
 
 # Download and install Relay
 # RUN install-php-extensions "relay${RELAY:+-$RELAY}"
