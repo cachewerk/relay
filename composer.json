@@ -1,6 +1,6 @@
 {
     "name": "cachewerk/relay",
-    "description": "The next-generation caching layer for PHP.",
+    "description": "The fastest Redis client for PHP. 100× faster cache reads, near-zero bandwidth, no code changes required.",
     "type": "library",
     "license": "MIT",
     "scripts": {
