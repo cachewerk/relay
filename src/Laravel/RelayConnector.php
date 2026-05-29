@@ -202,6 +202,8 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         $client = new Cluster(...$parameters); // @phpstan-ignore-line
 
+        $client->setOption(Relay::OPT_PHPREDIS_COMPATIBILITY, true);
+
         if (! empty($options['prefix'])) {
             $client->setOption(Relay::OPT_PREFIX, $options['prefix']);
         }
@@ -266,11 +268,16 @@ class RelayConnector extends PhpRedisConnector implements Connector
         $algorithms = [
             'default' => Relay::BACKOFF_ALGORITHM_DEFAULT,
             'decorrelated_jitter' => Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER,
-            // 'equal_jitter' => Relay::BACKOFF_ALGORITHM_EQUAL_JITTER,
-            // 'exponential' => Relay::BACKOFF_ALGORITHM_EXPONENTIAL,
-            // 'uniform' => Relay::BACKOFF_ALGORITHM_UNIFORM,
-            // 'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
         ];
+
+        // Algorithms added in newer Relay builds; guard so older extensions don't fatal on the constant.
+        foreach (['full_jitter', 'equal_jitter', 'exponential', 'uniform', 'constant'] as $name) {
+            $constant = 'Relay\Relay::BACKOFF_ALGORITHM_'.strtoupper($name);
+
+            if (defined($constant)) {
+                $algorithms[$name] = (int) constant($constant);
+            }
+        }
 
         if (is_string($algorithm) && isset($algorithms[$algorithm])) {
             return $algorithms[$algorithm];
