@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace CacheWerk\Relay\Laravel\Concerns;
 
+use Illuminate\Redis\Connections\PhpRedisConnection;
+
 /**
  * Relay-specific methods shared by the single and cluster connections.
  *
- * @mixin \Illuminate\Redis\Connections\PhpRedisConnection
+ * @mixin PhpRedisConnection
  */
 trait InteractsWithRelay
 {

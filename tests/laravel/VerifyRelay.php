@@ -67,17 +67,17 @@ class VerifyRelay extends Command
 
         // A cluster SCAN only walks a single node, so we just assert it returned keys.
         $isCluster
-            ? $this->assert('scan returns keys', count($found) > 0, count($found).' keys')
-            : $this->assert('scan returns all 50 keys', count($found) === 50, count($found).' keys');
+            ? $this->assert('scan returns keys', count($found) > 0, count($found) . ' keys')
+            : $this->assert('scan returns all 50 keys', count($found) === 50, count($found) . ' keys');
     }
 
     protected function verifyQueue(): void
     {
         Queue::push(new NoopJob);
-        $this->assert('queue push increments size', Queue::size() === 1, 'size='.Queue::size());
+        $this->assert('queue push increments size', Queue::size() === 1, 'size=' . Queue::size());
 
         Queue::bulk([new NoopJob, new NoopJob, new NoopJob]);
-        $this->assert('queue bulk pushes all jobs', Queue::size() === 4, 'size='.Queue::size());
+        $this->assert('queue bulk pushes all jobs', Queue::size() === 4, 'size=' . Queue::size());
 
         $this->assert('queue pop returns a job', Queue::pop() !== null);
     }

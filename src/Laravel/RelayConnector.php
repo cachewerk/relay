@@ -272,7 +272,7 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         // Algorithms added in newer Relay builds; guard so older extensions don't fatal on the constant.
         foreach (['full_jitter', 'equal_jitter', 'exponential', 'uniform', 'constant'] as $name) {
-            $constant = 'Relay\Relay::BACKOFF_ALGORITHM_'.strtoupper($name);
+            $constant = 'Relay\Relay::BACKOFF_ALGORITHM_' . strtoupper($name);
 
             if (defined($constant)) {
                 $algorithms[$name] = (int) constant($constant);
