@@ -9,12 +9,17 @@ use InvalidArgumentException;
 use Relay\Cluster;
 
 use Illuminate\Contracts\Redis\Connection;
+use Illuminate\Redis\Connections\PhpRedisClusterConnection;
+
+use CacheWerk\Relay\Laravel\Concerns\InteractsWithRelay;
 
 /**
  * @mixin Cluster
  */
-class RelayClusterConnection extends RelayConnection implements Connection
+class RelayClusterConnection extends PhpRedisClusterConnection implements Connection
 {
+    use InteractsWithRelay;
+
     /**
      * The Redis client.
      *
@@ -76,6 +81,16 @@ class RelayClusterConnection extends RelayConnection implements Connection
                 ? $this->command('rawCommand', [$master, 'flushdb', 'async'])
                 : $this->command('flushdb', [$master]);
         }
+    }
+
+    /**
+     * Determine if the connection is to a Redis Cluster.
+     *
+     * @return bool
+     */
+    public function isCluster()
+    {
+        return true;
     }
 
     /**

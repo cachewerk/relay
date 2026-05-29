@@ -51,7 +51,7 @@ jobs:
 
     name: Laravel ${{ matrix.laravel }} (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     strategy:
       fail-fast: true
@@ -96,9 +96,87 @@ jobs:
           composer config repositories.cachewerk/relay path ${{ github.workspace }}
           composer require cachewerk/relay @dev --no-interaction
 
-      - name: Make and run test command
+      - name: Install Relay verification fixtures
         working-directory: example-app
         run: |
-          php artisan make:command VerifyRelay --no-interaction
-          sed -i 's|//|dump(\\CacheWerk\\Relay\\Laravel\\Relay::stats(), \\Illuminate\\Support\\Facades\\Redis::info());|' app/Console/Commands/VerifyRelay.php
-          REDIS_CLIENT=relay php artisan app:verify-relay
+          mkdir -p app/Console/Commands app/Jobs
+          cp ${{ github.workspace }}/tests/stubs/VerifyRelay.php app/Console/Commands/VerifyRelay.php
+          cp ${{ github.workspace }}/tests/stubs/NoopJob.php app/Jobs/NoopJob.php
+
+      - name: Verify Relay (scan, queue, bulk)
+        working-directory: example-app
+        env:
+          REDIS_CLIENT: relay
+          QUEUE_CONNECTION: redis
+        run: php artisan app:verify-relay
+
+  laravel-cluster:
+
+    name: Laravel ${{ matrix.laravel }} Cluster (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - laravel: '13'
+            php: '8.3'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: redis, relay
+          tools: composer
+          coverage: none
+
+      - name: Start Redis Cluster
+        run: |
+          sudo apt-get install -y redis-server >/dev/null
+          for port in 7000 7001 7002 7003 7004 7005; do
+            mkdir -p /tmp/redis-cluster/$port
+            redis-server --port $port --cluster-enabled yes \
+              --cluster-config-file /tmp/redis-cluster/$port/nodes.conf \
+              --dir /tmp/redis-cluster/$port --appendonly no --save '' --daemonize yes
+          done
+          redis-cli --cluster create \
+            127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 \
+            127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 \
+            --cluster-replicas 1 --cluster-yes
+          for i in $(seq 1 30); do
+            [ "$(redis-cli -p 7000 cluster info | grep -o 'cluster_state:ok')" = "cluster_state:ok" ] && break
+            sleep 1
+          done
+          redis-cli -p 7000 cluster info | head -1
+
+      - name: Create Laravel app
+        run: composer create-project laravel/laravel example-app "^${{ matrix.laravel }}.0" --no-interaction --prefer-dist
+
+      - name: Install Composer dependencies
+        working-directory: example-app
+        run: |
+          composer config repositories.cachewerk/relay path ${{ github.workspace }}
+          composer require cachewerk/relay @dev --no-interaction
+
+      - name: Install Relay verification fixtures
+        working-directory: example-app
+        run: |
+          mkdir -p app/Console/Commands app/Jobs app/Providers
+          cp ${{ github.workspace }}/tests/stubs/VerifyRelay.php app/Console/Commands/VerifyRelay.php
+          cp ${{ github.workspace }}/tests/stubs/NoopJob.php app/Jobs/NoopJob.php
+          cp ${{ github.workspace }}/tests/stubs/RelayClusterTestProvider.php app/Providers/RelayClusterTestProvider.php
+          php -r '$f = "bootstrap/providers.php"; file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    \\App\\Providers\\RelayClusterTestProvider::class,", file_get_contents($f)));'
+
+      - name: Verify Relay over cluster (scan, queue, bulk, hash tags)
+        working-directory: example-app
+        env:
+          REDIS_CLIENT: relay
+          QUEUE_CONNECTION: redis
+          REDIS_QUEUE_CONNECTION: relaycluster
+          REDIS_CLUSTER_PORT: '7000'
+        run: php artisan app:verify-relay --connection=relaycluster

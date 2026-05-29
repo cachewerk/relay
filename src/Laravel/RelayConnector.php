@@ -170,8 +170,8 @@ class RelayConnector extends PhpRedisConnector implements Connector
 
         $parameters[] = Arr::get($config, 'read_timeout', 0.0);
 
-        if (! is_null($context = Arr::get($config, 'context'))) {
-            $parameters[] = $context;
+        if (is_array($context = Arr::get($config, 'context'))) {
+            $parameters[] = $this->normalizeContext($context);
         }
 
         $client->{$persistent ? 'pconnect' : 'connect'}(...$parameters); // @phpstan-ignore-line
@@ -194,10 +194,10 @@ class RelayConnector extends PhpRedisConnector implements Connector
             isset($options['persistent']) && $options['persistent'],
         ];
 
-        $parameters[] = $options['password'] ?? null;
+        $parameters[] = $this->formatClusterPassword($options);
 
-        if (! is_null($context = Arr::get($options, 'context'))) {
-            $parameters[] = $context;
+        if (is_array($context = Arr::get($options, 'context'))) {
+            $parameters[] = $this->normalizeClusterContext($context);
         }
 
         $client = new Cluster(...$parameters); // @phpstan-ignore-line
@@ -230,13 +230,29 @@ class RelayConnector extends PhpRedisConnector implements Connector
             $client->setOption(Relay::OPT_TCP_KEEPALIVE, $options['tcp_keepalive']);
         }
 
+        if (array_key_exists('max_retries', $options)) {
+            $client->setOption(Relay::OPT_MAX_RETRIES, $options['max_retries']);
+        }
+
+        if (array_key_exists('backoff_algorithm', $options)) {
+            $client->setOption(Relay::OPT_BACKOFF_ALGORITHM, $this->parseBackoffAlgorithm($options['backoff_algorithm']));
+        }
+
+        if (array_key_exists('backoff_base', $options)) {
+            $client->setOption(Relay::OPT_BACKOFF_BASE, $options['backoff_base']);
+        }
+
+        if (array_key_exists('backoff_cap', $options)) {
+            $client->setOption(Relay::OPT_BACKOFF_CAP, $options['backoff_cap']);
+        }
+
         return $client;
     }
 
     /**
      * Parse a "friendly" backoff algorithm name into an integer.
      *
-     * @param  int|string  $algorithm
+     * @param  mixed  $algorithm
      * @return int
      *
      * @throws InvalidArgumentException
@@ -256,10 +272,72 @@ class RelayConnector extends PhpRedisConnector implements Connector
             // 'constant' => Relay::BACKOFF_ALGORITHM_CONSTANT,
         ];
 
-        if (! isset($algorithms[$algorithm])) {
-            throw new InvalidArgumentException("Algorithm [{$algorithm}] is not a valid backoff algorithm.");
+        if (is_string($algorithm) && isset($algorithms[$algorithm])) {
+            return $algorithms[$algorithm];
         }
 
-        return $algorithms[$algorithm];
+        throw new InvalidArgumentException(sprintf(
+            'Algorithm [%s] is not a valid backoff algorithm.',
+            is_scalar($algorithm) ? (string) $algorithm : gettype($algorithm)
+        ));
+    }
+
+    /**
+     * Normalize the SSL context for a single Relay connection.
+     *
+     * Relay::connect() expects the context as `['stream' => ['verify_peer' => false, ...]]`.
+     *
+     * @param  array<mixed, mixed>  $context
+     * @return array<mixed, mixed>
+     */
+    protected function normalizeContext(array $context)
+    {
+        if (isset($context['stream'])) {
+            return $context;
+        }
+
+        if (isset($context['ssl']) && is_array($context['ssl'])) {
+            return ['stream' => $context['ssl']];
+        }
+
+        return ['stream' => $context];
+    }
+
+    /**
+     * Normalize the SSL context for a Relay cluster connection.
+     *
+     * Relay\Cluster::__construct() expects a flat context `['verify_peer' => false, ...]`.
+     *
+     * @param  array<mixed, mixed>  $context
+     * @return array<mixed, mixed>
+     */
+    protected function normalizeClusterContext(array $context)
+    {
+        if (isset($context['ssl']) && is_array($context['ssl'])) {
+            return $context['ssl'];
+        }
+
+        if (isset($context['stream']) && is_array($context['stream'])) {
+            return $context['stream'];
+        }
+
+        return $context;
+    }
+
+    /**
+     * Format the password for a Relay cluster connection.
+     *
+     * @param  array<string, mixed>  $options
+     * @return mixed
+     */
+    protected function formatClusterPassword(array $options)
+    {
+        $password = $options['password'] ?? null;
+
+        if (isset($options['username']) && $options['username'] !== '' && is_string($password)) {
+            return [$options['username'], $password];
+        }
+
+        return $password;
     }
 }
