@@ -100,8 +100,8 @@ jobs:
         working-directory: example-app
         run: |
           mkdir -p app/Console/Commands app/Jobs
-          cp ${{ github.workspace }}/tests/stubs/VerifyRelay.php app/Console/Commands/VerifyRelay.php
-          cp ${{ github.workspace }}/tests/stubs/NoopJob.php app/Jobs/NoopJob.php
+          cp ${{ github.workspace }}/tests/laravel/VerifyRelay.php app/Console/Commands/VerifyRelay.php
+          cp ${{ github.workspace }}/tests/laravel/NoopJob.php app/Jobs/NoopJob.php
 
       - name: Verify Relay (scan, queue, bulk)
         working-directory: example-app
@@ -167,9 +167,9 @@ jobs:
         working-directory: example-app
         run: |
           mkdir -p app/Console/Commands app/Jobs app/Providers
-          cp ${{ github.workspace }}/tests/stubs/VerifyRelay.php app/Console/Commands/VerifyRelay.php
-          cp ${{ github.workspace }}/tests/stubs/NoopJob.php app/Jobs/NoopJob.php
-          cp ${{ github.workspace }}/tests/stubs/RelayClusterTestProvider.php app/Providers/RelayClusterTestProvider.php
+          cp ${{ github.workspace }}/tests/laravel/VerifyRelay.php app/Console/Commands/VerifyRelay.php
+          cp ${{ github.workspace }}/tests/laravel/NoopJob.php app/Jobs/NoopJob.php
+          cp ${{ github.workspace }}/tests/laravel/RelayClusterTestProvider.php app/Providers/RelayClusterTestProvider.php
           php -r '$f = "bootstrap/providers.php"; file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    \\App\\Providers\\RelayClusterTestProvider::class,", file_get_contents($f)));'
 
       - name: Verify Relay over cluster (scan, queue, bulk, hash tags)
