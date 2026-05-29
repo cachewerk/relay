@@ -51,7 +51,7 @@ jobs:
 
     name: Laravel ${{ matrix.laravel }} (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     strategy:
       fail-fast: true
@@ -62,7 +62,7 @@ jobs:
           - laravel: '12'
             php: '8.2'
           - laravel: '13'
-            php: '8.3'
+            php: '8.5'
 
     services:
       redis:
@@ -96,9 +96,16 @@ jobs:
           composer config repositories.cachewerk/relay path ${{ github.workspace }}
           composer require cachewerk/relay @dev --no-interaction
 
-      - name: Make and run test command
+      - name: Install Relay verification fixtures
         working-directory: example-app
         run: |
-          php artisan make:command VerifyRelay --no-interaction
-          sed -i 's|//|dump(\\CacheWerk\\Relay\\Laravel\\Relay::stats(), \\Illuminate\\Support\\Facades\\Redis::info());|' app/Console/Commands/VerifyRelay.php
-          REDIS_CLIENT=relay php artisan app:verify-relay
+          mkdir -p app/Console/Commands app/Jobs
+          cp ${{ github.workspace }}/tests/laravel/VerifyRelay.php app/Console/Commands/VerifyRelay.php
+          cp ${{ github.workspace }}/tests/laravel/NoopJob.php app/Jobs/NoopJob.php
+
+      - name: Verify Relay (scan, queue, bulk)
+        working-directory: example-app
+        env:
+          REDIS_CLIENT: relay
+          QUEUE_CONNECTION: redis
+        run: php artisan app:verify-relay
