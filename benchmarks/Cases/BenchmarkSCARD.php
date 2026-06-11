@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkLenCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\LenCommand;
 
-class BenchmarkSCARD extends BenchmarkLenCommand
+class BenchmarkSCARD extends LenCommand
 {
     public static function flags(): int
     {

@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkMultiSetCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\MultiSetCommand;
 
-class BenchmarkSINTERCARD extends BenchmarkMultiSetCommand
+class BenchmarkSINTERCARD extends MultiSetCommand
 {
     //
 }

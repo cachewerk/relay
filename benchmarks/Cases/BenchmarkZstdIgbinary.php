@@ -3,11 +3,12 @@
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use Redis as PhpRedis;
+
 use Relay\Relay;
 use Predis\Client as Predis;
 
 use CacheWerk\Relay\Benchmarks\Support\Reporter;
-use CacheWerk\Relay\Benchmarks\Support\Benchmark;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\Benchmark;
 
 class BenchmarkZstdIgbinary extends Benchmark
 {

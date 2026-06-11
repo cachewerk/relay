@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkSetCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\SetCommand;
 
-class BenchmarkSRANDMEMBER extends BenchmarkSetCommand
+class BenchmarkSRANDMEMBER extends SetCommand
 {
     public static function flags(): int
     {

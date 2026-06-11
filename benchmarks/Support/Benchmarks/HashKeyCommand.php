@@ -1,8 +1,8 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
-class BenchmarkHashKeyCommand extends BenchmarkKeyCommand
+class HashKeyCommand extends KeyCommand
 {
     /**
      * @var array<int, string>

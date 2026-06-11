@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkStringRangeCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\StringRangeCommand;
 
-class BenchmarkBITCOUNT extends BenchmarkStringRangeCommand
+class BenchmarkBITCOUNT extends StringRangeCommand
 {
     //
 }

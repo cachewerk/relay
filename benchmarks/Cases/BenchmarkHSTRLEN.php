@@ -3,12 +3,13 @@
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use Redis as PhpRedis;
+
 use Relay\Relay;
 use Predis\Client as Predis;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkHashCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\HashCommand;
 
-class BenchmarkHSTRLEN extends BenchmarkHashCommand
+class BenchmarkHSTRLEN extends HashCommand
 {
     const MemsPerCommand = 4;
 

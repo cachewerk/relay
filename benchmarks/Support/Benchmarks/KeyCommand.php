@@ -1,12 +1,15 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
 use Redis as PhpRedis;
+
 use Relay\Relay;
 use Predis\Client as Predis;
 
-abstract class BenchmarkKeyCommand extends Benchmark
+use CacheWerk\Relay\Benchmarks\Support\Clients\InMemoryClient;
+
+abstract class KeyCommand extends Benchmark
 {
     /**
      * @var array<int, string>

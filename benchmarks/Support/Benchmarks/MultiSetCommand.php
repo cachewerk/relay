@@ -1,8 +1,8 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
-class BenchmarkMultiSetCommand extends Benchmark
+class MultiSetCommand extends Benchmark
 {
     const KeysPerCall = 8;
 

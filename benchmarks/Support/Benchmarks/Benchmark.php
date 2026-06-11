@@ -1,11 +1,14 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
 use Exception;
 use Redis as PhpRedis;
+
 use Relay\Relay;
 use Predis\Client as Predis;
+
+use CacheWerk\Relay\Benchmarks\Support\Reporter;
 
 abstract class Benchmark
 {
@@ -129,7 +132,7 @@ abstract class Benchmark
 
     protected function loadJsonFile(string $file, bool $assoc = true) // @phpstan-ignore-line
     {
-        $file = __DIR__ . "/data/{$file}";
+        $file = __DIR__ . "/../../data/{$file}";
 
         $data = file_get_contents($file);
 

@@ -4,6 +4,8 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Predis\Client as Predis;
 
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\Benchmark;
+
 class Runner
 {
     protected string $host;

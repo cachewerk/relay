@@ -4,8 +4,10 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
-use Symfony\Component\Console\Helper\TableCellStyle;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Console\Helper\TableCellStyle;
+
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\Benchmark;
 
 class CliReporter extends Reporter
 {

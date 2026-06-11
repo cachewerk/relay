@@ -2,6 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\Benchmark;
+
 class Subject
 {
     public string $method;

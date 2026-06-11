@@ -1,6 +1,6 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Clients;
 
 class ApcuClient implements InMemoryClient
 {

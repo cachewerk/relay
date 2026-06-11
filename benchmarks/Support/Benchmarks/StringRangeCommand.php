@@ -1,8 +1,8 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
-abstract class BenchmarkStringRangeCommand extends Benchmark
+abstract class StringRangeCommand extends Benchmark
 {
     /**
      * @var array<int|string, int[]>

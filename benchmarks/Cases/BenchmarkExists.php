@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkKeyCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\KeyCommand;
 
-class BenchmarkEXISTS extends BenchmarkKeyCommand
+class BenchmarkEXISTS extends KeyCommand
 {
     /**
      * @var array<int, string>

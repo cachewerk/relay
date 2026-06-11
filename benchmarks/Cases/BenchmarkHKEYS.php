@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkHashKeyCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\HashKeyCommand;
 
-class BenchmarkHKEYS extends BenchmarkHashKeyCommand
+class BenchmarkHKEYS extends HashKeyCommand
 {
     //
 }

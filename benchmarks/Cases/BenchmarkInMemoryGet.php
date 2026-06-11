@@ -2,9 +2,9 @@
 
 namespace CacheWerk\Relay\Benchmarks\Cases;
 
-use CacheWerk\Relay\Benchmarks\Support\BenchmarkInMemoryCommand;
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\InMemoryCommand;
 
-class BenchmarkInMemoryGet extends BenchmarkInMemoryCommand
+class BenchmarkInMemoryGet extends InMemoryCommand
 {
     public static function flags(): int
     {

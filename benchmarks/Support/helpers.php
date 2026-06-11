@@ -73,13 +73,13 @@ function getCommandTypes(array $opt, string $key, array $default): int
 
     foreach (getCsvOption($opt, $key, $default) as $type) {
         if (! strcasecmp($type, 'read')) {
-            $result |= Support\Benchmark::READ;
+            $result |= Support\Benchmarks\Benchmark::READ;
         } elseif (! strcasecmp($type, 'write')) {
-            $result |= Support\Benchmark::WRITE;
+            $result |= Support\Benchmarks\Benchmark::WRITE;
         } elseif (! strcasecmp($type, 'memory')) {
-            $result |= Support\Benchmark::MEMORY;
+            $result |= Support\Benchmarks\Benchmark::MEMORY;
         } elseif (! strcasecmp($type, 'default')) {
-            $result |= Support\Benchmark::DEFAULT;
+            $result |= Support\Benchmarks\Benchmark::DEFAULT;
         } else {
             fprintf(STDERR, "Error: Command type is only `read`, `write`, `memory`, or `default`\n");
             exit(1);
@@ -98,16 +98,16 @@ function getKeyTypes(array $opt, string $key, array $default): int
     $result = 0;
 
     $lookup = [
-        'all' => Support\Benchmark::ALL_TYPES,
-        'utility' => Support\Benchmark::UTILITY,
-        'string' => Support\Benchmark::STRING,
-        'hash' => Support\Benchmark::HASH,
-        'set' => Support\Benchmark::SET,
-        'list' => Support\Benchmark::LIST,
-        'zset' => Support\Benchmark::ZSET,
-        'stream' => Support\Benchmark::STREAM,
-        'hyperloglog' => Support\Benchmark::HYPERLOGLOG,
-        'hll' => Support\Benchmark::HYPERLOGLOG,
+        'all' => Support\Benchmarks\Benchmark::ALL_TYPES,
+        'utility' => Support\Benchmarks\Benchmark::UTILITY,
+        'string' => Support\Benchmarks\Benchmark::STRING,
+        'hash' => Support\Benchmarks\Benchmark::HASH,
+        'set' => Support\Benchmarks\Benchmark::SET,
+        'list' => Support\Benchmarks\Benchmark::LIST,
+        'zset' => Support\Benchmarks\Benchmark::ZSET,
+        'stream' => Support\Benchmarks\Benchmark::STREAM,
+        'hyperloglog' => Support\Benchmarks\Benchmark::HYPERLOGLOG,
+        'hll' => Support\Benchmarks\Benchmark::HYPERLOGLOG,
     ];
 
     foreach (getCsvOption($opt, $key, $default) as $type) {

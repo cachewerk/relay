@@ -1,10 +1,15 @@
 <?php
 
-namespace CacheWerk\Relay\Benchmarks\Support;
+namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
 use Relay\Table;
 
-abstract class BenchmarkInMemoryCommand extends BenchmarkKeyCommand
+use CacheWerk\Relay\Benchmarks\Support\Reporter;
+use CacheWerk\Relay\Benchmarks\Support\Clients\ApcuClient;
+use CacheWerk\Relay\Benchmarks\Support\Clients\InMemoryClient;
+use CacheWerk\Relay\Benchmarks\Support\Clients\RelayTableClient;
+
+abstract class InMemoryCommand extends KeyCommand
 {
     protected RelayTableClient $table;
 

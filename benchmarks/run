@@ -97,14 +97,14 @@ $benchmarks = array_map(function ($file) {
 
 $all = isset($opt['all']);
 
-$filterFlags = ($all || count($argv)) ? Support\Benchmark::ALL : $cmdTypes | $keyTypes;
+$filterFlags = ($all || count($argv)) ? Support\Benchmarks\Benchmark::ALL : $cmdTypes | $keyTypes;
 
 $benchmarks = array_filter($benchmarks, function ($v) use ($filterFlags) {
-    if (($filterFlags & Support\Benchmark::DEFAULT)) {
-        return $v::flags() & Support\Benchmark::DEFAULT;
+    if (($filterFlags & Support\Benchmarks\Benchmark::DEFAULT)) {
+        return $v::flags() & Support\Benchmarks\Benchmark::DEFAULT;
     }
 
-    $benchFlags = $v::flags() & ~(Support\Benchmark::DEFAULT);
+    $benchFlags = $v::flags() & ~(Support\Benchmarks\Benchmark::DEFAULT);
 
     return ($benchFlags & $filterFlags) == $benchFlags;
 });

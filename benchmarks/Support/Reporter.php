@@ -2,6 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
+use CacheWerk\Relay\Benchmarks\Support\Benchmarks\Benchmark;
+
 abstract class Reporter
 {
     protected bool $verbose;
