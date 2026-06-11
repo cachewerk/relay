@@ -24,13 +24,14 @@ To run a set of quick, default benchmarks, execute:
 ```bash
 composer run bench
 
-# Compare local-only caches
-composer run bench -- --command-type memory
-
 # List all available options
 composer run bench -- --help
+
+# Compare local-only caches (APCu and Relay\Table)
+php -d apc.enable_cli=1 benchmarks/run --command-type memory
 ```
 
+> [!NOTE]
 > Caveat 1: The results on Silicon are misleading, run the benchmarks on actual production infrastructure.   
 > Caveat 2: New Relic, Blacfire, Xdebug and similar profilers will significantly slow down Relay and skew the benchmarks.
 

@@ -2,6 +2,8 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 
+use Exception;
+
 use Relay\Table;
 
 use CacheWerk\Relay\Benchmarks\Support\Reporter;
@@ -22,6 +24,28 @@ abstract class InMemoryCommand extends KeyCommand
 
         if (method_exists($this, 'seed')) {
             $this->seed();
+            $this->verifySeed();
+        }
+    }
+
+    /**
+     * APCu silently drops writes when it's disabled at runtime, and a future
+     * case might seed only one of the stores — either way every read becomes
+     * a near-instant miss and the results look spectacular while measuring
+     * nothing. Fail loudly instead.
+     */
+    protected function verifySeed(): void
+    {
+        $key = (string) $this->keys[0];
+
+        foreach ($this->clients() as $client) {
+            if (in_array($client->get($key), [null, false], true)) {
+                throw new Exception(sprintf(
+                    'Seeding %s had no effect, key `%s` reads back empty',
+                    $client::class,
+                    $key
+                ));
+            }
         }
     }
 
@@ -33,7 +57,7 @@ abstract class InMemoryCommand extends KeyCommand
             $this->table = new RelayTableClient;
         }
 
-        if (extension_loaded('apcu')) {
+        if (extension_loaded('apcu') && apcu_enabled()) {
             $this->apcu = new ApcuClient;
         }
     }
@@ -48,10 +72,12 @@ abstract class InMemoryCommand extends KeyCommand
             Reporter::printWarning('Skipping Relay\Table runs, class is not available');
         }
 
-        if (extension_loaded('apcu')) {
-            $subjects[] = 'APCu';
-        } else {
+        if (! extension_loaded('apcu')) {
             Reporter::printWarning('Skipping APCu runs, extension is not loaded');
+        } elseif (! apcu_enabled()) {
+            Reporter::printWarning('Skipping APCu runs, extension is disabled (set apc.enable_cli=1)');
+        } else {
+            $subjects[] = 'APCu';
         }
 
         return $subjects;

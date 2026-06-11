@@ -4,11 +4,11 @@ namespace CacheWerk\Relay\Benchmarks\Cases;
 
 use CacheWerk\Relay\Benchmarks\Support\Benchmarks\InMemoryCommand;
 
-class BenchmarkInMemoryGet extends InMemoryCommand
+class BenchmarkTable extends InMemoryCommand
 {
     public static function flags(): int
     {
-        return self::STRING | self::MEMORY | self::DEFAULT;
+        return self::STRING | self::MEMORY;
     }
 
     public function command(): string
