@@ -19,9 +19,9 @@ if (! is_readable(__DIR__ . '/../vendor/autoload.php')) {
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/Support/helpers.php';
 
-$shortOptions = ['h:', 'p:', 's:', 'a:', 'v'];
+$shortOptions = ['h:', 'p:', 'a:', 'v'];
 $longOptions = [
-    'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
+    'host:', 'port:', 'auth:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
     'json', 'help', 'all', 'user:', 'pass:', 'command-type:', 'key-type:'
 ];
 
