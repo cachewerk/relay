@@ -19,7 +19,7 @@ function printUsage(string $script): void
                 --duration     Specifies the duration of the test in seconds. Defaults to 1s.
                 --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 2 for multiple workers.
                 --warmup       Specifies how many warm up runs to execute. Defaults to 1.
-                --filter       Specifies a regex filter to apply to the benchmarked clients.
+                --filter       A regex, or comma-separated list, to filter the benchmarked clients (e.g. 'relay,phpredis').
                 --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).
                 --command-type A comma separated list of command types (default, read, write).
                 --all          Run every benchmark case, ignoring key/command type filters.

@@ -67,6 +67,10 @@ $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
 $warmup = $opt['warmup'] ?? 1;
 
 $filter = strtolower(trim($opt['filter'] ?? ''));
+
+// Treat a comma-separated list as a regex alternation, so a shell-safe
+// `--filter relay,phpredis` works without quoting the equivalent `relay|phpredis`.
+$filter = (string) preg_replace('/\s*,\s*/', '|', $filter);
 $verbose = isset($opt['v']) || isset($opt['verbose']);
 $json = isset($opt['json']);
 

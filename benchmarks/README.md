@@ -68,7 +68,7 @@ composer run bench -- --help
 ./run --key-type=hash --command-type=read
 
 # Run benchmarks with only Relay and Predis
-./run --filter '^(Relay|Predis)'
+./run --filter relay,predis
 
 # Output JSON
 ./run --json
