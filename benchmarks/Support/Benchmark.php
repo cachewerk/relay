@@ -33,7 +33,9 @@ abstract class Benchmark
 
     const DEFAULT = 0x400;
 
-    const ALL = self::READ | self::WRITE | self::ALL_TYPES;
+    const MEMORY = 0x800;
+
+    const ALL = self::READ | self::WRITE | self::MEMORY | self::ALL_TYPES;
 
     protected string $host;
 
@@ -306,38 +308,36 @@ abstract class Benchmark
     }
 
     /**
+     * The client subjects this benchmark runs against, each
+     * matching a `benchmark{$subject}()` method.
+     *
+     * @return array<int, string>
+     */
+    protected function subjects(): array
+    {
+        if (! extension_loaded('redis')) {
+            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
+
+            return ['Predis', 'RelayNoCache', 'Relay'];
+        }
+
+        return ['Predis', 'PhpRedis', 'RelayNoCache', 'Relay'];
+    }
+
+    /**
      * @return array<string>
      */
     public function getBenchmarkMethods(string $filter): array
     {
-        $exclude = null;
+        $methods = [];
 
-        if (! extension_loaded('redis')) {
-            $exclude = 'PhpRedis';
-
-            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
+        foreach ($this->subjects() as $subject) {
+            if (! $filter || preg_match("/{$filter}/i", strtolower($subject))) {
+                $methods[] = "benchmark{$subject}";
+            }
         }
 
-        return array_filter(
-            get_class_methods($this),
-            function ($method) use ($exclude, $filter) {
-                if (! str_starts_with($method, 'benchmark')) {
-                    return false;
-                }
-
-                $method = substr($method, strlen('benchmark'));
-
-                if ($method === $exclude) {
-                    return false;
-                }
-
-                if ($filter && ! preg_match("/{$filter}/i", strtolower($method))) {
-                    return false;
-                }
-
-                return true;
-            }
-        );
+        return $methods;
     }
 
     public function benchmarkPredis(): int

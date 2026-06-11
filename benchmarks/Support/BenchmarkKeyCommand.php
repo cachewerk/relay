@@ -24,7 +24,7 @@ abstract class BenchmarkKeyCommand extends Benchmark
     }
 
     /**
-     * @param  Relay|PhpRedis|Predis  $client
+     * @param  Relay|PhpRedis|Predis|InMemoryClient  $client
      */
     protected function runBenchmark($client): int
     {
