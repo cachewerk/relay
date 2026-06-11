@@ -24,8 +24,8 @@ To run a set of quick, default benchmarks, execute:
 ```bash
 composer run bench
 
-# Use 8 workers, run for 5s per iteration
-composer run bench -- --workers=8 --duration=5
+# Compare local-only caches
+composer run bench -- --command-type memory
 
 # List all available options
 composer run bench -- --help

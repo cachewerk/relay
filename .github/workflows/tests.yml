@@ -88,7 +88,9 @@ jobs:
           coverage: none
 
       - name: Create Laravel app
-        run: composer create-project laravel/laravel example-app "^${{ matrix.laravel }}.0" --no-interaction --prefer-dist
+        run: |
+          composer config --global policy.advisories.block false
+          composer create-project laravel/laravel example-app "^${{ matrix.laravel }}.0" --no-interaction --prefer-dist
 
       - name: Install Composer dependencies
         working-directory: example-app
