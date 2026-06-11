@@ -13,7 +13,7 @@ class BenchmarkZINCRBY extends Benchmark
 
     public static function flags(): int
     {
-        return self::ZSET | self::READ;
+        return self::ZSET | self::WRITE;
     }
 
     public function setUp(): void
