@@ -53,6 +53,8 @@ abstract class Benchmark
 
     protected Relay $relayNoCache;
 
+    protected Relay $relayAdaptive;
+
     protected Predis $predis;
 
     protected PhpRedis $phpredis;
@@ -209,6 +211,7 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
+        $this->relayAdaptive = $this->createRelayAdaptive();
 
         if (extension_loaded('redis')) {
             $this->phpredis = $this->createPhpRedis();
@@ -255,6 +258,31 @@ abstract class Benchmark
     {
         $relay = new Relay;
         $relay->setOption(Relay::OPT_USE_CACHE, false);
+        $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
+        $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
+
+        $relay->connect($this->host, $this->port, 0.5, '', 0, 0.5);
+
+        if ($this->auth) {
+            $relay->auth($this->auth);
+        }
+
+        $relay->flushMemory();
+
+        return $relay;
+    }
+
+    protected function createRelayAdaptive(): Relay
+    {
+        $relay = new Relay;
+
+        $relay->setOption(Relay::OPT_ADAPTIVE_CACHE, [
+            'width' => 16_384,
+            'depth' => 6,
+            'minEvents' => 10,
+            'minRatio' => 5.0,
+        ]);
+
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
         $relay->setOption(Relay::OPT_THROW_ON_ERROR, true);
 
@@ -356,6 +384,11 @@ abstract class Benchmark
     public function benchmarkRelayNoCache(): int
     {
         return $this->runBenchmark($this->relayNoCache);
+    }
+
+    public function benchmarkRelayAdaptive(): int
+    {
+        return $this->runBenchmark($this->relayAdaptive);
     }
 
     public function benchmarkRelay(): int

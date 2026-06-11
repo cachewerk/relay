@@ -84,6 +84,7 @@ class BenchmarkZstdIgbinary extends Benchmark
 
         $clients = [
             $this->relayNoCache,
+            $this->relayAdaptive,
             $this->relay,
         ];
 
