@@ -4,8 +4,6 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 
 class ConcurrentRunner extends Runner
 {
-    protected int $workers;
-
     /**
      * @param  string|array<int, array<string>>|null  $auth
      */
@@ -165,7 +163,7 @@ class ConcurrentRunner extends Runner
 
             $subjects = new Subjects($benchmark);
 
-            $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup);
+            $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup, $this->workers);
 
             foreach ($benchmark->getBenchmarkMethods($this->filter) as $method) {
                 $subject = $subjects->add($method);

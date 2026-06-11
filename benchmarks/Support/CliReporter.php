@@ -9,15 +9,17 @@ use Symfony\Component\Console\Output\StreamOutput;
 
 class CliReporter extends Reporter
 {
-    public function startingBenchmark(Benchmark $benchmark, int $iterations, float $duration, int $warmup): void
+    public function startingBenchmark(Benchmark $benchmark, int $iterations, float $duration, int $warmup, int $workers): void
     {
         fprintf(
             STDERR,
-            "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup) for %2.2fs seconds\n\n",
+            "\n\033[30;42m %s \033[0m Executing %d iterations (%d warmup) for %2.2fs across %d %s\n\n",
             $benchmark->name(),
             $iterations,
             $warmup,
-            $duration
+            $duration,
+            $workers,
+            $workers === 1 ? 'worker' : 'workers'
         );
     }
 

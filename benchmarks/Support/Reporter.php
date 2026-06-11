@@ -14,7 +14,7 @@ abstract class Reporter
         $this->verbose = $verbose;
     }
 
-    abstract public function startingBenchmark(Benchmark $benchmark, int $runs, float $duration, int $warmup): void;
+    abstract public function startingBenchmark(Benchmark $benchmark, int $runs, float $duration, int $warmup, int $workers): void;
 
     abstract public function finishedIteration(Benchmark $benchmark, Iteration $iteration, string $client): void;
 

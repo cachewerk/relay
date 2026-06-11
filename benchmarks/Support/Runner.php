@@ -27,6 +27,8 @@ class Runner
 
     protected int $warmup;
 
+    protected int $workers = 1;
+
     /**
      * @param  string  $host
      * @param  string|int  $port
@@ -182,14 +184,14 @@ class Runner
 
             $subjects = new Subjects($benchmark);
 
-            $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup);
+            $reporter->startingBenchmark($benchmark, $this->runs, $this->duration, $this->warmup, $this->workers);
 
             foreach ($benchmark->getBenchmarkMethods($this->filter) as $method) {
                 $subject = $subjects->add($method);
                 $this->runMethod($reporter, $subject, $benchmark, $method);
             }
 
-            $reporter->finishedSubjects($subjects, 1);
+            $reporter->finishedSubjects($subjects, $this->workers);
         }
     }
 

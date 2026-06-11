@@ -56,8 +56,11 @@ $cmdTypes = getCommandTypes($opt, 'command-type', ['default']);
 
 $canFork = extension_loaded('pcntl');
 
-$threads = Support\System::cpu()->threads;
-$workers = (int) ($opt['workers'] ?? max(1, $canFork ? $threads - 2 : 1));
+$cores = Support\System::cpu()->cores;
+
+// Default to half the cores, rounded down to an even number of workers.
+$half = $canFork ? intdiv($cores, 2) : 1;
+$workers = (int) ($opt['workers'] ?? max(1, $half - ($half % 2)));
 
 $duration = $opt['duration'] ?? 1.0;
 $runs = $opt['runs'] ?? ($workers < 2 ? 5 : 2);
