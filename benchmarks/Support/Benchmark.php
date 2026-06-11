@@ -33,7 +33,9 @@ abstract class Benchmark
 
     const DEFAULT = 0x400;
 
-    const ALL = self::READ | self::WRITE | self::ALL_TYPES;
+    const MEMORY = 0x800;
+
+    const ALL = self::READ | self::WRITE | self::MEMORY | self::ALL_TYPES;
 
     protected string $host;
 

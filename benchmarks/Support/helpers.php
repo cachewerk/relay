@@ -21,7 +21,7 @@ function printUsage(string $script): void
                 --warmup       Specifies how many warm up runs to execute. Defaults to 1.
                 --filter       A regex, or comma-separated list, to filter the benchmarked clients (e.g. 'relay,phpredis').
                 --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).
-                --command-type A comma separated list of command types (default, read, write).
+                --command-type A comma separated list of command types (default, read, write, memory).
                 --all          Run every benchmark case, ignoring key/command type filters.
                 --json         Output results in JSON instead of a table.
             -v, --verbose      Enables verbose output.
@@ -76,10 +76,12 @@ function getCommandTypes(array $opt, string $key, array $default): int
             $result |= Support\Benchmark::READ;
         } elseif (! strcasecmp($type, 'write')) {
             $result |= Support\Benchmark::WRITE;
+        } elseif (! strcasecmp($type, 'memory')) {
+            $result |= Support\Benchmark::MEMORY;
         } elseif (! strcasecmp($type, 'default')) {
             $result |= Support\Benchmark::DEFAULT;
         } else {
-            fprintf(STDERR, "Error: Command type is only `read`, `write`, or `default`\n");
+            fprintf(STDERR, "Error: Command type is only `read`, `write`, `memory`, or `default`\n");
             exit(1);
         }
     }

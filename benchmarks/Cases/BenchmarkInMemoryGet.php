@@ -8,7 +8,7 @@ class BenchmarkInMemoryGet extends BenchmarkInMemoryCommand
 {
     public static function flags(): int
     {
-        return self::STRING | self::READ | self::DEFAULT;
+        return self::STRING | self::MEMORY | self::DEFAULT;
     }
 
     public function command(): string
