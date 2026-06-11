@@ -2,12 +2,13 @@
 
 namespace CacheWerk\Relay\Benchmarks\Support;
 
-abstract class BenchmarkInMemoryCommand extends Benchmark
+use Relay\Table;
+
+abstract class BenchmarkInMemoryCommand extends BenchmarkKeyCommand
 {
-    /**
-     * @var array<int, string>
-     */
-    protected array $keys;
+    protected RelayTableClient $table;
+
+    protected ApcuClient $apcu;
 
     public function setUp(): void
     {
@@ -19,12 +20,54 @@ abstract class BenchmarkInMemoryCommand extends Benchmark
         }
     }
 
+    public function setUpClients(): void
+    {
+        parent::setUpClients();
+
+        if (class_exists(Table::class)) {
+            $this->table = new RelayTableClient;
+        }
+
+        if (extension_loaded('apcu')) {
+            $this->apcu = new ApcuClient;
+        }
+    }
+
+    protected function subjects(): array
+    {
+        $subjects = [];
+
+        if (class_exists(Table::class)) {
+            $subjects[] = 'RelayTable';
+        } else {
+            Reporter::printWarning('Skipping Relay\Table runs, class is not available');
+        }
+
+        if (extension_loaded('apcu')) {
+            $subjects[] = 'APCu';
+        } else {
+            Reporter::printWarning('Skipping APCu runs, extension is not loaded');
+        }
+
+        return $subjects;
+    }
+
+    /**
+     * @return array<int, InMemoryClient>
+     */
     protected function clients(): array
     {
-        return array_filter([
-            $this->table,
-            $this->apcu,
-        ]);
+        $clients = [];
+
+        if (isset($this->table)) {
+            $clients[] = $this->table;
+        }
+
+        if (isset($this->apcu)) {
+            $clients[] = $this->apcu;
+        }
+
+        return $clients;
     }
 
     protected function flush(): void
@@ -34,17 +77,13 @@ abstract class BenchmarkInMemoryCommand extends Benchmark
         }
     }
 
-    /**
-     * @param  mixed  $client
-     */
-    protected function runBenchmark($client): int
+    public function benchmarkRelayTable(): int
     {
-        $cmd = $this->command();
+        return $this->runBenchmark($this->table);
+    }
 
-        foreach ($this->keys as $key) {
-            $client->{$cmd}($key);
-        }
-
-        return count($this->keys);
+    public function benchmarkAPCu(): int
+    {
+        return $this->runBenchmark($this->apcu);
     }
 }

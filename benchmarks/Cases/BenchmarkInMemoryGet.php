@@ -8,12 +8,12 @@ class BenchmarkInMemoryGet extends BenchmarkInMemoryCommand
 {
     public static function flags(): int
     {
-        return self::STRING | self::READ;
+        return self::STRING | self::READ | self::DEFAULT;
     }
 
     public function command(): string
     {
-        return str_replace('inmemory', '', parent::command());
+        return 'get';
     }
 
     public function seed(): void
@@ -21,10 +21,13 @@ class BenchmarkInMemoryGet extends BenchmarkInMemoryCommand
         $clients = $this->clients();
 
         foreach ($this->loadJsonFile('meteorites.json') as $item) {
+            $key = (string) $item['id'];
+
             foreach ($clients as $client) {
-                $client->set((string) $item['id'], $item);
+                $client->set($key, $item);
             }
-            $this->keys[] = $item['id'];
+
+            $this->keys[] = $key;
         }
     }
 }

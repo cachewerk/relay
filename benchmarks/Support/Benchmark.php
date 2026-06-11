@@ -5,7 +5,6 @@ namespace CacheWerk\Relay\Benchmarks\Support;
 use Exception;
 use Redis as PhpRedis;
 use Relay\Relay;
-use Relay\Table;
 use Predis\Client as Predis;
 
 abstract class Benchmark
@@ -51,11 +50,7 @@ abstract class Benchmark
 
     protected Predis $predis;
 
-    protected ?PhpRedis $phpredis;
-
-    protected object $table;
-
-    protected ?object $apcu;
+    protected PhpRedis $phpredis;
 
     /**
      * @param  string  $host
@@ -209,9 +204,10 @@ abstract class Benchmark
         $this->predis = $this->createPredis();
         $this->relay = $this->createRelay();
         $this->relayNoCache = $this->createRelayNoCache();
-        $this->phpredis = $this->createPhpRedis();
-        $this->table = $this->createRelayTable();
-        $this->apcu = $this->createAPCu();
+
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -224,9 +220,10 @@ abstract class Benchmark
     public function refreshClients(): void
     {
         $this->predis = $this->createPredis();
-        $this->phpredis = $this->createPhpRedis();
-        $this->table = $this->createRelayTable();
-        $this->apcu = $this->createAPCu();
+
+        if (extension_loaded('redis')) {
+            $this->phpredis = $this->createPhpRedis();
+        }
     }
 
     /**
@@ -267,12 +264,8 @@ abstract class Benchmark
         return $relay;
     }
 
-    protected function createPhpRedis(): ?PhpRedis
+    protected function createPhpRedis(): PhpRedis
     {
-        if (! extension_loaded('redis')) {
-            return null;
-        }
-
         $phpredis = new PhpRedis;
         $phpredis->connect($this->host, $this->port, 0.5, '', 0, 0.5);
         $phpredis->setOption(PhpRedis::OPT_MAX_RETRIES, 0);
@@ -312,51 +305,21 @@ abstract class Benchmark
         ]);
     }
 
-    public function createRelayTable(): object
+    /**
+     * The client subjects this benchmark runs against, each
+     * matching a `benchmark{$subject}()` method.
+     *
+     * @return array<int, string>
+     */
+    protected function subjects(): array
     {
-        return new class
-        {
-            public function clear(): bool
-            {
-                return Table::clearAll();
-            }
+        if (! extension_loaded('redis')) {
+            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
 
-            public function get(string $key): mixed
-            {
-                return Table::get($key);
-            }
-
-            public function set(string $key, $value): bool
-            {
-                return Table::set($key, $value);
-            }
-        };
-
-    }
-
-    protected function createAPCu(): ?object
-    {
-        if (! extension_loaded('apcu')) {
-            return null;
+            return ['Predis', 'RelayNoCache', 'Relay'];
         }
 
-        return new class
-        {
-            public function clear(): bool
-            {
-                return apcu_clear_cache();
-            }
-
-            public function get(string $key): mixed
-            {
-                return apcu_fetch($key);
-            }
-
-            public function set(string $key, $value): bool
-            {
-                return apcu_store($key, $value);
-            }
-        };
+        return ['Predis', 'PhpRedis', 'RelayNoCache', 'Relay'];
     }
 
     /**
@@ -364,40 +327,15 @@ abstract class Benchmark
      */
     public function getBenchmarkMethods(string $filter): array
     {
-        $exclude = [];
+        $methods = [];
 
-        if (! extension_loaded('redis')) {
-            $exclude[] = 'PhpRedis';
-
-            Reporter::printWarning('Skipping PhpRedis runs, extension is not loaded');
-        }
-
-        if (! extension_loaded('apcu')) {
-            $exclude[] = 'APCu';
-
-            Reporter::printWarning('Skipping APCu runs, extension is not loaded');
-        }
-
-        return array_filter(
-            get_class_methods($this),
-            function ($method) use ($exclude, $filter) {
-                if (! str_starts_with($method, 'benchmark')) {
-                    return false;
-                }
-
-                $method = substr($method, strlen('benchmark'));
-
-                if (in_array($method, $exclude, true)) {
-                    return false;
-                }
-
-                if ($filter && ! preg_match("/{$filter}/i", strtolower($method))) {
-                    return false;
-                }
-
-                return true;
+        foreach ($this->subjects() as $subject) {
+            if (! $filter || preg_match("/{$filter}/i", strtolower($subject))) {
+                $methods[] = "benchmark{$subject}";
             }
-        );
+        }
+
+        return $methods;
     }
 
     public function benchmarkPredis(): int
@@ -418,15 +356,5 @@ abstract class Benchmark
     public function benchmarkRelay(): int
     {
         return $this->runBenchmark($this->relay);
-    }
-
-    public function benchmarkRelayTable(): int
-    {
-        return $this->runBenchmark($this->table);
-    }
-
-    public function benchmarkAPCu(): int
-    {
-        return $this->runBenchmark($this->apcu);
     }
 }
