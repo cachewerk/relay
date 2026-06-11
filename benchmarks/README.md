@@ -17,13 +17,6 @@ cd relay
 composer install
 ```
 
-If Composer isn't available on the system, download it:
-
-```bash
-wget https://getcomposer.org/download/latest-stable/composer.phar
-./composer.phar install
-```
-
 ## Running benchmarks
 
 To run a set of quick, default benchmarks, execute:
