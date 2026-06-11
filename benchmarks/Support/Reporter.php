@@ -51,6 +51,11 @@ abstract class Reporter
     }
 
     /**
+     * @var array<string, true>
+     */
+    protected static array $warnedOnce = [];
+
+    /**
      * @param  string  $fmt
      * @param  bool|float|int|string|null  ...$args
      * @return void
@@ -58,6 +63,26 @@ abstract class Reporter
     public static function printWarning(string $fmt, ...$args): void
     {
         fprintf(STDERR, "\n\033[33m WARNING \033[0m {$fmt}\n", ...$args);
+    }
+
+    /**
+     * Print a warning only the first time a given message is encountered.
+     *
+     * @param  string  $fmt
+     * @param  bool|float|int|string|null  ...$args
+     * @return void
+     */
+    public static function printWarningOnce(string $fmt, ...$args): void
+    {
+        $message = sprintf($fmt, ...$args);
+
+        if (isset(self::$warnedOnce[$message])) {
+            return;
+        }
+
+        self::$warnedOnce[$message] = true;
+
+        self::printWarning('%s', $message);
     }
 
     /**

@@ -67,13 +67,13 @@ class BenchmarkZstdIgbinary extends Benchmark
         if (! defined("{$className}::SERIALIZER_IGBINARY") ||
             ! $client->setOption($client::OPT_SERIALIZER, $client::SERIALIZER_IGBINARY)
         ) {
-            Reporter::printWarning("Unable to set igbinary serializer on {$className}");
+            Reporter::printWarningOnce("Unable to set igbinary serializer on {$className}");
         }
 
         if (! defined("{$className}::COMPRESSION_ZSTD") ||
             ! $client->setOption($client::OPT_COMPRESSION, $client::COMPRESSION_ZSTD)
         ) {
-            Reporter::printWarning("Unable to set zstd compression on {$className}");
+            Reporter::printWarningOnce("Unable to set zstd compression on {$className}");
         }
     }
 
