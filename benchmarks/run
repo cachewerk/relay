@@ -22,7 +22,7 @@ require __DIR__ . '/Support/helpers.php';
 $shortOptions = ['h:', 'p:', 's:', 'a:', 'v'];
 $longOptions = [
     'host:', 'port:', 'verbose', 'workers:', 'filter:', 'duration:', 'runs:', 'warmup:',
-    'json', 'help', 'user:', 'pass:', 'command-type:', 'key-type:'
+    'json', 'help', 'all', 'user:', 'pass:', 'command-type:', 'key-type:'
 ];
 
 $opt = getopt(implode($shortOptions), $longOptions, $optind);
@@ -91,7 +91,9 @@ $benchmarks = array_map(function ($file) {
     throw new \InvalidArgumentException('Unable to read file ' . __DIR__ . '/' . $file);
 }, empty($argv) ? glob(__DIR__ . '/Cases/Benchmark*.php') : $argv);
 
-$filterFlags = count($argv) ? Support\Benchmark::ALL : $cmdTypes | $keyTypes;
+$all = isset($opt['all']);
+
+$filterFlags = ($all || count($argv)) ? Support\Benchmark::ALL : $cmdTypes | $keyTypes;
 
 $benchmarks = array_filter($benchmarks, function ($v) use ($filterFlags) {
     if (($filterFlags & Support\Benchmark::DEFAULT)) {

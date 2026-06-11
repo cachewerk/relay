@@ -22,6 +22,7 @@ function printUsage(string $script): void
                 --filter       Specifies a regex filter to apply to the benchmarked clients.
                 --key-type     A comma separated list of key types (string, set, hash, list, zset, hyperloglog).
                 --command-type A comma separated list of command types (default, read, write).
+                --all          Run every benchmark case, ignoring key/command type filters.
                 --json         Output results in JSON instead of a table.
             -v, --verbose      Enables verbose output.
                 --help         Prints this help message.

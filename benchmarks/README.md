@@ -53,7 +53,8 @@ composer run bench -- --help
 ### Examples
 
 ```bash
-# Run one (or more) specific benchmark
+# Run one specific, multiple or all benchmarks
+./run --all
 ./run BenchmarkHMGET.php
 ./run BenchmarkHMGET.php BenchmarkHGETALL.php 
 
