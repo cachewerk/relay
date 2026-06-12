@@ -5,15 +5,19 @@ namespace CacheWerk\Relay\Benchmarks\Support\Benchmarks;
 use Exception;
 
 use Relay\Table;
+use Swoole\Table as SwooleTable;
 
 use CacheWerk\Relay\Benchmarks\Support\Reporter;
 use CacheWerk\Relay\Benchmarks\Support\Clients\ApcuClient;
 use CacheWerk\Relay\Benchmarks\Support\Clients\InMemoryClient;
 use CacheWerk\Relay\Benchmarks\Support\Clients\RelayTableClient;
+use CacheWerk\Relay\Benchmarks\Support\Clients\SwooleTableClient;
 
 abstract class InMemoryCommand extends KeyCommand
 {
     protected RelayTableClient $table;
+
+    protected SwooleTableClient $swooleTable;
 
     protected ApcuClient $apcu;
 
@@ -57,6 +61,10 @@ abstract class InMemoryCommand extends KeyCommand
             $this->table = new RelayTableClient;
         }
 
+        if (class_exists(SwooleTable::class)) {
+            $this->swooleTable = new SwooleTableClient;
+        }
+
         if (extension_loaded('apcu') && apcu_enabled()) {
             $this->apcu = new ApcuClient;
         }
@@ -70,6 +78,12 @@ abstract class InMemoryCommand extends KeyCommand
             $subjects[] = 'RelayTable';
         } else {
             Reporter::printWarning('Skipping Relay\Table runs, class is not available');
+        }
+
+        if (class_exists(SwooleTable::class)) {
+            $subjects[] = 'SwooleTable';
+        } else {
+            Reporter::printWarning('Skipping Swoole\Table runs, extension is not loaded');
         }
 
         if (! extension_loaded('apcu')) {
@@ -94,6 +108,10 @@ abstract class InMemoryCommand extends KeyCommand
             $clients[] = $this->table;
         }
 
+        if (isset($this->swooleTable)) {
+            $clients[] = $this->swooleTable;
+        }
+
         if (isset($this->apcu)) {
             $clients[] = $this->apcu;
         }
@@ -111,6 +129,11 @@ abstract class InMemoryCommand extends KeyCommand
     public function benchmarkRelayTable(): int
     {
         return $this->runBenchmark($this->table);
+    }
+
+    public function benchmarkSwooleTable(): int
+    {
+        return $this->runBenchmark($this->swooleTable);
     }
 
     public function benchmarkAPCu(): int
