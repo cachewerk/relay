@@ -27,7 +27,7 @@ composer run bench
 # List all available options
 composer run bench -- --help
 
-# Compare local-only caches (APCu and Relay\Table)
+# Compare local-only caches
 php -d apc.enable_cli=1 benchmarks/run --command-type memory
 ```
 
