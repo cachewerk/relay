@@ -280,7 +280,7 @@ abstract class Benchmark
             'width' => 16_384,
             'depth' => 6,
             'minEvents' => 10,
-            'minRatio' => 5.0,
+            'minRatio' => 2.0,
         ]);
 
         $relay->setOption(Relay::OPT_MAX_RETRIES, 0);
