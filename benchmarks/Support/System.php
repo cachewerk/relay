@@ -53,22 +53,24 @@ class System
         }
 
         foreach (explode("\n", trim($info)) as $line) {
-            if (! trim($line)) {
+            if (! trim($line) || ! str_contains($line, ':')) {
                 continue;
             }
 
-            [$key, $value] = explode(':', $line);
+            [$key, $value] = explode(':', $line, 2);
 
             $result['threads'] += trim($key) == 'processor';
 
             $result[strtolower(trim($key))] = trim($value);
         }
 
+        $arch = trim((string) shell_exec('uname -m'));
+
         return new CpuInfo(
-            $result['model name'],
-            $result['cpu cores'],
-            $result['threads'],
-            trim((string) shell_exec('uname -m')),
+            $result['model name'] ?? "Linux {$arch}",
+            (int) ($result['cpu cores'] ?? $result['threads']),
+            (int) $result['threads'],
+            $arch,
         );
     }
 }
