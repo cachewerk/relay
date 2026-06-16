@@ -15,7 +15,7 @@ function printUsage(string $script): void
             -a, --auth         The Redis password for legacy authentication.
                 --user         The Redis username for ACL authentication.
                 --pass         The redis password for ACL authentication.
-                --workers      Specifies the number of worker threads.
+                --workers      Number of worker processes, or a comma-separated list to sweep (e.g. '1,6,12').
                 --duration     Specifies the duration of the test in seconds. Defaults to 1s.
                 --runs         Specifies the number of test runs. Defaults to 5 for a single worker, 2 for multiple workers.
                 --warmup       Specifies how many warm up runs to execute. Defaults to 1.
