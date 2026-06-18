@@ -17,11 +17,11 @@ RUN curl -L https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz 
 RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar -xzC /tmp \
   && USE_SSL=1 make -C /tmp/hiredis-1.2.0 install
 
-# Relay requires the `msgpack` extension
+# Install the `msgpack` extension for Relay's msgpack serializer (optional, resolved at runtime)
 RUN pecl install msgpack \
   && echo "extension = msgpack.so" > $(php-config --ini-dir)/10-msgpack.ini
 
-# Relay requires the `igbinary` extension
+# Install the `igbinary` extension for Relay's igbinary serializer (optional, resolved at runtime)
 RUN pecl install igbinary \
   && echo "extension = igbinary.so" > $(php-config --ini-dir)/10-igbinary.ini
 

@@ -16,7 +16,7 @@ ENV PHP_EXT_DIR=/usr/lib64/php/modules
 
 ARG RELAY=v0.30.0
 
-# Relay requires the `msgpack` and `igbinary` extension
+# Install the `msgpack` and `igbinary` extensions for Relay's serializers (optional, resolved at runtime)
 RUN dnf -y install \
   php-msgpack \
   php-igbinary
