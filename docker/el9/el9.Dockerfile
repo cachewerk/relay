@@ -19,10 +19,16 @@ ARG RELAY=v0.30.0
 # Install optional extensions
 RUN dnf -y install php-igbinary
 
-# Install Relay dependencies
+# Install Relay dependencies (hiredis)
+RUN dnf install -y \
+  gcc make openssl-devel \
+  && curl -fsSL https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | tar xz -C /tmp \
+  && make -C /tmp/hiredis-1.2.0 USE_SSL=1 PREFIX=/usr LIBRARY_PATH=lib64 install \
+  && ldconfig
+
+# Install Relay dependencies (libck)
 RUN dnf install -y --nogpgcheck \
   --repofrompath opensuse,http://download.opensuse.org/pub/opensuse/distribution/leap/15.5/repo/oss/ \
-  libhiredis1_1_0 \
   libck0
 
 # Download Relay
