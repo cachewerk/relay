@@ -6,11 +6,7 @@ RUN dnf install -y \
   php-devel \
   gzip
 
-# Relay requires the `msgpack` extension
-RUN pecl install msgpack && \
-  echo "extension = msgpack.so" > $(php-config --ini-dir)/40-msgpack.ini
-
-# Relay requires the `igbinary` extension
+# Install optional `igbinary` extension
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 

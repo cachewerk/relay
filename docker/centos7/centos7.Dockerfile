@@ -30,10 +30,8 @@ RUN yum install -y \
   https://rpmfind.net/linux/opensuse/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
   https://rpmfind.net/linux/opensuse/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
 
-# Relay requires the `msgpack` and `igbinary` extension
-RUN yum install -y \
-  php80-php-igbinary \
-  php80-php-msgpack
+# Install optional extensions
+RUN yum install -y php80-php-igbinary
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

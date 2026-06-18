@@ -25,11 +25,7 @@ RUN yum install -y \
   https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libck0-0.7.1-bp155.2.11.x86_64.rpm \
   https://download.opensuse.org/distribution/leap/15.5/repo/oss/x86_64/libhiredis1_1_0-1.1.0-bp155.1.6.x86_64.rpm
 
-# Relay requires the `msgpack` extension
-RUN pecl install msgpack && \
-  echo "extension = msgpack.so" > $(php-config --ini-dir)/40-msgpack.ini
-
-# Relay requires the `igbinary` extension
+# Install optional `igbinary` extension
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 

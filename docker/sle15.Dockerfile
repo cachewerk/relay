@@ -17,11 +17,7 @@ RUN zypper install -y \
   libhiredis1_1_0 \
   liblz4-1
 
-# Relay requires the `msgpack` extension
-RUN pecl install msgpack && \
-  echo "extension = msgpack.so" > $(php-config --ini-dir)/msgpack.ini
-
-# Relay requires the `igbinary` extension
+# Install optional `igbinary` extension
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/igbinary.ini
 
