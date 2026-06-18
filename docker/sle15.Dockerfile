@@ -17,11 +17,7 @@ RUN zypper install -y \
   libhiredis1_1_0 \
   liblz4-1
 
-# Install the `msgpack` extension for Relay's msgpack serializer (optional, resolved at runtime)
-RUN pecl install msgpack && \
-  echo "extension = msgpack.so" > $(php-config --ini-dir)/msgpack.ini
-
-# Install the `igbinary` extension for Relay's igbinary serializer (optional, resolved at runtime)
+# Install optional `igbinary` extension
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/igbinary.ini
 
