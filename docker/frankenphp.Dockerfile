@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
     liblz4-1 \
     libzstd1
 
-# Install the `msgpack` and `igbinary` extensions for Relay's serializers (optional, resolved at runtime)
-RUN install-php-extensions igbinary msgpack
+# Install optional extensions
+RUN install-php-extensions igbinary
 
 ARG RELAY=v0.30.0
 

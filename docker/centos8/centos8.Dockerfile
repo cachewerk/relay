@@ -25,10 +25,8 @@ RUN yum install -y --nogpgcheck \
   libhiredis1_1_0 \
   libck0
 
-# Install the `msgpack` and `igbinary` extensions for Relay's serializers (optional, resolved at runtime)
-RUN yum install -y \
-  php80-php-igbinary \
-  php80-php-msgpack
+# Install optional extensions
+RUN yum install -y php80-php-igbinary
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \
