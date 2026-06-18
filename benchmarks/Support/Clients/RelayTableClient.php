@@ -8,7 +8,7 @@ class RelayTableClient implements InMemoryClient
 {
     public function clear(): bool
     {
-        return Table::clearAll();
+        return (bool) Table::clearAll();
     }
 
     public function get(string $key): mixed
