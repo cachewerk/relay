@@ -90,4 +90,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Check EditorConfig
-        uses: greut/eclint-action@v0
+        run: |
+          pip install editorconfig-checker==3.6.1
+          ec --format github-actions
