@@ -20,7 +20,7 @@ ARG RELAY=v0.30.0
 
 # --- STOP ---
 # The one-liner above is what you should use. Our CI matrix needs to test
-# against `dev` builds and `install-php-extensions` not does support that.
+# against `dev` builds and `install-php-extensions` does not support that.
 
 # Download Relay
 RUN ARCH=$(dpkg --print-architecture | sed 's/amd64/x86-64/; s/arm64/aarch64/') \
