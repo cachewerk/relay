@@ -1,7 +1,5 @@
 FROM rockylinux/rockylinux:9
 
-ARG DEBIAN_FRONTEND=noninteractive
-
 RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
 RUN dnf -y module reset php
@@ -42,5 +40,4 @@ RUN cp "/tmp/relay.ini" "$PHP_INI_DIR/50-relay.ini" \
   && cp "/tmp/relay.so" "$PHP_EXT_DIR/relay.so"
 
 # Inject UUID
-RUN UUID=$(cat /proc/sys/kernel/random/uuid) \
-  && sed -i "s/00000000-0000-0000-0000-000000000000/$UUID/" "$PHP_EXT_DIR/relay.so"
+RUN sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
