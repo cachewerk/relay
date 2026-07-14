@@ -3,7 +3,7 @@ FROM php:8.5-cli
 ARG RELAY
 
 # Install PIE
-RUN apt-get update && apt-get install -y git uuid-runtime \
+RUN apt-get update && apt-get install -y git unzip uuid-runtime \
   && curl -fsSL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
   && chmod +x /usr/local/bin/pie
 
