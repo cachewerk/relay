@@ -12,7 +12,7 @@ RUN dnf -y install php-cli
 ENV PHP_INI_DIR=/etc/php.d/
 ENV PHP_EXT_DIR=/usr/lib64/php/modules
 
-ARG RELAY=v0.30.0
+ARG RELAY=v0.40.0
 
 # Install optional extensions
 RUN dnf -y install php-igbinary

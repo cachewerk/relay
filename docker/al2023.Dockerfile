@@ -10,7 +10,7 @@ RUN dnf install -y \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.30.0
+ARG RELAY=v0.40.0
 
 # Install Relay dependencies (hiredis)
 RUN dnf install -y \
