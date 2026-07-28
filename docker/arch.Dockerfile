@@ -21,7 +21,7 @@ RUN curl -L https://github.com/redis/hiredis/archive/refs/tags/v1.2.0.tar.gz | t
 RUN pecl install igbinary \
   && echo "extension = igbinary.so" > $(php-config --ini-dir)/10-igbinary.ini
 
-ARG RELAY=v0.30.0
+ARG RELAY=v0.40.0
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
