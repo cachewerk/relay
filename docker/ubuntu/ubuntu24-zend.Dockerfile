@@ -23,7 +23,7 @@ RUN apt-get install -y \
   libhiredis-dev \
   libck-dev
 
-# Install Relay dependencies
+# Install optional extensions
 RUN pecl install \
   msgpack \
   igbinary

@@ -12,7 +12,7 @@ RUN apt-get install -y \
   php-dev \
   php-fpm
 
-# Install Relay dependencies
+# Install optional extensions
 RUN apt-get install -y \
   php-msgpack \
   php-igbinary

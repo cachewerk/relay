@@ -14,7 +14,10 @@ ARG RELAY=v0.40.0
 # Install Relay dependencies
 RUN zypper install -y \
   libck0 \
-  libhiredis1_1_0 \
+  libhiredis1_1_0
+
+# Install optional compression libraries
+RUN zypper install -y \
   liblz4-1
 
 # Install optional `igbinary` extension

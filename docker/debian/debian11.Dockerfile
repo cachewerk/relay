@@ -26,9 +26,12 @@ RUN apt-get install -y \
 
 # Install Relay dependencies
 RUN apt-get install -y \
+  libck-dev
+
+# Install optional extensions and compression libraries
+RUN apt-get install -y \
   lz4 \
   zstd \
-  libck-dev \
   php8.5-msgpack \
   php8.5-igbinary
 

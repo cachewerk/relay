@@ -6,7 +6,10 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 # Install Relay dependencies
 RUN apt-get update && apt-get install -y \
     libck0t64 \
-    libhiredis1.1.0 \
+    libhiredis1.1.0
+
+# Install optional compression libraries
+RUN apt-get install -y \
     liblz4-1 \
     libzstd1
 

@@ -11,7 +11,10 @@ RUN apk add \
 RUN apk add \
   ck \
   hiredis \
-  hiredis-ssl \
+  hiredis-ssl
+
+# Install optional extensions and compression libraries
+RUN apk add \
   lz4-libs \
   zstd-libs \
   php81-pecl-msgpack \

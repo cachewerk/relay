@@ -15,7 +15,10 @@ RUN apt-get install -y \
 # Install Relay dependencies
 RUN apt-get install -y \
   libhiredis-dev \
-  libck-dev \
+  libck-dev
+
+# Install optional extensions
+RUN apt-get install -y \
   php-msgpack \
   php-igbinary
 

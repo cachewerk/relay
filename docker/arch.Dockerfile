@@ -6,7 +6,7 @@ RUN pacman -Syu --noconfirm \
 RUN curl -L -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar && \
   php /tmp/go-pear.phar
 
-# Install Relay dependencies
+# Install optional compression libraries
 RUN pacman -S --noconfirm \
   lz4
 

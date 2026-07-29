@@ -7,7 +7,7 @@ RUN curl -L https://repo.litespeed.sh | bash
 RUN dnf install -y \
   lsphp83
 
-# Install Relay dependencies
+# Install optional extensions
 RUN dnf install -y \
   lsphp83-pecl-igbinary \
   lsphp83-pecl-msgpack
