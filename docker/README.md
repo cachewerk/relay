@@ -64,6 +64,14 @@ docker run -it relay-frankenphp bash
 $ php --ri relay
 ```
 
+## Enterprise Linux 10
+
+```bash
+docker build --pull --tag relay-el10 --file el10/el10.Dockerfile .
+docker run -it relay-el10 bash
+$ php --ri relay
+```
+
 ## Linux Mint 21
 
 ```bash
