@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-ARG RELAY=0.20.0
+ARG RELAY=v0.50.0
 
 # Install PIE
 RUN apt-get update && apt-get install -y git unzip uuid-runtime \
