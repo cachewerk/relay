@@ -1,5 +1,14 @@
 FROM debian:11
 
+# Debian 11 reached end of life on 2026-08-31. Its `bullseye-security` pool is
+# being torn down and now serves intermittent 404s, so pin the base system to
+# the frozen archive instead. `bullseye-security` is dropped rather than
+# repointed, as it has not been published on archive.debian.org yet.
+RUN printf '%s\n' \
+      'deb http://archive.debian.org/debian bullseye main' \
+      'deb http://archive.debian.org/debian bullseye-updates main' \
+      > /etc/apt/sources.list
+
 RUN apt-get update
 
 RUN apt-get install -y \
