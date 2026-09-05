@@ -1,5 +1,8 @@
 FROM debian:11
 
+RUN sed -i 's|http://deb.debian.org/debian-security|http://snapshot.debian.org/archive/debian-security/20260831T000000Z|' /etc/apt/sources.list \
+  && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99snapshot
+
 RUN apt-get update
 
 RUN apt-get install -y \
