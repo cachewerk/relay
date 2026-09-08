@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-ARG RELAY=0.50.0
+ARG RELAY=v0.50.0
 
 # Install PIE
 RUN apt-get update && apt-get install -y git unzip uuid-runtime \
@@ -18,7 +18,7 @@ RUN pecl install igbinary msgpack \
   && docker-php-ext-enable igbinary msgpack
 
 # Install Relay
-RUN pie install "cachewerk/ext-relay:${RELAY}"
+RUN pie install "cachewerk/ext-relay:${RELAY#v}"
 
 # Verify version (optional)
 RUN INSTALLED=$(php -r "echo phpversion('relay');") \
