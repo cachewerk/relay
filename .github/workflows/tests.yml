@@ -12,6 +12,29 @@ concurrency:
 
 jobs:
 
+  versions:
+
+    name: Consistent versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer
+          coverage: none
+
+      - name: Install Consistent Versions
+        run: composer global require szepeviktor/consistent-versions:^1.2 --no-interaction --prefer-dist
+
+      - name: Check version consistency
+        run: composer global exec consistent-versions -- check consistent-versions.yaml
+
   benchmarks:
 
     name: Benchmarks

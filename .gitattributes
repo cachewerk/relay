@@ -10,4 +10,5 @@
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+/consistent-versions.yaml export-ignore
 phpstan.neon.dist export-ignore

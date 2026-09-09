@@ -1,0 +1,111 @@
+checks:
+  relay-version:
+    normalize:
+      - trim-v-prefix
+      - version
+
+    expected:
+      reader: yaml
+      file: .github/workflows/docker.yml
+      path: $.jobs.packages.env.RELAY_VERSION
+
+    values:
+      docker-workflow-artifact-matrix:
+        reader: yaml
+        file: .github/workflows/docker.yml
+        path: $.jobs.artifacts.strategy.matrix.version[0]
+
+      docker-alpine:
+        reader: dockerfile
+        file: docker/alpine.Dockerfile
+        path: $.args.RELAY
+
+      docker-al2:
+        reader: dockerfile
+        file: docker/al2.Dockerfile
+        path: $.args.RELAY
+
+      docker-al2023:
+        reader: dockerfile
+        file: docker/al2023.Dockerfile
+        path: $.args.RELAY
+
+      docker-arch:
+        reader: dockerfile
+        file: docker/arch.Dockerfile
+        path: $.args.RELAY
+
+      docker-centos7:
+        reader: dockerfile
+        file: docker/centos7/centos7.Dockerfile
+        path: $.args.RELAY
+
+      docker-centos8:
+        reader: dockerfile
+        file: docker/centos8/centos8.Dockerfile
+        path: $.args.RELAY
+
+      docker-rocky8:
+        reader: dockerfile
+        file: docker/centos8/rocky8.Dockerfile
+        path: $.args.RELAY
+
+      docker-debian11:
+        reader: dockerfile
+        file: docker/debian/debian11.Dockerfile
+        path: $.args.RELAY
+
+      docker-el9:
+        reader: dockerfile
+        file: docker/el9/el9.Dockerfile
+        path: $.args.RELAY
+
+      docker-el10:
+        reader: dockerfile
+        file: docker/el10/el10.Dockerfile
+        path: $.args.RELAY
+
+      docker-frankenphp:
+        reader: dockerfile
+        file: docker/frankenphp.Dockerfile
+        path: $.args.RELAY
+
+      docker-litespeed:
+        reader: dockerfile
+        file: docker/litespeed/litespeed.Dockerfile
+        path: $.args.RELAY
+
+      docker-openlitespeed:
+        reader: dockerfile
+        file: docker/litespeed/openlitespeed.Dockerfile
+        path: $.args.RELAY
+
+      docker-mint21:
+        reader: dockerfile
+        file: docker/mint21.Dockerfile
+        path: $.args.RELAY
+
+      docker-pie-pinned:
+        reader: dockerfile
+        file: docker/pie/pie-pinned.Dockerfile
+        path: $.args.RELAY
+
+      docker-sle15:
+        reader: dockerfile
+        file: docker/sle15.Dockerfile
+        path: $.args.RELAY
+
+      docker-ubuntu20:
+        reader: dockerfile
+        file: docker/ubuntu/ubuntu20.Dockerfile
+        path: $.args.RELAY
+
+      docker-ubuntu24:
+        reader: dockerfile
+        file: docker/ubuntu/ubuntu24.Dockerfile
+        path: $.args.RELAY
+
+      docker-ubuntu24-zend:
+        reader: dockerfile
+        file: docker/ubuntu/ubuntu24-zend.Dockerfile
+        path: $.args.RELAY
