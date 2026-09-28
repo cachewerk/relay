@@ -7,7 +7,7 @@ These Docker environments are concrete examples of Relay's [installation instruc
 You may specify the Relay version/build for non-package (APT/YUM) Docker examples:
 
 ```bash
-docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.9.1 .
+docker build --pull --tag relay-alpine --file alpine.Dockerfile --build-arg RELAY=v0.50.2 .
 ```
 
 To install the nightly developments builds use the `dev` version:

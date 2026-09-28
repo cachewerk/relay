@@ -9,7 +9,7 @@ RUN zypper --gpg-auto-import-keys update -y \
     php8-pecl \
     php8-devel
 
-ARG RELAY=v0.50.0
+ARG RELAY=v0.50.2
 
 # Install Relay dependencies
 RUN zypper install -y \
