@@ -19,4 +19,4 @@ RUN pecl install igbinary msgpack \
 
 # Install Relay
 # RUN pie install cachewerk/ext-relay
-RUN pie install "cachewerk/ext-relay:${RELAY}"
+RUN pie install "cachewerk/ext-relay:${RELAY#v}.*"

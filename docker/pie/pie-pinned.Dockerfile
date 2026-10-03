@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-ARG RELAY=v0.50.2
+ARG RELAY=v0.50.2.1
 
 # Install PIE
 RUN apt-get update && apt-get install -y git unzip uuid-runtime \
@@ -22,5 +22,5 @@ RUN pie install "cachewerk/ext-relay:${RELAY#v}"
 
 # Verify version (optional)
 RUN INSTALLED=$(php -r "echo phpversion('relay');") \
-  && EXPECTED="${RELAY#v}" \
+  && EXPECTED=$(echo "${RELAY#v}" | cut -d. -f1-3) \
   && if [ "$INSTALLED" != "$EXPECTED" ]; then echo "Expected $EXPECTED but got $INSTALLED"; exit 1; fi
