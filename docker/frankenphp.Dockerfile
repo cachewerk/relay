@@ -16,7 +16,7 @@ RUN apt-get install -y \
 # Install optional extensions
 RUN install-php-extensions igbinary
 
-ARG RELAY=v0.50.2
+ARG RELAY=v0.60.0
 
 # Download and install Relay
 # RUN install-php-extensions "relay${RELAY:+-$RELAY}"

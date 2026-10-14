@@ -20,7 +20,7 @@ RUN apk add \
   php81-pecl-msgpack \
   php81-pecl-igbinary
 
-ARG RELAY=v0.50.2
+ARG RELAY=v0.60.0
 
 # Download Relay
 RUN PLATFORM=$(uname -m | sed 's/_/-/') \

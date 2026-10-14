@@ -22,7 +22,7 @@ RUN apt-get install -y \
   php-msgpack \
   php-igbinary
 
-ARG RELAY=v0.50.2
+ARG RELAY=v0.60.0
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
