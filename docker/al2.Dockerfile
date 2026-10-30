@@ -32,7 +32,7 @@ RUN yum install -y \
 RUN pecl install igbinary && \
   echo "extension = igbinary.so" > $(php-config --ini-dir)/40-igbinary.ini
 
-ARG RELAY=v0.60.0
+ARG RELAY=v0.60.1
 
 # Download Relay
 RUN ARCH=$(uname -m | sed 's/_/-/') \
