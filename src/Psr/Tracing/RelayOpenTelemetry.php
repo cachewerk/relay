@@ -328,7 +328,7 @@ class RelayOpenTelemetry
      */
     protected function setMethodAttributes(string $name)
     {
-        $method = new ReflectionMethod($this->relay::class, $name);
+        $method = new ReflectionMethod($this->relay, $name);
 
         $attributes = array_flip(array_map(
             fn ($attribute) => $attribute->getName(),

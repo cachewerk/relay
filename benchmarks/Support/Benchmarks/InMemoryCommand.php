@@ -46,7 +46,7 @@ abstract class InMemoryCommand extends KeyCommand
             if (in_array($client->get($key), [null, false], true)) {
                 throw new Exception(sprintf(
                     'Seeding %s had no effect, key `%s` reads back empty',
-                    $client::class,
+                    get_class($client),
                     $key
                 ));
             }

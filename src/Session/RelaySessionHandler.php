@@ -13,6 +13,13 @@ use SessionUpdateTimestampHandlerInterface;
 class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimestampHandlerInterface
 {
     /**
+     * The Relay instance.
+     *
+     * @var Relay
+     */
+    protected Relay $relay;
+
+    /**
      * The of seconds after which data will be seen as 'garbage' and cleaned up.
      *
      * @var int
@@ -40,8 +47,9 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
      * @param  ?int  $ttl
      * @return void
      */
-    public function __construct(protected Relay $relay, ?int $ttl = null)
+    public function __construct(Relay $relay, ?int $ttl = null)
     {
+        $this->relay = $relay;
         $this->ttl = (int) ($ttl ?: ini_get('session.gc_maxlifetime') ?: 1440);
     }
 
@@ -73,6 +81,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
      * @param  string  $id
      * @return string|false
      */
+    #[\ReturnTypeWillChange]
     public function read(#[\SensitiveParameter] string $id): string|false
     {
         if (isset($this->sessionId, $this->sessionData) && $this->sessionId === $id) {
@@ -88,7 +97,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
             $data = $this->relay->get($id);
 
             return is_string($data) ? $data : '';
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return '';
         }
     }
@@ -104,7 +113,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
     {
         try {
             return $this->relay->setex($id, $this->ttl, $data);
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return false;
         }
     }
@@ -119,7 +128,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
     {
         try {
             return (bool) $this->relay->del($id);
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return false;
         }
     }
@@ -134,7 +143,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
     {
         try {
             $data = $this->relay->get($id);
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return false;
         } finally {
             $this->sessionId = $id;
@@ -155,7 +164,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
     {
         try {
             return $this->relay->expire($id, (int) $this->ttl);
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return false;
         }
     }
@@ -166,7 +175,8 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
      * @param  int  $max_lifetime
      * @return int|false
      */
-    public function gc(int $max_lifetime): int|false
+    #[\ReturnTypeWillChange]
+    public function gc(int $max_lifetime)
     {
         return false;
     }
