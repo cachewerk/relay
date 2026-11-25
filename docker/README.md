@@ -90,10 +90,20 @@ $ php --ri relay
 
 ## PHP Images
 
-This image uses `mlocati/php-extension-installer` to install the extension.
+These images use [`install-php-extensions`](https://github.com/mlocati/docker-php-extension-installer) to install the extension.
+
+Copying the script from the `mlocati/php-extension-installer` image:
 
 ```bash
 docker build --pull --tag relay-php-cli --file php-cli.Dockerfile .
 docker run -it relay-php-cli bash
+$ php --ri relay
+```
+
+Downloading the script with `ADD`:
+
+```bash
+docker build --pull --tag relay-php-cli-add --file php-cli-add.Dockerfile .
+docker run -it relay-php-cli-add bash
 $ php --ri relay
 ```
