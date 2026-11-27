@@ -82,7 +82,7 @@ class RelaySessionHandler implements SessionHandlerInterface, SessionUpdateTimes
      * @return string|false
      */
     #[\ReturnTypeWillChange]
-    public function read(#[\SensitiveParameter] string $id): string|false
+    public function read(#[\SensitiveParameter] string $id)
     {
         if (isset($this->sessionId, $this->sessionData) && $this->sessionId === $id) {
             $data = $this->sessionData;
