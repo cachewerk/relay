@@ -15,7 +15,9 @@ $ php --ri relay
 ## Debian (manual)
 
 ```bash
-docker build --pull --tag relay-debian --file debian11.Dockerfile .
+docker build --pull --tag relay-debian --file debian13.Dockerfile .
 docker run -it relay-debian bash
 $ php --ri relay
 ```
+
+For Debian 11, `debian11.Dockerfile` uses its stock PHP 7.4, since Ondřej’s repository no longer serves bullseye.

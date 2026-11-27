@@ -34,6 +34,7 @@ jobs:
           - el9/el9
           - el10/el10
           - debian/debian11
+          - debian/debian13
           - ubuntu/ubuntu20
           - ubuntu/ubuntu24
           - ubuntu/ubuntu24-zend
@@ -100,7 +101,6 @@ jobs:
           - centos8/centos8-dnf
           - el9/el9-dnf
           - el10/el10-dnf
-          - debian/debian11-apt
           - debian/debian12-apt
           - ubuntu/ubuntu22-apt
           - ubuntu/ubuntu26-apt
