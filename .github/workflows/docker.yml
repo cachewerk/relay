@@ -42,6 +42,7 @@ jobs:
           - mint21
           - sle15
           - php-cli
+          - php-cli-add
           - frankenphp
 
     services:
